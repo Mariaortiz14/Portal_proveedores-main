@@ -19,7 +19,9 @@
                     <div class="col-lg-10 col-md-12 text-center">
                         <img src="{% static 'img/photo_1.jpeg' %}" alt="Proveedor Photo" class="img-fluid rounded  m-3">
                         <h2 class="wlcm" style="color: #ffffff">¿Aun no eres proveedor?</h2>
-                        <a type="button" href="{% url 'users:signup' %}" class="btn btn-secondary ">¡Regístrate!</a>
+                        <!--<a type="button" href="{% url 'users:signup' %}" class="btn btn-secondary ">¡Regístrate!</a>-->
+                        <a href="{% url 'users:register' %}" class="btn btn-secondary">¡Regístrate!</a>
+
                     </div>
                 </div>
             </div>

@@ -110,31 +110,40 @@ def login_(request):
         return redirect('proveedor:dashboard')
     elif request.user.is_authenticated and request.user.groups.filter(name='compras').exists():
         return redirect('compras:dashboard')
-  
+    
     form = LoginForm()
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
-            user = form.cleaned_data['username']
+            username = form.cleaned_data['username']
             password = form.cleaned_data['password']
-            if User.objects.filter(username=user).exists():
-                user = User.objects.get(username=user)
+
+            try:
+                user = User.objects.get(username=username)
                 if user.check_password(password):
+                    if not user.is_active:
+                        messages.error(request, 'Usuario inactivo.')
+                        return render(request, 'users/register/login.html', {'form': form})
+                    
                     login(request, user)
+
+                    # Redirección por grupo
                     if user.groups.filter(name='Proveedor').exists():
                         return redirect('proveedor:dashboard')
                     elif user.groups.filter(name='compras').exists():
                         return redirect('compras:dashboard')
-                    
+                    elif user.is_superuser:
+                        return redirect('/admin/')
+                    else:
+                        messages.error(request, 'Tu cuenta no tiene un rol asignado.')
+                        return render(request, 'users/register/login.html', {'form': form})
                 else:
-                    messages.error(request, 'Usuario o contraseña incorrectos')
-                    return render(request, 'users/register/login.html', {'form': form})
-            else:
-                messages.error(request, 'Usuario o contraseña incorrectos')
-                return render(request, 'users/register/login.html', {'form': form})
-    
-    
+                    messages.error(request, 'Usuario o contraseña incorrectos.')
+            except User.DoesNotExist:
+                messages.error(request, 'Usuario o contraseña incorrectos.')
+
     return render(request, 'users/register/login.html', {'form': form})
+
 
 
 def logout_(request):
