@@ -1,0 +1,170 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static 'bootstrap/js/bootstrap.min.js' %}">
+<style>
+    @page {
+        size: letter;
+        margin: 0.2in; /* Ajusta este valor según tus necesidades */
+    }
+    body {
+        margin: 0; /* Elimina márgenes adicionales del body */
+        font-size: 10.5px; /* Ajusta el tamaño de la letra según tus necesidades */
+    }
+    .table-container {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        margin: 0; /* Ajusta este valor según tus necesidades */
+        padding: 0; /* Ajusta este valor según tus necesidades */
+    }
+    .table {
+        border: 2px solid black; /* Borde negro para la tabla */
+    }
+    .table td, .table th {
+        border: 1px solid black; /* Borde negro para las celdas */
+    }
+    .table td, .table th {
+        border: 1px solid black; /* Borde negro para las celdas */
+        width: 12.5%; /* Ajusta este valor para que todas las celdas tengan el mismo ancho */
+    }
+</style>
+
+<div class="table-container">
+    <table class="table table-sm border-dark-subtle border-1 table-bordered">
+        <tbody>
+            <tr>
+                <td colspan="2" style="background-color: #d4d4d4;" class="table-active fw-bold">Tipo de Persona</td>
+                <td>{{ registro.tipo_persona }}</td>
+                <td colspan="3" style="background-color: #d4d4d4;" class="table-active fw-bold">Tipo de Proveedor</td>
+                <td colspan="3">{{ registro.tipo_proveedor }}</td>
+            </tr>
+            <tr>
+                <td style="background-color: #d4d4d4;" colspan="5">Se encuentra certificado como Operador Económico autorizado por parte de la DIAN:</td>
+                <td colspan="4">{{ registro.dian }}</td>
+            </tr>
+            <tr>
+                <td colspan="9" style="background-color: #7F7F7F;">
+                    <p class="text-light fw-bold text-center p-0 m-0">Datos de Actividad económica</p>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1" style="background-color: #d4d4d4;">Nombre o Razón Social:</td>
+                <td colspan="5" >{{ registro.razon_social }}</td>
+                <td colspan="1" style="background-color: #d4d4d4;">Sigla o Nombre Comercial:</td>
+                <td colspan="2" >{{ registro.sigla }}</td>
+
+            </tr>
+            <tr>
+                <td colspan="3" style="background-color: #d4d4d4;">Tipo De documento:</td>
+                <td colspan="2">{{ registro.tipo_documento }}</td>
+                <td colspan="2" style="background-color: #d4d4d4;">Numero:</td>
+                <td colspan="2" >{{ registro.documento }}</td>
+            </tr>
+            <tr>
+                <td colspan="1" style="background-color: #d4d4d4;">CIIU:</td>
+                <td colspan="8">{{ registro.ciiu }}</td>
+            </tr>
+            <tr>
+                <td colspan="1" style="background-color: #d4d4d4;">Dirección:</td>
+                <td colspan="3">{{ registro.direccion }}</td>
+                <td colspan="1" style="background-color: #d4d4d4;">Ciudad:</td>
+                <td>{{ registro.municipio }}</td>
+                <td colspan="1" style="background-color: #d4d4d4;">Departamento:</td>
+                <td colspan="2" >{{ registro.departamento }}</td>
+            </tr>
+            <tr>
+                <td colspan="1" style="background-color: #d4d4d4;">Teléfono:</td>
+                <td colspan="2">{{ registro.telefono }}</td>
+                <td colspan="1" style="background-color: #d4d4d4;">Correo:</td>
+                <td colspan="5">{{ registro.email }}</td>
+            </tr>
+            <tr>
+                <td colspan="2" style="background-color: #d4d4d4;">Representante Legal:</td>
+                <td colspan="4">{{ registro.representante_legal }}</td>
+                <td colspan="1" style="background-color: #d4d4d4;">Identificación:</td>
+                <td colspan="2">{{ registro.identificacion_representante }}</td>
+            </tr>
+            <tr>
+                <td colspan="1" style="background-color: #d4d4d4;">Grupo Empresarial:</td>
+                <td colspan="8">{% if registro.pertenece_grupo == 'No' %} N/A {% else %} {{ registro.nombre_grupo }} {% endif %}</td>
+            </tr>
+            <tr>
+                <td colspan="2" style="background-color: #d4d4d4;">Persona con cargo público:</td>
+                {% if registro.tiene_trabajo_figura_publica == 'No' %}
+                    <td colspan="7">N/A</td>
+                {% else %}
+                    <td colspan="1" style="background-color: #d4d4d4;">Nombre:</td>
+                    <td colspan="3">{{ registro.nombre_trabajo_figura_publica }}</td>
+                    <td colspan="1" style="background-color: #d4d4d4;">Cargo</td>
+                    <td colspan="2">{{ registro.cargo_trabajo_figura_publica }}</td>
+                {% endif %}
+            </tr>
+            <tr>
+                <td colspan="9" style="background-color: #7F7F7F;">
+                    <p class="text-light fw-bold text-center p-0 m-0">Composición accionaria:</p>
+                </td>
+            </tr>
+            {% for a in accionarios %}
+                <tr class="border-bottom border-dark-subtle">
+                    <td colspan="1" style="background-color: #d4d4d4;">Nombre completo o razón social:</td>
+                    <td colspan="3">{{ a.nombre_razon_social }}</td>
+                    <td colspan="1" style="background-color: #d4d4d4;">Identificación:</td>
+                    <td colspan="2">{{ a.tipo_identificacion }} {{ a.identificacion }}</td>
+                    <td colspan="1" style="background-color: #d4d4d4;">Porcentaje de participación:</td>
+                    <td>{{ a.porcentaje }}%</td>
+                </tr>
+            {% endfor %}
+            <tr>
+                <td colspan="9" style="background-color: #7F7F7F;">
+                    <p class="text-light fw-bold text-center p-0 m-0">Información financiera:</p>
+                </td>
+            </tr>
+            <tr class="border-bottom border-dark-subtle">
+                <td colspan="2" style="background-color: #d4d4d4;">Total Activos:</td>
+                <td>{{ financiera.total_activos }}</td>
+                <td colspan="2" style="background-color: #d4d4d4;">Total Pasivos:</td>
+                <td>{{ financiera.total_pasivos }}</td>
+                <td colspan="2" style="background-color: #d4d4d4;">Patrimonio:</td>
+                <td>{{ financiera.patrimonio }}</td>
+
+
+            </tr>
+            
+            <tr class="border-bottom border-dark-subtle">
+                <td colspan="2" style="background-color: #d4d4d4;">Ingresos Mensuales:</td>
+                <td>{{ financiera.ingresos_mensuales }}</td>
+                <td colspan="2" style="background-color: #d4d4d4;">Egresos Mensuales:</td>
+                <td>{{ financiera.egresos_mensuales }}</td>
+                <td colspan="2" style="background-color: #d4d4d4;">Otros Ingresos:</td>
+                <td>{{ financiera.otros_ingresos }}</td>
+
+
+            </tr>
+            
+            <tr class="border-bottom border-dark-subtle">
+                <td colspan="2" style="background-color: #d4d4d4;">Otros Egresos:</td>
+                <td>{{ financiera.otros_egresos }}</td>
+                <td colspan="2" style="background-color: #d4d4d4;">Ventas Anules:</td>
+                <td>{{ financiera.ventas_mensuales }}</td>
+                <td colspan="2" style="background-color: #d4d4d4;">Tipo Empresa:</td>
+                <td>{{ financiera.tipo_empresa }}</td>
+            </tr>
+
+            <tr class="border-bottom border-dark-subtle">
+                <td colspan="2" style="background-color: #d4d4d4;">Empleados:</td>
+                <td>{{ financiera.num_empleados }}</td>
+            </tr>
+            <tr>
+                <td colspan="9" style="background-color: #7F7F7F;">
+                    <p class="text-light fw-bold text-center p-0 m-0">Información Tributaria:</p>
+                </td>
+            </tr>
+            <tr class="border-bottom border-dark-subtle">
+                <td colspan="2" style="background-color: #d4d4d4;">Tipo Contribuyente:</td>
+            </tr>
+
+
+
+        </tbody>
+    </table>
+</div>

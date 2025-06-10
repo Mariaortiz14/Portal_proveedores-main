@@ -1,0 +1,93 @@
+{% extends "_layout_compras.html" %}
+
+{% block Title %}
+    Solicitud
+{% endblock Title %}
+
+
+{% block content %}
+
+<div class="row m-0  ps-lg-0 p-md-0 p-sm-0 p-xs-0 d-flex justify-content-center  ">
+    <div class="justify-content-between d-flex  ">
+        <h2 class=" p-3 ps-5">Mis solicitudes</h2>
+        <a type="button" class="btn btn-success text-light m-4 " href="{%url 'compras:crear_solicitudes'%}"  ><i class="fa-solid fa-plus me-2 "></i>Crear Solicitud </a>
+    </div>
+    <div class="col-md-11 col-sm-12 col-xs-12 shadow bg-white rounded" style="background-color: hsl(0, 0%, 0%)">
+        <div class="row p-3 gx-3 gy-3 d-flex flex-wrap">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {{message}}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+            {% for s in solicitudes%}
+            <div class="col-md-4 col-lg-4 col-sm-12 col-xs-12">
+                <div class="card h-100 flex-fill">
+                    <div class="card-header">
+                        <h5 class="card-title">{{s.TSolicitud|lower}}</h5>
+                    </div>
+                    <div class="card-body p-3">
+                        <div class="row">
+                            <div class="col-lg-8 col-sm-12 col-md-6">
+                                <p class="card-text">{{s.identificador}} </p>
+                                <p class="card-text"><b>Numero de propuestas:</b></p>
+                                <p class="card-text"><b>Familia:</b> {{s.familia}}</p>
+                                <p class="card-text"><b>Fecha de creación:</b> {{s.fecha_creacion}}</p>
+                            </div>
+                            <div class="col-lg-4 col-sm-12 col-md-6">
+                                <p class="card-title"><b>Estado: {{s.estado}}</b></p>
+                                <p class="card-text">Fecha de Finalización: {{s.fecha_entrega}}</p>
+                                <a href="{%url 'compras:solicitud_id' id=s.id %}" class="btn btn-dark">Ver detalles</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer mt-auto d-flex justify-content-end">
+                        <a href=" " class="btn btn-sm btn-warning me-2"><i class="fi fi-rs-file-edit"></i></a>
+                        <a class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#modal" data-bs-id="{{s.id}}" ><i class="fi fi-rs-trash"></i></a>
+                    </div>
+                </div>
+            </div>
+
+            {%endfor%}
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Eliminar solicitud</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ¿Está seguro que desea eliminar la solicitud?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <a class="btn btn-danger">Eliminar</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock content %}
+
+{% block script %}
+<script>
+    var myModal = new bootstrap.Modal(document.getElementById('modal'), {
+        keyboard: false
+    });
+
+    $('#modal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var id = button.data('bs-id');
+        var modal = $(this);
+        modal.find('.modal-footer a').attr('href', '/compras/mis_solicitudes/' + id+ '/eliminar/');
+    });
+</script>
+{% endblock script %}
+

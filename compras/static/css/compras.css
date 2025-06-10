@@ -1,0 +1,63 @@
+.navtab{
+    background-color: #ffffff;
+    border-bottom: 1px solid #e9ecef;
+    color: white;
+    display: flex; /* Convierte navtab en un contenedor flex */
+    padding-top: 0.5rem;
+}
+
+.navtab .nav-item {
+    margin-right: 1rem;
+    padding-right: 0.7rem ; 
+}
+
+#id_oea {
+    pointer-events: none; /* Disable interactions */
+}
+  
+#id_oea input {
+    pointer-events: auto; /* Re-enable interactions for the checkboxes themselves */
+}
+
+.info {
+    font-size: 4.5rem;
+}
+
+#id_extra, #id_forma_pago, #id_matriz {
+    pointer-events: none;
+  }
+
+
+input:focus, select:focus {
+    border-color: #ff8080 !important;
+    outline: 0 !important;
+    box-shadow: 0 0 0 0.2rem rgba(255, 0, 0, 0.25) !important;
+}
+input, select, textarea {
+    border: 1px solid #c2c2c2 !important;
+}
+
+.is-invalid .is-invalid, .select2-container--bootstrap .is-invalid, div .is-invalid {
+    border: 1px solid #d65454 !important;
+}
+
+
+.navtab .nav-item:last-child {
+    border-right: none;
+}
+
+.navtab .nav-item .nav-link {
+    display: block;
+    border-bottom: 2px solid #ffffff; 
+}
+
+.navtab .nav-item .nav-link.active {
+    color: #565656;
+    font-weight: bold;
+    border-bottom: 2px solid #6c6c6c; 
+}
+
+.hidden{
+    display: none;
+}
+

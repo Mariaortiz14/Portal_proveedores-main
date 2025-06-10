@@ -1,0 +1,21 @@
+{% extends "_layout.html" %}
+
+{% block title %}ERROR{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+    <div class="text-center mt-5">
+        <div class="error mx-auto" data-text="Error">
+            <p class="m-0">Error</p>
+        </div>
+        <p class="text-dark mb-5 lead">{{texto}}</p>
+        <p class="text-secondary text-sm-start ">Mas información: {{error}}</p>
+
+        <p class="text-black-50 mb-0"></p><a href="{{url}}">← Vuelve</a>
+
+
+    </div>
+</div>
+    
+{% endblock %}

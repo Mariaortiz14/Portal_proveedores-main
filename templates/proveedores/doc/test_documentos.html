@@ -1,0 +1,86 @@
+{% extends "_layout_proveedores.html" %}
+
+{% block Title %}
+Documentos
+{% endblock Title %}
+
+{% block content %}
+
+{% load static %}
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.189/pdf_viewer.min.css" integrity="sha512-9uknW5oN7ouvfOCw5wxRC3O9LmGrH3jhuCjcHnAHNvkP4s7Z5X0rWXxHHM0LcyWT/aBIMan/lCJHJtQx8eEAyg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+
+
+
+<div class="container-fluid m-0">
+  <div class="row">
+    <div class="col-md-12">
+      <h2 class="ps-3 pt-3">Documentos</h2>
+      <div class="row">
+        <div class="shadow col-lg-4 col-md-12 col-sm-12 col-xs-12 c1 bg-white rounded m-3">
+          <div class="list-group list-group-flush p-2">
+            <button type="button" class="list-group-item list-group-item-action active" aria-current="true">
+              The current button
+            </button>
+            <a type="button" onclick="mostrarPDF('{% url 'descargar_archivo' path='prueba.pdf' %}')" class="list-group-item list-group-item-action">A second item</a>
+            <button type="button" class="list-group-item list-group-item-action">A third button item</button>
+            <button type="button" class="list-group-item list-group-item-action">A fourth button item</button>
+            <button type="button" class="list-group-item list-group-item-action">A disabled button item</button>
+          </div>
+        </div>
+        <div class="shadow col-lg-7 col-md-12 col-sm-12 col-xs-12 c1 bg-white rounded m-3">
+          <div id="visorPDF">
+            <canvas id="pdfCanvas"></canvas>
+          </div>
+
+          <button onclick="cargarPDF('{% url 'descargar_archivo' path='prueba.pdf' %}')">Cargar PDF</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+{% endblock content %}
+
+{% block script %}
+
+<script type="module">
+  import pdfjsDist from 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.0.189/+esm'
+
+  document.addEventListener('DOMContentLoaded', function() {
+  window.mostrarPDF = function(urlPDF) {
+    var visorPDF = document.getElementById("visorPDF");
+    var pdfCanvas = document.getElementById("pdfCanvas");
+
+    pdfjsDist.getDocument(urlPDF).then(function (pdf) {
+      pdf.getPage(1).then(function (page) {
+        var viewport = page.getViewport({ scale: 1.5 });
+        pdfCanvas.width = viewport.width;
+        pdfCanvas.height = viewport.height;
+        var renderContext = {
+          canvasContext: pdfCanvas.getContext("2d"),
+          viewport: viewport,
+        };
+        page.render(renderContext);
+        visorPDF.style.display = "block";
+      });
+    });
+  }
+
+  // Definir la función cargarPDF en el ámbito global
+  window.cargarPDF = function(urlPDF) {
+    var pdfCanvas = document.getElementById("pdfCanvas");
+    pdfCanvas.width = 0;
+    pdfCanvas.height = 0;
+    mostrarPDF(urlPDF);
+  }
+  });
+
+  // Resto de tu código aquí
+</script>
+{% endblock script %}

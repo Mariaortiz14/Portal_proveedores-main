@@ -1,0 +1,199 @@
+{% extends "_layout_compras.html" %}
+
+{% block Title %}
+    FEPCO
+{% endblock Title %}
+{% block css %}
+{% load static %}
+    <link rel="stylesheet" href="{%static 'css/compras.css'%}">
+{% endblock css %}
+
+{% block content %}
+
+
+<div class="row m-0  ps-lg-0 p-md-0 p-sm-0 p-xs-0 d-flex justify-content-center  ">
+    <div class="">
+        <h2 class=" pt-3 ps-5">Matriz de selección</h2>
+        <ol class=" ms-5 mb-0 breadcrumb breadcrumb-chevron p-2 y rounded-3">
+            <li class="breadcrumb-item">
+              <a class="link-body-emphasis fw-semibold text-decoration-none" href="{%url 'compras:t_basicas'%}">Tablas básicas</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+              Matriz de selección
+            </li>
+        </ol>
+    </div>
+    <div class="col-md-11 col-sm-12 col-xs-12 h-100 shadow p-3 m-2 bg-white rounded h-60" style="background-color: hsl(0, 0%, 0%)">
+            <div class="card border-0   col-md-12 col-lg-12 col-sm-12 col-xs-12">
+                <form method="post" action="{%url 'compras:matriz'%}" >
+                    {%csrf_token%}
+                    <label for="tabla"  class="form-label">Seleccione una familia</label>
+                    <select class="form-select" id="id_familia" name="familia" aria-label="Default select example">
+                        <option value="">----------</option>
+                        {%for f in familias%}
+                            <option value="{{f.id}}">{{f.nombre}}</option>
+                        {%endfor%}
+                    </select>
+                    <table class="table align-middle mt-3 mb-0 bg-white table-hover table-striped">
+                        <thead class="table-dark">
+                            <tr>
+                                <th scope="col">Documento</th>
+                                <th scope="col">X</th>
+                                <th scope="col">*</th>
+                                <th scope="col">**</th>
+                                <th scope="col">***</th>
+                                <th scope="col">****</th>
+                                <th scope="col">Borrar</th>
+   
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="7" style="background-color: #7F7F7F;"><p class="text-light fw-bold p-0 m-0 ">Requisitos generales</p></td>
+                            </tr>
+                            {%for m in doc_generales%}
+                                <tr>
+                                    <td>{{m.nombre}}</td>
+                                    <input class="hidden" id="{{m.id}}">
+                                    <td><input type="radio" name="{{m.id}}" value="x"></td>
+                                    <td><input type="radio" name="{{m.id}}" value="*"></td>
+                                    <td><input type="radio" name="{{m.id}}" value="**"></td>
+                                    <td><input type="radio" name="{{m.id}}" value="***"></td>
+                                    <td><input type="radio" name="{{m.id}}" value="****"></td>
+                                    <td><button type="button" onclick="borrar('{{m.id}}')" class="btn btn-danger btn-sm">Borrar</button></td>
+                                </tr>
+                            {%endfor%}
+                            <tr>
+                                <td colspan="7" style="background-color: #7F7F7F;"><p class="text-light fw-bold p-0 m-0 ">Certificaciones</p></td>
+                            </tr>
+                            {%for m in doc_certificados%}
+                                <tr>
+                                    <td>{{m.nombre}}</td>
+                                    <input class="hidden" id="{{m.id}}">
+                                    <td><input type="radio" name="{{m.id}}" value="x"></td>
+                                    <td><input type="radio" name="{{m.id}}" value="*"></td>
+                                    <td><input type="radio" name="{{m.id}}" value="**"></td>
+                                    <td><input type="radio" name="{{m.id}}" value="***"></td>
+                                    <td><input type="radio" name="{{m.id}}" value="****"></td>
+                                    <td><button type="button" onclick="borrar('{{m.id}}')" class="btn btn-danger btn-sm">Borrar</button></td>
+                                </tr>
+                            {%endfor%}
+                            <tr>
+                                <td colspan="7" style="background-color: #7F7F7F;"><p class="text-light fw-bold p-0 m-0 ">Reglamentarios</p></td>
+                            </tr>
+                            {%for m in doc_regla%}
+                                <tr>
+                                    <td>{{m.nombre}}</td>
+                                    <input class="hidden" id="{{m.id}}">
+                                    <td><input type="radio" name="{{m.id}}" value="x"></td>
+                                    <td><input type="radio" name="{{m.id}}" value="*"></td>
+                                    <td><input type="radio" name="{{m.id}}" value="**"></td>
+                                    <td><input type="radio" name="{{m.id}}" value="***"></td>
+                                    <td><input type="radio" name="{{m.id}}" value="****"></td>
+                                    <td><button type="button" onclick="borrar('{{m.id}}')" class="btn btn-danger btn-sm">Borrar</button></td>
+                                </tr>
+                            {%endfor%}
+                            <tr>
+                                <td colspan="7" style="background-color: #7F7F7F;"><p class="text-light fw-bold p-0 m-0 ">Licencias</p></td>
+                            </tr>
+                            {%for m in doc_lic%}
+                                <tr>
+                                    <td>{{m.nombre}}</td>
+                                    <input class="hidden" id="{{m.id}}">
+                                    <td><input type="radio" name="{{m.id}}" value="x"></td>
+                                    <td><input type="radio" name="{{m.id}}" value="*"></td>
+                                    <td><input type="radio" name="{{m.id}}" value="**"></td>
+                                    <td><input type="radio" name="{{m.id}}" value="***"></td>
+                                    <td><input type="radio" name="{{m.id}}" value="****"></td>
+                                    <td><button type="button" onclick="borrar('{{m.id}}')" class="btn btn-danger btn-sm">Borrar</button></td>
+                                </tr>
+                            {%endfor%}
+                            <tr>
+                                <td colspan="7" style="background-color: #7F7F7F;"><p class="text-light fw-bold p-0 m-0 ">Calificaciones</p></td>
+                            </tr>
+                            {%for m in doc_califi%}
+                                <tr>
+                                    <td>{{m.nombre}}</td>
+                                    <input class="hidden" id="{{m.id}}">
+                                    <td><input type="radio" name="{{m.id}}" value="x"></td>
+                                    <td><input type="radio" name="{{m.id}}" value="*"></td>
+                                    <td><input type="radio" name="{{m.id}}" value="**"></td>
+                                    <td><input type="radio" name="{{m.id}}" value="***"></td>
+                                    <td><input type="radio" name="{{m.id}}" value="****"></td>
+                                    <td><button type="button" onclick="borrar('{{m.id}}')" class="btn btn-danger btn-sm">Borrar</button></td>
+                                </tr>
+                            {%endfor%}
+                            <tr>
+                                <td colspan="7" style="background-color: #7F7F7F;"><p class="text-light fw-bold p-0 m-0 ">Varios</p></td>
+                            </tr>
+                            {%for m in doc_varios%}
+                                <tr>
+                                    <td>{{m.nombre}}</td>
+                                    <input class="hidden" id="{{m.id}}">
+                                    <td><input type="radio" name="{{m.id}}" value="x"></td>
+                                    <td><input type="radio" name="{{m.id}}" value="*"></td>
+                                    <td><input type="radio" name="{{m.id}}" value="**"></td>
+                                    <td><input type="radio" name="{{m.id}}" value="***"></td>
+                                    <td><input type="radio" name="{{m.id}}" value="****"></td>
+                                    <td><button type="button" onclick="borrar('{{m.id}}')" class="btn btn-danger btn-sm">Borrar</button></td>
+                                </tr>
+                            {%endfor%}
+                        </tbody>
+                    </table>
+                    <div class="d-flex mt-3 justify-content-center">
+                        <button type="submit" class="btn btn-secondary">Guardar</button>
+                    </div>
+                    
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock%}
+
+{% block script %}
+<script>
+    function borrar(id){
+        radios = document.getElementsByName(id);
+        for (let i = 0; i < radios.length; i++) {
+            radios[i].checked = false;
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() { $(document).ready(function() {
+        $('#id_familia').change(function() {
+            var familiaId = $(this).val();
+            $.ajax({
+                url: familiaId+'/',
+                dataType: 'json',
+                success: function(data) {
+                    if (data.documentos == 'No hay documentos asociados a esta familia') {
+                        var radios = document.querySelectorAll('input[type="radio"]');
+                        for (let i = 0; i < radios.length; i++) {
+                            radios[i].checked = false;
+                        }
+                    }
+                    else{
+                        for (let i = 0; i < data.documentos.length; i++) {
+                            $('#'+data.documentos[i].documento_id).val(data.documentos[i].obligatoriedad);
+                            var radio = document.getElementsByName(data.documentos[i].documento_id);
+                            for (let j = 0; j < radio.length; j++) {
+                                if(radio[j].value == data.documentos[i].obligatoriedad){
+                                    radio[j].checked = true;
+                                }
+                            }
+                            var input = document.getElementById(data.documentos[i].documento_id);
+                            input.value = data.documentos[i].id;                    
+                        }
+                    }
+                }
+            });
+        });
+    });
+ })
+
+    
+    
+</script>
+{% endblock %}

@@ -1,0 +1,139 @@
+
+
+
+<div class="container-fluid">
+    <div class="row">
+        {% if not condition %}
+            <div class="col-md-12">
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong class="pe-2">¡Atención!</strong> Complete la aprobación de documentos para continuar.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        {% endif %}
+        <div class="col-md-12">
+            <div class="card border-0 shadow">
+                <div class="card-body">
+                    <h3>Evaluación inicial</h3>
+                    <hr class="border border-dark-subtle border-1 opacity-75">
+                    <div class="row">
+                        {% if not condition %}
+                            <div id="overlay" class="rounded" style="position: absolute; top: 0; left: 0; height: 100%; width: 100%; background-color: rgba(128, 128, 128, 0.5);"></div>
+                        {% endif %}
+                        <form>
+                            <div class="col-12 col-md-12">
+                                {%csrf_token%}
+                                <div class="row">
+                                    <div class="col-12">
+                                        <label for="{{ form.s_calidad.id_for_label }}" class="form-label">Sistema de gestión de calidad: *</label>
+                                    </div>
+                                    <div class="col-7">        
+                                        {{  form.s_calidad }}
+                                    </div>
+                                    <div class="col-5">
+                                        {{  form.descripcion_s }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-12 pt-2">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <label for="{{ form.experiencia.id_for_label }}" class="form-label">Experiencia comercial: *</label>
+                                    </div>
+                                    <div class="col-7">
+                                        {{  form.experiencia }}
+                                    </div>
+                                    <div class="col-5">
+                                        {{  form.descripcion_e }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-12 pt-2">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <label for="{{ form.forma_pago.id_for_label }}" class="form-label">Forma de pago: *</label>
+                                    </div>
+                                    <div class="col-7">
+                                        {{  form.forma_pago }}
+                                    </div>
+                                    <div class="col-5">
+                                        {{  form.descripcion_f }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-12 pt-2">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <label for="{{ form.matriz.id_for_label }}" class="form-label">Matriz para seccion de proveedores de SSTA: *</label>
+                                    </div>
+                                    <div class="col-7">
+                                        {{  form.matriz }}
+           
+                                    </div>
+                                    <div class="col-5">
+                                        {{  form.descripcion_m }}
+                                    </div>
+                                    <div class="col-12">
+                                        {%if faltantes%}
+                                        <li><b class="text-danger">Documentos faltantes:</b></li>
+                                            {%for f in faltantes%}
+                                                {%if f.obligatoriedad == 'x' %}
+                                                <li><b class="text-danger" title="{{ f.get_obligatoriedad_display }}">{{f.documento.nombre}}</b></li>
+                                                {%else%}
+                                                <li><b title="{{ f.get_obligatoriedad_display }}">{{f.documento.nombre}}</b></li>
+                                                {%endif%}
+                                            {%endfor%}
+                                        {%endif%}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-12 pt-3">
+                                <div class="row">
+                                    <div class="col-4">
+                                        <label for="{{ form.oea.id_for_label }}" class="form-label">Operador económico autorizado (OEA): *</label>
+                                    </div>
+                                    <div class="col-3 pt-2">
+                                        {{  form.oea}}
+                                        <b class="text-danger">{{mensaje_oea}}</b>
+                                    </div>
+                                    <div class="col-5">
+                                        {{  form.descripcion_o }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-12 pt-3">
+                                <div class="row">
+                                    <div class="col-4">
+                                        <label for="{{ form.validacion.id_for_label }}" class="form-label">Validación de listas restrictivas: *</label>
+                                    </div>
+                                    <div class="col-3 pt-2">
+                                        {{  form.validacion}}
+                                    </div>
+                                    <div class="col-5">
+                                        {{  form.descripcion_v }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-12 pt-2">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <label for="{{ form.extra.id_for_label }}" class="form-label fw-bold ">Calificación extra RSE: *</label>
+                                    </div>
+                                    <div class="col-7">
+                                        {{  form.extra }}
+                                    </div>
+                                    <div class="col-5">
+                                        {{  form.descripcion_ex }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-center col-12 col-md-12 pt-3">
+                                <button type="submit" class="btn btn-secondary">Guardar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

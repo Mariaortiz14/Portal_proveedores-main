@@ -1,0 +1,116 @@
+{% extends "_layout_compras.html" %}
+
+{% block Title %}
+    FEPCO
+{% endblock Title %}
+{% block css %}
+<style>
+ .hidden{
+    display: none;
+ }
+</style>
+{% endblock %}
+
+{% block content %}
+
+
+<div class="m-0 ps-lg-0 p-md-0 p-sm-0 p-xs-0">
+    <div class="">
+        <h2 class=" pt-3 ps-5">Tablas Básicas</h2>
+        <ol class=" ms-5 mb-0 breadcrumb breadcrumb-chevron p-2 y rounded-3">
+    
+            <li class="breadcrumb-item">
+              <a class="link-body-emphasis fw-semibold text-decoration-none" href="{%url 'compras:t_basicas'%}">Tablas básicas</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+              {{nombre}}
+            </li>
+        </ol>
+    </div>
+
+    <div class="p-1 m-1 row d-flex justify-content-center ">
+        <div class=" col-md-4 col-sm-12 m-2 p-0">
+
+            <div class="card shadow ">
+                <div class="card-header py-3">
+                    <p class="text-secondary m-0 fw-bold">Crear {{nombre}}</p>   
+                </div>
+                    
+                <div class="card-body ">
+                    <form class="row" action="{%url 'compras:crear_editar' tablas=t_nombre %}" method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" name="id">
+                        <div class="col-12 ">
+                            <label class="" for="nombre"> Nombre </label>
+                            <input type="text" class="form-control" name="nombre" id="nombre_modelo" placeholder="Nombre" required>
+                        </div>
+                                 
+                        <div class="d-flex justify-content-center m-2 ">
+                                <button class="btn btn-secondary m-2 hidden"  id="editar">Editar</button>
+                                <button class="btn btn-danger m-2 hidden" type="button" id="cerrar"  onclick="cancelar()">Cancelar</button>
+                                <button class="btn btn-secondary"  id="crear">Crear</button>
+
+                        </div>
+                    </form>
+                </div>
+                    
+            </div>
+                
+        </div>
+        <div class="card col-md-7 m-2  col-sm-12 p-0 ">
+            <div class="card-header py-3">
+                <p class="text-secondary m-0 fw-bold"> Listado {{nombre}}  </p>
+            </div>
+            <div class="p-3">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {%for i in objetos %}
+                        <tr>
+                            <td id="{{i.id}}">{{i.nombre}} </td>
+                            <td>
+                                <a class="btn btn-secondary"  onclick="abrir('{{i.id}}')"><i class="fa-solid fa-pen-to-square"></i></a>
+                                <a class="btn btn-danger" href="{%url 'compras:eliminar' tablas=t_nombre id=i.id %}"><i class="fa-solid fa-trash-can"></i></a>
+                            </td>
+                        </tr>
+        
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>         
+        </div>
+    </div>
+</div>
+
+{% endblock%}
+
+{% block script %}
+<script>
+
+    function abrir(id){
+        $('#editar').removeClass('hidden');
+        $('#cerrar').removeClass('hidden');
+        $('#crear').addClass('hidden');
+
+
+        $('#nombre_modelo').val($('#'+id).text());
+        $('input[name="id"]').val(id);
+    }
+
+    function cancelar(){
+        $('#editar').addClass('hidden');
+        $('#cerrar').addClass('hidden');
+        $('#crear').removeClass('hidden');
+
+        $('#nombre_modelo').val('');
+        $('input[name="id"]').val('');
+    }
+
+
+</script>
+{% endblock %}

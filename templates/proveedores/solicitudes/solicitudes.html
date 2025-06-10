@@ -1,0 +1,45 @@
+{% extends "_layout_proveedores.html" %}
+
+{% block Title %}
+    Solicitud FEPCO
+{% endblock Title %}
+
+
+{% block content %}
+
+<div class="row m-0  ps-lg-0 p-md-0 p-sm-0 p-xs-0 d-flex justify-content-center  ">
+    <div class="justify-content-between d-flex  ">
+        <h2 class=" p-3 ps-5">Solicitudes FEPCO</h2>
+    </div>
+    <div class="col-md-11 col-sm-12 col-xs-12 shadow bg-white rounded" style="background-color: hsl(0, 0%, 0%)">
+        <div class="row p-3 gx-3 gy-3 ">
+            {% for s in solicitudes%}
+                <div class="col-md-4 col-lg-4 col-sm-12 col-xs-12">
+                    <div class="card h-100 flex-fill">
+                        <div class="card-header">
+                            <h5 class="card-title">{{s.TSolicitud|lower}}</h5>
+                        </div>
+                        <div class="card-body p-3">
+                            <div class="row">
+                                <div class="col-lg-8 col-sm-12 col-md-6">
+                                    <p class="card-text">{{s.identificador}} </p>
+                                    <p class="card-text"><b>Numero de propuestas:</b></p>
+                                    <p class="card-text"><b>Fecha de creación:</b> {{s.fecha_creacion}}</p>
+                                </div>
+                                <div class="col-lg-4 col-sm-12 col-md-6">
+                                    <p class="card-title"><b>Estado: {{s.estado}}</b></p>
+                                    <p class="card-text">Fecha de Finalización: {{s.fecha_entrega}}</p>
+                                    <a href="{%url 'proveedor:solicitud_id' id=s.id %}" class="btn btn-dark">Ver detalles</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            {%endfor%}
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+

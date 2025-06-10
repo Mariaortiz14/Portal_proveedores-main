@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+  <title> {% block Title  %} Title  {% endblock Title %} </title>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+{% load static %}
+  <!-- Bootstrap CSS v5.2.1 -->
+  <link rel="stylesheet" href="{%static 'bootstrap/css/bootstrap.min.css'%}">
+  <link rel="stylesheet" href="{%static 'bootstrap/js/bootstrap.min.js'%}">
+    <link rel="icon" href="{% static 'img/logos_final/icono.ico' %}" />
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.5.1/uicons-solid-straight/css/uicons-solid-straight.css'>
+    <link rel='stylesheet' href='https://cdn-uicons.flaticon.com/2.5.1/uicons-regular-straight/css/uicons-regular-straight.css'>
+    <link href="{% static 'fontawesomefree/css/fontawesome.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'fontawesomefree/css/brands.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'fontawesomefree/css/solid.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'css/layout.css' %}" rel="stylesheet">
+    {% block css %}
+
+    {% endblock css %}
+</head>
+
+<body  id="body-pd">
+  
+  {% block sesion %}
+  <header class="header" id="header">
+    <div class="header_toggle m-1" > <i class="fa-solid fa-bars" id="header-toggle"></i> </div>
+    <div class="d-flex text-center dropdown">
+        <a class="pt-2 pe-4 link-dark " role="button">
+            <span>{{user.username}}</span>
+            <i class='bx bx-chevron-down py-2 pt-2'></i>
+        </a>
+        <ul class="dropdown-menu menu_bar">
+            <li>
+                <a role="button" href="" type="submit" class="dropdown-item">
+                    Mi Cuenta
+                </a>
+            </li>
+            <li>
+              <a role="button" href="{% url 'users:logout' %}" type="button" class="dropdown-item">
+                  Cerrar Sesión
+              </a>
+            </li>
+        </ul>
+        <div class="header_img"> <img src="{% static 'img/icono.jpg'%}" alt="">
+        </div>
+    </div>
+</header>
+  {% endblock sesion %}
+  
+  <div class="l-navbar" id="nav-bar">
+    <nav class="nav_bar">
+      <div> 
+        <a href="{%url 'compras:dashboard'%}" class="nav_logo"> <img src="{% static 'img/logos_final/11.png' %}" alt="" width="25" height="25"> 
+          <span class="nav_logo-name">Portal Proveedores</span> 
+        </a>
+        <div class="nav_list"> 
+          <a href="{%url 'compras:dashboard'%}" class="nav_link" aria-label="Inicio"   > 
+            <i class="fa-solid fa-house nav_icon"></i>
+            <span class="nav_name" aria-label="Inicio">Inicio</span> 
+          </a>
+          <a class="nav_link"  href="{%url 'compras:missolicitudes'%}" role="button"> 
+            <i class="fa-solid fa-file-pen nav_icon"></i>
+            <span class="nav_name">Mis Solicitudes</span> 
+          </a>
+
+          <a href="{%url 'compras:misproveedores'%}" class="nav_link"> 
+            <i class="fa-solid fa-users nav_icon"></i>
+            <span class="nav_name">Proveedores</span> 
+          </a> 
+          
+          <a href="{%url 'compras:tareas'%}" class="nav_link"> 
+            <i class="fa-solid fa-list-check nav_icon"></i>
+            <span class="nav_name">Asiganar tareas</span> 
+          </a> 
+                    
+          <a href="{%url 'compras:t_basicas'%}" class="nav_link" id="tablas basicas"> 
+            <i class="fa-solid fa-table-list nav_icon"></i>
+            <span class="nav_name">Tablas basicas</span> 
+          </a> 
+
+          
+        </div>
+      </div> 
+      <a href="#" class="nav_link"> <i class="fa-solid fa-right-from-bracket"></i> <span class="nav_name">Cerrar Sesión</span> </a>
+    </nav>
+  </div>
+
+    <div class=" wrapper container-fluid m-0" style="background-color:  #f4f4f4">
+    {% block content%} 
+ 
+    {% endblock content%} 
+
+    </div>
+
+    <footer class="footer mt-auto d-flex flex-wrap justify-content-center align-items-center ms-5 py-2 my-4">
+      <div class="col-md-4 d-flex align-items-center justify-content-center">
+          <span class="mb-md-0 text-muted">&copy; 2023 FEPCO</span>
+      </div>
+    </footer>
+  
+
+<!-- JS de Bootstrap (jQuery y Popper.js son dependencias) -->
+  <script src="{% static 'js/jquery-3.7.1.min.js'%}"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="{%static 'js/script.js'%}"></script>
+  <script src="{% static 'bootstrap/js/bootstrap.js'%}"></script>
+  {% block script %}
+  
+  
+  {% endblock script %}
+
+  {% block grafico %}
+
+  {% endblock grafico %}
+
+</body>
+
+</html>

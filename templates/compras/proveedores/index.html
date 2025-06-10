@@ -1,0 +1,61 @@
+{% extends "_layout_compras.html" %}
+
+{% block Title %}
+    FEPCO
+{% endblock Title %}
+
+
+{% block content %}
+
+<div class="row m-0  ps-lg-0 p-md-0 p-sm-0 p-xs-0 d-flex justify-content-center  ">
+        <h2 class=" p-3 ps-5">Proveedores</h2>
+        <div class="col-md-11 col-sm-12 col-xs-12 c1 h-100 shadow p-3 m-2 bg-white rounded h-60" style="background-color: hsl(0, 0%, 0%)">
+                <div class="card col-md-12 col-lg-12 col-sm-12 col-xs-12">
+                    <div class="card-body p-0">
+                        <table class="table align-middle p-0 mb-0 bg-white table-hover table-striped">
+                            <thead class="table-dark p-2">
+                              <tr>
+                                <th>Razón Social</th>
+                                <th>Tipo DOC</th>
+                                <th>Familia</th>
+                                <th>Estado</th>
+                                <th>...</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {% for key, value in registros.items %}
+                              <tr>
+                                <td>
+                                  <div class="d-flex align-items-center">
+                                    <div class="ms-3">
+                                      <p class="fw-bold mb-1">{{value.0.razon_social}}</p>
+                                      <p class="text-muted mb-0">{{value.0.email}}</p>
+                                    </div>
+                                  </div>
+                                </td>
+                                <td>
+                                  <p class="fw-normal mb-1">{{value.0.tipo_documento}}</p>
+                                  <p class="text-muted mb-0">{{value.0.documento}} - {{value.0.dv}}</p>
+                                </td>
+
+                                <td>
+                                  <p class="fw-normal mb-1">Proveedor de:</p>
+                                  <p class="text-muted mb-0">{{value.1.familia.nombre}}</p>
+                                </td>
+                                <td>
+                                    <h5><span class="badge text-bg-warning">{{value.1.estado}}</span></h5>
+                                </td>
+                                <td>
+                                  <a href="{% url 'compras:proveedor' id_registro=value.0.id_registro %}" class="btn btn-link btn-rounded btn-sm fw-bold" data-mdb-ripple-color="dark">Ver</a>
+                                </td>
+                              </tr>
+                              {% endfor %}
+                            </tbody>
+                          </table>
+                    </div>
+            </div>
+        </div>
+        
+    </div>
+
+{% endblock content %}

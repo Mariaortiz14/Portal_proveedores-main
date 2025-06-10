@@ -1,0 +1,107 @@
+{% extends '_layout_compras.html' %}
+
+{% block content %}
+<div class="row m-0 ps-lg-0 p-md-0 p-sm-0 p-xs-0 d-flex justify-content-center">
+    <div class="jumbotron">
+        <h2 class="pt-3 ps-5">Lista de Tareas</h2>
+        <p class="ps-5 lead">Aquí puedes ver y filtrar las tareas asignadas a los usuarios.</p>
+    </div>
+    <div class="col-md-11 col-sm-12 col-xs-12 shadow bg-white rounded">
+        <div class="row p-3 gx-3 gy-3">
+            <h3 class="mb-2">Filtrar Tareas</h3>
+            <form method="get" action="">
+                <div class="row">
+                    <div class="col-3 mb-3">
+                        <label for="filter_user" class="form-label">Filtrar por Usuario</label>
+                        <select class="form-control" id="filter_user" name="user">
+                            <option value="">Todos</option>
+                            {% for user in users %}
+                                <option value="{{ user.id }}" {% if request.GET.user == user.id|stringformat:"s" %}selected{% endif %}>{{ user.username }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-3 mb-3">
+                        <label for="filter_status" class="form-label">Filtrar por Estado</label>
+                        <select class="form-control" id="filter_status" name="status">
+                            <option value="">Todos</option>
+                            <option value="hecha" {% if request.GET.status == "hecha" %}selected{% endif %}>Hecha</option>
+                            <option value="no_hecha" {% if request.GET.status == "no_hecha" %}selected{% endif %}>No Hecha</option>
+                        </select>
+                    </div>
+                    <div class="col-3 mb-3 mt-4 d-flex align-items-center">
+                        <button type="submit" class="btn btn-danger">Filtrar</button>
+                    </div>
+                </div>
+                
+            </form>
+        </div>
+        <div class="row p-3 gx-3 gy-3">
+            <h3 class="mb-2">Tareas</h3>
+            <table class="table m-2">
+                <thead>
+                    <tr>
+                        <th>Título</th>
+                        <th>Descripción</th>
+                        <th>Fecha de Vencimiento</th>
+                        <th>Asignado a</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for tarea in tareas %}
+                        <tr>
+                            <td>{{ tarea.titulo }}</td>
+                            <td>{{ tarea.descripcion }}</td>
+                            <td>{{ tarea.fecha_vencimiento }}</td>
+                            <td>{{ tarea.usuario.username }}</td>
+                            <td>{{ tarea.hecha }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <button type="button" class="btn btn-primary m-3" data-bs-toggle="modal" data-bs-target="#asignarTareaModal">
+            Asignar Nueva Tarea
+        </button>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="asignarTareaModal" tabindex="-1" aria-labelledby="asignarTareaModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="asignarTareaModalLabel">Asignar Nueva Tarea</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Título de la Tarea</label>
+                        <input type="text" class="form-control" id="title" name="title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="due_date" class="form-label">Fecha de Vencimiento</label>
+                        <input type="date" class="form-control" id="due_date" name="due_date" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="assigned_to" class="form-label">Asignar a</label>
+                        <select class="form-control" id="assigned_to" name="assigned_to" required>
+                            {% for user in users %}
+                                <option value="{{ user.id }}">{{ user.username }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Asignar Tarea</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

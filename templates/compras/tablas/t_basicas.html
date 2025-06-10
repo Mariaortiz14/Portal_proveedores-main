@@ -1,0 +1,37 @@
+{% extends "_layout_compras.html" %}
+
+{% block Title %}
+    FEPCO
+{% endblock Title %}
+
+
+{% block content %}
+
+
+<div class="row m-0  ps-lg-0 p-md-0 p-sm-0 p-xs-0 d-flex justify-content-center  ">
+    <h2 class=" p-3 ps-5">Tablas Básicas</h2>
+    <div class="col-md-11 col-sm-12 col-xs-12 h-100 shadow p-3 m-2 bg-white rounded h-60" style="background-color: hsl(0, 0%, 0%)">
+            <div class="card  col-md-12 col-lg-12 col-sm-12 col-xs-12">
+                <div class="card-body p-0">
+                    <table class="table align-middle p-0 mb-0 bg-white table-hover table-striped">
+                        <div class="card-header py-3">
+                            <p class="text-secondary-emphasis   m-0 fw-bold"> Nombre </p>
+                            <thead>
+                            </thead>
+                        </div>
+                        <tbody>
+                            <tr>
+                                <td><a href="{%url 'compras:tablas' t='familias'%}" class="text-secondary">Familia </a> </td>
+                            </tr>
+                            <tr>
+                                <td><a href="{%url 'compras:matriz'%}" class="text-secondary">Matriz de selección</a> </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock%}

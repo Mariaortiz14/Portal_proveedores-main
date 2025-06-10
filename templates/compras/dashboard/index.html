@@ -1,0 +1,104 @@
+{% extends "_layout_compras.html" %}
+
+{% block Title %}
+    FEPCO
+{% endblock %}
+
+{% block content %}
+{%load static%}
+        <div class="row d-flex g-3 ">
+            <div class="col-12">
+                <div class="row g-3 d-flex justify-content-center ">
+                    <div class="col-md-3 col-sm-6 h-100 ">
+                        <div class="shadow py-3 bg-white rounded" style="background-color: hsl(0, 0%, 0%)">
+                            <div class="container h-100 ">
+                                <div class="row">
+                                        <div class="card col-md-12 col-lg-12 col-sm-12 col-xs-12">
+                                            <div class="card-body">
+                                                <h5 class="card-title text-center">Proveedores</h5>
+                                                <canvas  id="myChart"></canvas>
+                                            </div>
+                                        </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 h-100 ">
+                        <div class=" shadow py-3 bg-white rounded" style="background-color: hsl(0, 0%, 0%)">
+                            <div class="container h-100 ">
+                                <div class="row">
+                                    <div class="card col-md-12 col-lg-12 col-sm-12 col-xs-12">
+                                        <div class="card-body">
+                                            <h5 class="card-title text-center">Solicitudes</h5>
+                                            <canvas  id="myChart2"></canvas>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 h-100 ">
+                        <div class="shadow bg-white py-3 rounded" style="background-color: hsl(0, 0%, 0%)">
+                            <div class="container h-100 ">
+                                <div class="row">
+                                    <div class="card col-md-12 col-lg-12 col-sm-12 col-xs-12">
+                                        <div class="card-body">
+                                            <h5 class="card-title text-center">#</h5>
+                                            <canvas  id="myChart3"></canvas>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container c2 p-1 ">
+               
+
+            </div> 
+            
+        </div>
+{% endblock %}
+
+{%block grafico%}
+<script>
+ const graph = document.querySelector("#myChart");
+ const graph2 = document.querySelector("#myChart2");
+ const graph3 = document.querySelector("#myChart3");
+ 
+ 
+
+const data = {
+  labels: [
+    'Red',
+    'Blue',
+    'Yellow'
+  ],
+  datasets: [{
+    label: 'My First Dataset',
+    data: [300, 50, 100],
+    backgroundColor: [
+      '#fa3434',
+      '#733738',
+      '#848484'
+    ],
+    hoverOffset: 4
+  }]
+};
+
+const config = {
+  type: 'doughnut',
+  data: data,
+};
+
+new Chart(graph, config);
+new Chart(graph2, config);
+new Chart(graph3, config);
+
+
+  </script>
+
+{%endblock%}

@@ -1,0 +1,91 @@
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12 col-md-12 mb-3 p-0 m-0">
+            <div class="card border-0 shadow">
+                <div class="card-body">
+                    <table class="table table-sm border-dark-subtle border-1 table-bordered">
+
+                        <tbody>
+                            <tr>
+                                <td  class="table-active fw-bold " >Tipo de Persona</td>
+                                <td>{{registro.tipo_persona}}</td>
+                                <td  class="table-active fw-bold " >Tipo de Proveedor</td>
+                                <td>{{registro.tipo_proveedor}}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" class="table-active fw-bold " >Se encuentra certificado como Operador Económico autorizado por parte de la DIAN:</td>
+                                <td>{{registro.dian}}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="8" style="background-color: #7F7F7F;"><p class="text-light fw-bold text-center  p-0 m-0 ">Datos de Actividad económica</p></td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="table-active fw-bold " >Nombre o Razón Social:</td>
+                                <td>{{registro.razon_social}}</td>
+                                <td colspan="1" class="table-active fw-bold " >Sigla o Nombre Comercial:</td>
+                                <td>{{registro.sigla}}</td>
+                                <td colspan="1" class="table-active fw-bold " >Tipo De documento:</td>
+                                <td>{{registro.tipo_documento}}</td>
+                                <td colspan="1" class="table-active fw-bold " >Numero:</td>
+                                <td>{{registro.documento}}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="table-active fw-bold " >CIIU:</td>
+                                <td colspan="7">{{registro.ciiu}}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="table-active fw-bold " >Dirección:</td>
+                                <td colspan="3">{{registro.direccion}}</td>
+                                <td colspan="1" class="table-active fw-bold " >Ciudad:</td>
+                                <td >{{registro.municipio}}</td>
+                                <td colspan="1" class="table-active fw-bold " >Departamento:</td>
+                                <td>{{registro.departamento}}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="table-active fw-bold " >Teléfono:</td>
+                                <td>{{registro.telefono}}</td>
+                                <td colspan="1" class="table-active fw-bold " >Correo:</td>
+                                <td colspan="5">{{registro.email}}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="table-active fw-bold " >Representante Legal:</td>
+                                <td colspan="4">{{registro.representante_legal}}</td>
+                                <td colspan="1" class="table-active fw-bold " >Identificación:</td>
+                                <td colspan="2">{{registro.identificacion_representante}}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="table-active fw-bold " >Grupo Empresarial :</td>
+                                <td colspan="7">{%if registro.pertenece_grupo == 'No'  %} N/A {%else%} {{registro.nombre_grupo}} {%endif%}</td>
+                            
+                            </tr>
+                            <tr>
+                                <td colspan="1" class="table-active fw-bold " >Persona con cargo publico:</td>
+                                {%if registro.tiene_trabajo_figura_publica == 'No'  %}<td colspan="7">N/A </td> {%else%} <td colspan="1" class="table-active fw-bold " >Nombre:</td> <td colspan="3">{{registro.nombre_trabajo_figura_publica}}</td> <td colspan="1" class="table-active fw-bold " >Cargo</td> <td colspan="2">{{registro.cargo_trabajo_figura_publica}}</td> {%endif%}
+                            </tr>
+                            <tr>
+                                <td colspan="8" style="background-color: #7F7F7F;"><p class="text-light fw-bold text-center  p-0 m-0 ">Composición accionaria:</p></td>
+                            </tr>
+                            {%for a in accionarios%}
+                            <tr class="border-bottom border-dark-subtle  " >
+                                <td colspan="1" class="table-active fw-bold " >Nombre completo o razón social:</td>
+                                <td colspan="3"> {{a.nombre_razon_social}}</td>
+                                <td colspan="1" class="table-active fw-bold " >Identificación:</td>
+                                <td>{{a.tipo_identificacion}}  {{a.identificacion}}</td>
+                                <td colspan="1" class="table-active fw-bold " >Porcentaje de participación:</td>
+                                <td >{{a.porcentaje}}%</td>
+                            </tr>
+
+                            {%endfor%}
+                            <tr>
+                                <td colspan="8" style="background-color: #7F7F7F;"><p class="text-light fw-bold text-center  p-0 m-0 ">Información financiera:</p></td>
+                            </tr>
+
+                        </tbody>
+                    </table>                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

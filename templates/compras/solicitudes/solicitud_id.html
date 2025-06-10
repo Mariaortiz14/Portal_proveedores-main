@@ -1,0 +1,258 @@
+{% extends "_layout_compras.html" %}
+
+{% block Title %}
+    {{solicitud.identificador}}
+{% endblock Title %}
+
+{%load static%}
+{% block content %}
+
+<div class="row m-0  ps-lg-0 p-md-0 p-sm-0 p-xs-0 d-flex justify-content-center  ">
+    <div class="justify-content-between d-flex  ">
+        <h2 class=" p-3 ps-5">{{ solicitud.TSolicitud|lower}}</h2>
+    </div>
+    <div class="col-md-11 col-sm-12 col-xs-12  bg-white rounded mb-3">
+        <div class="row color-row">  
+            <div class="card m-0 mb-3 p-0 border shadow col-md-12 h-75 col-lg-12 col-sm-12 col-xs-12" >
+                <div class="card-header">
+                    <h5 class="card-title text-center text-uppercase text-secondary">Información Solicitud</h5>
+                </div>
+                <div class="card-body">
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="col-lg-6 col-sm-12 col-md-6 mb-3">
+                                <p class="card-text"><b>Numero de solicitud:</b> {{solicitud.identificador}}</p>
+                                <p class="card-text"><b>Fecha de creación:</b> {{solicitud.fecha_creacion}}</p>
+                                <p class="card-text"><b>Fecha de finalización:</b> {{solicitud.fecha_fin}}</p>
+                                <p class="card-text"><b>Estado:</b> {{solicitud.estado}}</p>
+                                {% for c in caracteristicas %}
+                                    <p class="card-text"><i class="fa-solid fa-circle fa-2xs pe-2"></i>{{c.caracteristica}}</p>
+                                {% endfor %}
+                            </div>
+                            <div class="col-lg-6 col-sm-12 col-md-6 mb-3">
+                                <p class="card-text"><b>Descripción:</b> {{solicitud.descripcion|lower}}</p>
+                                <p class="card-text"><b>Observaciones:</b> {{solicitud.observaciones}}</p>
+                            </div>
+                            <div class="col-12 d-flex justify-content-center">
+                                {% if solicitud.estado == 'Nueva' %}
+                                <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#editarSolicitudModal">
+                                    Editar
+                                </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>           
+            <div class="card m-0 mb-3 p-0 border shadow col-md-12 h-75 col-lg-12 col-sm-12 col-xs-12" >
+                <div class="card-header">
+                    <h5 class="card-title text-center text-uppercase text-secondary">Ranking</h5>
+                </div>
+                <div class="card-body " >
+                    <table class="mb-4 table table-striped table-hover table-bordered">
+                        <thead>
+                            <tr>
+                                <th scope="col">Proveedor</th>
+                                <th scope="col">Oferta</th>
+                                <th scope="col">Fecha</th>
+                                <th scope="col">Ranking</th>
+                                <th scope="col">Ver</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {%for r in propuestas_ranking%}
+                                <tr>
+                                    <td>{{r.id_homologacion.id_registro.razon_social}}</td>
+                                    <td>{{r.valor_t}}</td>
+                                    <td>{{r.fecha|date:"d/m/Y"}}</td>
+                                    <td>{{forloop.counter}}</td>
+                                    <td>                        <button type="button" class="btn btn-dark" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#solicitudModal"
+                                        data-razon-social="{{ r.id_homologacion.id_registro.razon_social }}"
+                                        data-valor="{{ r.valor_t }}"
+                                        data-fecha="{{ r.fecha|date:"d/m/Y" }}"
+                                        data-id="{{ r.id }}"
+                                        data-descripcion="{{ r.descripcion }}"
+                                        data-file="{{ r.file.url }}"
+                                        data-garantia = "{{ r.garantia }}"
+                                        data-moneda = "{{ r.moneda }}"
+                                        data-t_pago = "{{ r.t_pago }}"
+                                        >
+                                    Ver
+                                </button></td>
+                                </tr>
+                            {%endfor%}
+                        </tbody>
+                    </table>
+                    <div class="col-12 d-flex row justify-content-center " style="height: 500px; width: 100%">
+                        <canvas id="myChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="card border shadow mt-2 col-md-12 col-lg-12 col-sm-12 col-xs-12">
+                <div class="card-body">
+                    <div class="col-12">
+                        <h5 class="card-title text-center text-uppercase text-secondary">Comentarios</h5>
+
+                        
+                        <div class="list-group">
+                            {% for comentario in solicitud.comentarios_set.all %}
+                            <div class="list-group-item list-group-item-action flex-column align-items-start">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <div class="d-flex align-items-center">
+                                        <img src="{%static 'img/perfil.png'%}" alt="{{ comentario.usuario.username }}" class="user-photo">
+                                        <h5 class="mb-1 ml-3">{{ comentario.usuario.username }}</h5>
+                                    </div>
+                                    <small>{{ comentario.fecha }}</small>
+                                </div>
+                                <p class="mb-1">{{ comentario.comentario }}</p>
+                                <a href="#repuestas" class="btn btn-link" onclick="document.getElementById('respuesta-form-{{ comentario.id }}').style.display='block'">Responder</a>
+                                <div id="respuesta-form-{{ comentario.id }}" style="display:none;">
+                                    <form method="post" action="{% url 'compras:agregar_comentario' id=solicitud.id parent_id=comentario.id  %}">
+                                        {% csrf_token %}
+                                        {{ form_comentarios.as_p }}                              
+                                        <div class="d-flex justify-content-end mt-2">
+                                            <button type="submit"  class="btn btn-success">Enviar</button>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="list-group mt-3 ml-4">
+                                {% for reply in comentario.replies.all %}
+                                    <div class="list-group-item list-group-item-action flex-column align-items-start">
+                                        <div class="d-flex w-100 justify-content-between">
+                                            <div class="d-flex align-items-center">
+                                                <img src="{%static 'img/perfil.png'%}" alt="{{ reply.usuario.username }}" class="user-photo">
+                                                <h5 class="mb-1 ml-3">{{ reply.usuario.username }}</h5>
+                                            </div>
+                                            <small>{{ reply.fecha }}</small>
+                                        </div>
+                                        <p class="mb-1">{{ reply.comentario }}</p>
+                                    </div>
+                                {% endfor %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="solicitudModal" tabindex="-1" aria-labelledby="solicitudModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="solicitudModalLabel">Detalles de la Solicitud</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-12">
+                        <p><b>Proveedor:</b> <span id="razon_social"></span></p>
+                        <p><b>Oferta:</b> <span id="valor"></span></p>
+                        <p><b>Fecha:</b> <span id="fecha"></span></p>
+                        <p><b>Descripción:</b> <span id="descripcion"></span></p>
+                        <p><b>Garantía:</b> <span id="garantia"></span></p>
+                        <p><b>Moneda:</b> <span id="moneda"></span></p>
+                        <p><b>Tipo de Pago:</b> <span id="t_pago"></span></p>
+                        <a href="" id="file" target="_blank">Ver archivo</a>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-success">Aprobar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editarSolicitudModal" tabindex="-1" aria-labelledby="editarSolicitudModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editarSolicitudModalLabel">Editar Solicitud</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" action="{%url 'compras:editar_solicitud' id=solicitud.id %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="descripcion" class="form-label">Descripción</label>
+                        <textarea class="form-control" id="descripcion" name="descripcion">{{ solicitud.descripcion }}</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="observaciones" class="form-label">Observaciones</label>
+                        <textarea class="form-control" id="observaciones" name="observaciones">{{ solicitud.observaciones }}</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="estado" class="form-label">Estado</label>
+                        <select class="form-select" id="estado" name="estado">
+                            <option value="Nueva" {% if solicitud.estado == 'Nueva' %}selected{% endif %}>Nueva</option>
+                            <option value="En Proceso" {% if solicitud.estado == 'En Proceso' %}selected{% endif %}>En Proceso</option>
+                            <option value="Finalizada" {% if solicitud.estado == 'Finalizada' %}selected{% endif %}>Finalizada</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-success">Guardar Cambios</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+{% block script %}
+<script>
+    const graph = document.querySelector("#myChart");
+    fetch('{%url 'compras:get_propuestas_chart' id=solicitud.id %}')
+        .then(response => response.json())
+        .then(data_complete => {
+            console.log(data_complete)
+            // Asignar los datos recibidos a las constantes
+            const data_= data_complete.data;
+            const config = {
+                type: 'line',
+                data: data_,
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            reverse: true,
+                        }
+                    }
+                }
+              };
+        
+            var myChart = new Chart(graph, config);
+        })
+        .catch(error => console.error('Error:', error));
+
+    var solicitudModal = document.getElementById('solicitudModal');
+    solicitudModal.addEventListener('show.bs.modal', function (event) {
+        var button = event.relatedTarget;
+        var razon_social = button.getAttribute('data-razon-social');
+        var valor = button.getAttribute('data-valor');
+        var fecha = button.getAttribute('data-fecha');
+        var descripcion = button.getAttribute('data-descripcion');
+        var file = button.getAttribute('data-file');
+        var garantia = button.getAttribute('data-garantia');
+        var moneda = button.getAttribute('data-moneda');
+        var t_pago = button.getAttribute('data-t_pago');
+        var id = button.getAttribute('data-id');
+        var modal = document.getElementById('solicitudModal');
+        modal.querySelector('#razon_social').textContent = razon_social;
+        modal.querySelector('#valor').textContent = valor;
+        modal.querySelector('#fecha').textContent = fecha;
+        modal.querySelector('#descripcion').textContent = descripcion;
+        modal.querySelector('#file').href = file;
+        modal.querySelector('#garantia').textContent = garantia;
+        modal.querySelector('#moneda').textContent = moneda;
+        modal.querySelector('#t_pago').textContent = t_pago;
+    });
+
+
+</script>
+{% endblock script %}

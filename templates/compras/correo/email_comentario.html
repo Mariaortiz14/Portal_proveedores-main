@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>[{{solicitud_id}}] Notificación de Nuevo comentario </title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 50px auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .email-header {
+
+            color: #ffffff;
+
+            text-align: center;
+        }
+        .email-header img {
+            max-width: 100px;
+            margin: 20px;
+            
+        }
+        .email-header div {
+            background-color: #3E4040; 
+            color: #ffffff; 
+            padding: 20px;
+            text-align: center;
+        }
+        .email-body {
+            padding: 20px;
+            color: #333333;
+            line-height: 1.5;
+        }
+        .email-body h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #d32f2f; /* Rojo oscuro */
+        }
+        .email-body p {
+            margin-bottom: 20px;
+        }
+        .email-footer {
+            background-color: #f4f4f4;
+            padding: 10px;
+            text-align: center;
+            color: #777777;
+            font-size: 12px;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #d32f2f; /* Rojo oscuro */
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        @media (max-width: 600px) {
+            .email-body, .email-footer {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="email-header">
+            <img src="https://fepco.com.co/wp-content/uploads/2022/05/Logo-png.webp" alt="Logo">
+            <div>
+                <h2>Nuevo Comentario</h2>
+            </div>
+        </div>
+        <div class="email-body">
+            <h1>Hola, </h1>
+            <p>Se ha realizado un nuevo comentario en la solicitud <strong>{{titulo}}</strong>.</p>
+            <p>Para ver el comentario, haz clic en el siguiente botón:</p>
+            <a href="{{url}}" class="button">Ver Comentario</a>
+            <p>Si no puedes hacer clic en el botón, copia y pega la siguiente URL en tu navegador:</p>
+            <p>{{url}}</p>
+            <p>Si no reconoces esta solicitud, por favor ignora este mensaje.</p>
+            <p>{{error}}</p>
+        </div>
+        <div class="email-footer">
+            <p>&copy; 2024 FEPCO. Todos los derechos reservados.</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,103 @@
+{% extends "_layout.html" %}
+
+{% block Title  %} Portal Proveedores  {% endblock Title %}
+{% block content%} 
+{% load static %}
+<div class="container-fluid p-0 m-0 vh-50" style="background-color: #f4f4f4">
+    <div class="contenedor  vh-100  row m-0">
+        <div class="col-md-7 col-sm-12 col-xs-12 c1 p-5" style="background-color: hsl(0, 0%, 0%)">
+            <div class="container d-flex flex-column h-100">
+                <div class="row">
+                    <nav class="col-lg-12 col-md-12">
+                        <a class="navbar-brand">
+                            <img src="{% static 'img/logos_final/3.png' %}" alt="" width="50" height="50">
+                            <img src="{% static 'img/logos_final/2.png' %}" alt="" width="190" height="40">
+                        </a>
+                    </nav>
+                </div>
+                <div class="row justify-content-center align-items-center h-100">
+                    <div class="col-lg-10 col-md-12 text-center">
+                        <img src="{% static 'img/photo_1.jpeg' %}" alt="Proveedor Photo" class="img-fluid rounded  m-3">
+                        <h2 class="wlcm" style="color: #ffffff">¿Aun no eres proveedor?</h2>
+                        <a type="button" href="{% url 'users:signup' %}" class="btn btn-secondary ">¡Regístrate!</a>
+                    </div>
+                </div>
+            </div>
+        </div>       
+        <div class="col-md-5 col-sm-12 col-xs-12 c2 px-5 pt-5 m-0">
+            <div class="container d-flex flex-column h-100">
+                <div class="row justify-content-center align-items-center h-100">
+                    <div class="col-lg-10 col-md-12 shadow-lg p-3 bg-white rounded h-60">
+                        <h6 class="h5 mb-0 text-center p-3">¡Bienvenido!</h6>
+                        <p></p>
+                        <p> </p>
+                        <div class="container d-flex flex-column h-100">
+                            <div class="row p-6 m-2">
+                                <form action="{%url 'users:login'%}" method="post" >
+                                    {% csrf_token %}
+                                    {% if messages %}
+                                        {% for message in messages %}
+                                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                                {{message}}
+                                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                            </div>
+                                        {% endfor %}
+                                    {% endif %}
+                                    <div class="col-12">
+                                        <div class="form-group mb-3 ">
+                                            <label for="{{form.username.id_for_label}}">Usuario</label>
+                                            {{form.username}}
+                                            {% if form.errors %} 
+                                                <small class="text-danger">{{form.errors}}</small>
+                                            {% endif %}
+                                        </div>
+                                        <div class="form-group mb-3" style="position: relative;">
+                                            <label for="{{form.password.id_for_label}}">Contraseña</label>
+                                            <i class="fa-solid fa-eye password-toggle" onclick="togglePassword()" style="position: absolute; right: 10px; top: 60%; cursor: pointer;"></i>
+                                            {{form.password}}
+                                            {% if form.errors %}
+                                                <small class="text-danger">{{form.errors}}</small>
+                                            {% endif %}
+                                        </div>
+                                        <div class="d-grid gap-2 d-block pb-3">
+                                            <button type="submit" class="btn btn-primary btn-dark">Ingresar</button>
+                                          </div>
+                                          <div class="text-center ">
+                                            <a href="#l" class="forgot-link float-right text-primary">¿Olvidó su contraseña?</a>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>    
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock content %}
+
+
+{% block script %} 
+<script>
+    function togglePassword() {
+      var passwordInput = document.getElementById('id_password');
+      var toggleIcon = document.querySelector('.password-toggle');
+      if (passwordInput.type === "password") {
+        passwordInput.type = "text";
+        toggleIcon.classList.remove('fa-eye');
+        toggleIcon.classList.add('fa-eye-slash');
+      } else {
+        passwordInput.type = "password";
+        toggleIcon.classList.remove('fa-eye-slash');
+        toggleIcon.classList.add('fa-eye');
+      }
+    }
+    </script>
+    
+{% endblock script %} 
+
+    
+    

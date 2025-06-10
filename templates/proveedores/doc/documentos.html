@@ -1,0 +1,77 @@
+{% extends "_layout_proveedores.html" %}
+
+{% block Title %}
+Documentos
+{% endblock Title %}
+
+{% block content %}
+
+{% load static %}
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.189/pdf_viewer.min.css"
+  integrity="sha512-9uknW5oN7ouvfOCw5wxRC3O9LmGrH3jhuCjcHnAHNvkP4s7Z5X0rWXxHHM0LcyWT/aBIMan/lCJHJtQx8eEAyg=="
+  crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <div class="row ">
+    <div class="col-md-12">
+      
+      <div class="row m-0  ps-lg-0 p-md-0 p-sm-0 p-xs-0 d-flex justify-content-center  ">
+        <h2 class=" col-9 p-3 ps-5">Documentos</h2>
+        <div class="p-2 col-2 m-2 justify-content-end ">
+          <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Documentos
+            </button>
+            <ul class="dropdown-menu">
+              {%for file, name in pdf%}
+              <li><button type="button" class="dropdown-item"
+                onclick="cargarPDF('{% url 'proveedor:descargar_archivo' path=file %}')">{{name}}</button></li>
+              {%endfor%}
+            </ul>
+          </div>
+        </div>
+
+      </div>
+
+      
+      <div class="row d-flex  justify-content-center  ">
+        <div class="shadow col-lg-11  col-md-12 col-sm-12 col-xs-12 c1 bg-white rounded m-2 ">
+          
+        </div>
+        <div class="container shadow col-lg-9 col-md-12 col-sm-12 col-xs-12 c2 bg-white rounded m-2">
+          <div class="controlador row d-flex  justify-content-end ">
+            <button id="zoomInButton" type="button"
+              class=" btn btn-dark col-1 m-2 p-2 btn c1 d-flex justify-content-center">
+              <i class="fa-solid fa-plus"></i>
+            </button>
+            <button id="zoomOutButton" type="button"
+              class=" btn btn-dark  col-1 m-2 p-2 btn c2 d-flex justify-content-center">
+              <i class="fa-solid fa-minus"></i>
+            </button>
+          </div>
+          <div id="visorPDF" class=" " style="width: 100%;  overflow: auto;">
+            <canvas id="pdfCanvas"></canvas>
+          </div>
+          <div class="controlador row d-flex left   justify-content-end ">
+            <button type="button" class="btn btn-dark col-2 m-2   p-2 btn c1 d-flex justify-content-center"
+              onclick="cambiarPagina(-1)">
+              <i class="fa-solid fa-chevron-left"></i>
+            </button>
+            <button type="button" class="right  btn btn-dark  me-3 -2 col-2 m-2 p-2 btn c2 d-flex justify-content-center"
+              onclick="cambiarPagina(1)">
+              <i class="fa-solid fa-chevron-right"></i>
+            </button>
+          </div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}
+
+{% block script %}
+<script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@2.10.377/build/pdf.js"></script>
+<script src="{% static 'js/pdf.js' %}"></script>
+{% endblock script %}

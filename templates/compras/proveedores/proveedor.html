@@ -1,0 +1,228 @@
+{% extends "_layout_compras.html" %}
+
+{% block Title %}
+    FEPCO
+{% endblock Title %}
+{% load static %}
+{% block css %}
+    <link rel="stylesheet" href="{%static 'css/compras.css'%}">
+    <style>
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 120px;
+            background-color: black;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px 0;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%; /* Posición del tooltip */
+            left: 50%;
+            margin-left: -60px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
+{% endblock css %}
+
+{% block content %}
+<h2 class=" p-3">{{registro.razon_social}}</h2>
+<ul class="nav navtab px-3 " id="myTab" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link link-secondary active" id="empresa-tab" data-bs-toggle="tab" data-bs-target="#empresa-tab-pane" type="button" role="tab" aria-controls="empresa-tab-pane" aria-selected="true">Empresa</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link link-secondary" id="info-tab" data-bs-toggle="tab" data-bs-target="#info-tab-pane" type="button" role="tab" aria-controls="info-tab-pane" aria-selected="false">Información</button>
+    </li>
+    <li class="nav-item " role="presentation">
+      <button class="nav-link link-secondary position-relative" id="familia-tab" data-bs-toggle="tab" data-bs-target="#familia-tab-pane" type="button" role="tab" aria-controls="familia-tab-pane" aria-selected="false">Familia
+        {% if homologa.familia == None %}  
+        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+            <p class="m-0" style="font-size: 0.5rem;"> ! </p>
+            <span class="visually-hidden">Seleccionar Familia</span>
+          </span>
+        {% endif %}
+        </button>
+
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link link-secondary" id="homolo-tab" data-bs-toggle="tab" data-bs-target="#homolo-tab-pane" type="button" role="tab" aria-controls="homolo-tab-pane" aria-selected="false">Homologación</button>
+    </li>        
+    <li class="nav-item" role="presentation">
+        <button class="nav-link link-secondary" id="doc-tab" data-bs-toggle="tab" data-bs-target="#doc-tab-pane" type="button" role="tab" aria-controls="doc-tab-pane" aria-selected="false">Documentos</button>
+    </li>
+    <li class="nav-item" role="presentation">
+        <button class="nav-link link-secondary" id="catalogo-tab" data-bs-toggle="tab" data-bs-target="#catalogo-tab-pane" type="button" role="tab" aria-controls="catalogo-tab-pane" aria-selected="false">Catalogo</button>
+    </li>
+</ul>
+<div class="tab-content" id="myTabContent">
+    <div class="tab-pane fade show active" id="empresa-tab-pane" role="tabpanel" aria-labelledby="empresa-tab" tabindex="0">
+        {%include 'compras/proveedores/info.html'%}
+    </div>
+    <div class="tab-pane fade" id="info-tab-pane" role="tabpanel" aria-labelledby="info-tab" tabindex="0">
+        {%include 'compras/proveedores/contacto.html'%}
+    </div>
+    <div class="tab-pane fade" id="familia-tab-pane" role="tabpanel" aria-labelledby="familia-tab" tabindex="0">
+        {%include 'compras/proveedores/familia.html'%}
+    </div>
+    <div class="tab-pane fade" id="homolo-tab-pane" role="tabpanel" aria-labelledby="homolo-tab" tabindex="0">
+        {%include 'compras/proveedores/homologacion.html'%}
+    </div>
+    <div class="tab-pane fade" id="doc-tab-pane" role="tabpanel" aria-labelledby="doc-tab" tabindex="0">
+        {%include 'compras/proveedores/documentos.html'%}
+    </div>
+    <div class="tab-pane fade" id="catalogo-tab-pane" role="tabpanel" aria-labelledby="catalogo-tab" tabindex="0">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card border-0 shadow p-3">
+                        <h5>El proveedor no ha cargado el catálogo. En caso de ser necesario, por favor, asigne la tarea correspondiente para que se complete esta acción</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+        
+<!-- Modal -->
+<div class="modal fade" id="approvalModal" tabindex="-1" aria-labelledby="approvalModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="approvalModalLabel">Aprobación de Documento</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="approvalForm" action="{%url 'compras:aprobacion' id_registro=registro.id_registro %}" method="post">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <input type="hidden" id="documentoId" name="id">
+                    <div class="mb-3">
+                        <label for="expiryDate" class="form-label">Fecha de Vencimiento del Documento</label>
+                        <input type="date" class="form-control" id="expiryDate" name="fecha_ven">
+                    </div>
+                    <div class="mb-3">
+                        <label for="comments" class="form-label">Comentarios</label>
+                        <textarea class="form-control" id="comments" rows="3" name="des"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-success" name="aprobar">Aprobar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="disapprovalModal" tabindex="-1" aria-labelledby="disapprovalModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="disapprovalModalLabel">Desaprobación de Documento</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="disapprovalForm" action="{%url 'compras:aprobacion' id_registro=registro.id_registro %}" method="post">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <input type="hidden" id="documentoIdDisapproval" name="id">
+                    <div class="mb-3">
+                        <label for="reason" class="form-label">Razón de la desaprobación</label>
+                        <textarea class="form-control" id="reason" rows="3" name="des" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-danger" name="desaprobar" >Desaprobar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="taskModal" tabindex="-1" aria-labelledby="taskModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="disapprovalModalLabel">Asignar Tarea</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="disapprovalForm" action="{%url 'compras:tareas_proveedor' id_registro=registro.id_registro %}" method="post">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <input type="hidden" id="documentoIdTask" name="id">
+                    <div class="mb-3">
+                        <p>Se asignará una tarea al proveedor para que vulva a cargar el documento</p>
+                    </div>
+                    <div class="mb-3">
+                        <label for="reason" class="form-label">Descripción de la tarea</label>
+                        <textarea class="form-control" id="reason" rows="3" name="descripcion" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="reason" class="form-label">Fecha vencimiento para realizar tarea</label>
+                        <input type="date" class="form-control" id="expiryDate" name="fecha_ven">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-success" name="aprobar">Asignar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock%}
+
+{% block script %}
+    <script src="{% static 'js/compras.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@2.10.377/build/pdf.js"></script>
+    <script src="{% static 'js/pdf.js' %}"></script>
+
+    <script>
+        function aprobarDocumento(id) {
+            // Guarda el ID del documento en un input oculto
+            document.getElementById('documentoId').value = id;
+        
+            // Abre el modal
+            var myModal = new bootstrap.Modal(document.getElementById('approvalModal'), {});
+            myModal.show();
+    
+        }
+        function rechazarDocumento(id) {
+            // Guarda el ID del documento en un input oculto
+            document.getElementById('documentoIdDisapproval').value = id;
+        
+            // Abre el modal
+            var myModal = new bootstrap.Modal(document.getElementById('disapprovalModal'), {});
+            myModal.show();
+        }
+        function asignarTarea(id) {
+            // Guarda el ID del documento en un input oculto
+            document.getElementById('documentoIdTask').value = id;
+        
+            // Abre el modal
+            var myModal = new bootstrap.Modal(document.getElementById('taskModal'), {});
+            myModal.show();
+        }
+
+    </script>
+
+
+
+{% endblock script %}

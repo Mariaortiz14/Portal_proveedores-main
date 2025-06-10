@@ -1,0 +1,13 @@
+{
+    "python.analysis.autoImportCompletions": true,
+    "python.analysis.typeCheckingMode": "basic",
+    "cSpell.words": [
+        "Autorretenedor",
+        "ciiu",
+        "csrf",
+        "Egresos"
+    ],
+    "files.watcherExclude": {
+        "**/node_modules/*/**": false
+    }
+}

@@ -1,0 +1,101 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12 col-md-12 mb-3 p-0 ">
+            <div class="card  border-0 shadow ">
+                <div class="row p-3 justify-content-center ">
+                    <div class="col-lg-2 col-md-3 col-sm-12">
+                        {% if homologa.estado == 'Pendiente' %}
+                        <div class="d-flex flex-column justify-content-center align-items-center">
+                            <i class="info m-2 text-warning fa-solid fa-clock"></i>
+                            <p class="fw-bold mb-0 mt-2 ">Estado</p>
+                            <p class="fw-medium text-warning  ">{{homologa.estado}}</p>
+                        </div>
+                        {% elif homologa.estado == 'Aceptado' %}
+                        <div class="info d-flex flex-column justify-content-center align-items-center">
+                            <i class="fa-solid m-2 text-success  fa-thumbs-up"></i>
+                            <p class="fw-bold mb-0 mt-3 ">Estado</p>
+                            <p class="fw-medium text-success  ">{{homologa.estado}}</p>
+                        </div>
+                        {% else %}
+                        <div class=" d-flex flex-column justify-content-center align-items-center">
+                            <i class=" info m-2 fa-solid text-danger fa-thumbs-down"></i>
+                            <p class="fw-bold mb-0 mt-3 ">Estado</p>
+                            <p class="fw-medium text-danger  ">{{homologa.estado}}</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="col-lg-2 col-md-3 col-sm-12 flex-column justify-content-center align-items-center">
+                        <div class="d-flex ">
+                            <canvas id="gaugeChart" style="with:80px; height: 80px;"></canvas>  
+                        </div>
+                        <p class="fw-bold mb-0 mt-3 text-center">Evaluación</p>
+                        <p class="fw-light m-0 text-center">0%</p>
+                    </div>
+                    <div class="col-lg-2 col-md-3 col-sm-12">
+                        <div class="row m-0 p-0 justify-content-center align-items-center">
+                            <div class="col-6 p-0 d-flex flex-column justify-content-center align-items-center">
+                                <i class="info fa-solid  fa-file-lines"></i>
+                            </div>
+                            <div class="col-6  p-0 d-flex flex-column justify-content-center align-items-center">
+                                <p class="fw-light  mb-0 mt-2 "><span class="text-success fw-bold pe-2 ">{{doc_aceptados}}</span>Aceptados</p>
+                                <p class="fw-light mb-0 mt-2 "><span class="text-danger fw-bold pe-2">{{doc_rechazados}}</span>Rechazados</p>
+                                <p class="fw-light mb-0 mt-2 "><span class="text-warning fw-bold pe-2">{{doc_pendientes}}</span>Pendientes</p>
+                            </div>
+                        </div>
+                        <p class="fw-bold mb-0 mt-2 pt-1 text-center">Documentos</p>
+                        <p class="fw-light m-0 text-center">{{total}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>                       
+        <div class="col-12 pe-2 col-md-6 p-0">
+            <div class="card border-0 shadow ">
+                <div class="card-header">
+                    <h3>Información General</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-12 col-md-6">
+                            <div class="form-group">
+                                <label for="nombre">Razón Social</label>
+                                <input type="text" class="form-control" id="nombre" name="nombre" value="{{registro.razon_social}}" disabled>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="form-group">
+                                <label for="nombre">{{registro.tipo_documento}}</label>
+                                <input type="text" class="form-control" id="nombre" name="nombre" value="{{registro.documento}}-{{registro.dv}}" disabled>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="form-group">
+                                <label for="nombre">Teléfono</label>
+                                <input type="text" class="form-control" id="nombre" name="nombre" value="{{registro.telefono}}" disabled>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="form-group">
+                                <label for="nombre">Correo</label>
+                                <input type="text" class="form-control" id="nombre" name="nombre" value="{{registro.email}}" disabled>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-12">
+                            <div class="form-group">
+                                <label for="nombre">Dirección</label>
+                                <input type="text" class="form-control" id="nombre" name="nombre" value="{{registro.direccion}}" disabled>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 ps-2 col-md-6 p-0">
+            <div class="card border-0 shadow">
+                <div class="card-body">
+                    <div class="row">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

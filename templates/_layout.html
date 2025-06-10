@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <title> {% block Title  %} Title  {% endblock Title %} </title>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+
+    {% load static %}
+    <link rel="icon" href="{% static 'img/logos_final/icono.ico' %}" />
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+    integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous">
+  </script>
+  <link href="{% static 'fontawesomefree/css/fontawesome.css' %}" rel="stylesheet" type="text/css">
+  <link href="{% static 'fontawesomefree/css/brands.css' %}" rel="stylesheet" type="text/css">
+  <link href="{% static 'fontawesomefree/css/solid.css' %}" rel="stylesheet" type="text/css">
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.min.js"
+    integrity="sha384-7VPbUDkoPSGFnVtYi0QogXtr74QeVeeIs99Qfg5YCF+TidwNdjvaKZX19NZ/e6oz" crossorigin="anonymous">
+  </script>
+  <script src="{% static 'js/jquery-3.7.1.min.js'%}"></script>
+  <script src="{% static 'js/select2.min.js'%}"></script>
+  <script src="{% static 'js/select2.js'%}"></script>
+  <link href="{% static 'bootstrap/css/bootstrap.min.css'%}" rel="stylesheet" type="text/css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.4.1/backbone.js"></script>
+
+
+
+  {% block style %} 
+  <style>
+    .container_footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background: rgba(255, 255, 255, 0); /* Cambia esto a la transparencia que desees */
+    }
+  </style>
+    
+  {% endblock style %}
+</head>
+
+<body>
+
+    <header>
+      {% block nav %} 
+
+
+      {% endblock nav %}
+
+    </header>
+    <main>
+      {% block content%} 
+      
+      {% endblock content%} 
+
+
+    </main>
+    {%block footer%}
+    <div class="container_footer px-5">
+      <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4">
+        <div class="col-md-4 d-flex align-items-center">
+          <a href="/" class="mb-3 me-2 mb-md-0 text-muted text-decoration-none lh-1">
+            <img src="{% static 'img/logos_final/9_gris.png' %}" alt="" width="28" height="30">
+          </a>
+          <span class="mb-3 mb-md-0 text-muted">&copy; 2024 FEPCO</span>
+        </div>
+        
+    
+        <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+          <li class="ms-4"><a class="text-muted text-secondary " href="#" style="font-size: 1.25rem " ><i class="fa-brands fa-x-twitter"></i></a></li>
+          <li class="ms-3"><a class="text-muted" href="#" style="font-size: 1.25rem "><i class="fa-brands fa-instagram"></i></a></li>
+          <li class="ms-3"><a class="text-muted text-secondary" href="#" style="font-size: 1.25rem "><i class="fa-brands fa-facebook"></i></a></li>
+        </ul>
+      </footer>
+
+    </div>
+    {%endblock footer%}
+
+  <!-- Bootstrap JavaScript Libraries -->
+
+  
+
+
+  {% block script %} 
+    
+  {% endblock script %} 
+</body>
+
+</html>

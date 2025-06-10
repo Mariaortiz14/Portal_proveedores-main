@@ -1,0 +1,140 @@
+{% extends "_layout_proveedores.html" %}
+{% load tags %}
+{% block Title  %} Mi Cuenta  {% endblock Title %}
+{% block content%} 
+
+{% load static %}
+    <div class="container-fluid  m-0" style="background-color:  #f3f2f2">
+        <div class="row d-flex justify-content-center">
+            <div class="wrapper bg-white mt-sm-3 m-3 shadow col-lg-6 col-md-12 col-sm-12 col-xs-12 c1 bg-white rounded h-60" style="background-color: hsl(0, 0%, 0%)">
+                <h4 class="pb-4 border-bottom">Configuracion de cuenta</h4>
+                <div class="d-flex align-items-start py-3 border-bottom">
+                    <img src="https://images.pexels.com/photos/1037995/pexels-photo-1037995.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"
+                        class="img" alt="">
+                    <div class="ps-5" id="img-section">
+                        <b>Foto de perfil</b>
+                        <p>tipo de imagen</p>
+                        <button class="btn btn-dark border"><b>Subir</b></button>
+                    </div>
+                </div>
+                <div class="py-2">
+                    <div class="row py-2">
+                        <div class="col-md-6">
+                            <label for="firstname">Nombre Empresa</label>
+                            <input type="text" class="bg-light form-control" placeholder="Ecopetrol">
+                        </div>
+                        <div class="col-md-6 pt-md-0 pt-3">
+                            <label for="lastname">NIT</label>
+                            <input type="text" class="bg-light form-control" placeholder="1254246-7">
+                        </div>
+                    </div>
+                    <div class="row py-2">
+                        <div class="col-md-6">
+                            <label for="email">Correo</label>
+                            <input type="text" class="bg-light form-control" placeholder="nnnnn@ecopetrol.com">
+                        </div>
+                        <div class="col-md-6 pt-md-0 pt-3">
+                            <label for="phone">Telefono</label>
+                            <input type="tel" class="bg-light form-control" placeholder="326478">
+                        </div>
+                    </div>
+                    <div class="row py-2">
+                        <div class="col-md-6">
+                            <label for="Dir">Direccion</label>
+                            <input type="text" class="bg-light form-control" placeholder="CR # 45">
+                        </div>
+                        <div class="col-md-6 pt-md-0 pt-3">
+                            <label for="phone2">Telefono 2</label>
+                            <input type="tel" class="bg-light form-control" placeholder="34526478">
+                        </div>
+                    </div>
+                
+                    <div class="py-3 pb-4 border-bottom">
+                        <button class="btn btn-dark mr-3">Guardar Cambios</button>
+                        <button class="btn border btn-outline-dark">Cancelar</button>
+                    </div>
+                    <div class="d-sm-flex align-items-center pt-3" id="deactivate">
+                        <div>
+                            <b>Eliminar cuenta</b>
+                            <p>Se enviara un correo a FEPCO de no eliminacion de cuenta </p>
+                        </div>
+                        <div class="ps-2 ml-auto">
+                            <button class="btn danger">Eliminar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="wrapper bg-white mt-sm-3 shadow c2 m-3 col-lg-5 col-md-12 col-sm-12 col-xs-12bg-white rounded h-60" style="background-color: hsl(0, 0%, 0%)">
+                <h4 class="pb-4 border-bottom">Documentos</h4>
+                <div class="d-flex align-items-start py-3 border-bottom">
+                    <div class=" col-md-12 col-lg-12 col-xs-12 mb-sm-0">
+                        <div class="card h-75 mb-0 mt-0 justify-content-center d-flex ">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-5  p-2 c1 pt-3">
+                                        <p class="card-title">x documento</p> 
+                                    </div>
+                                  
+                                    <div class="col-4  p-2 c2 pt-3">
+                                        <h6 style="color: green;">Aceptado </h6>
+                                    </div>
+                                    <a href="#" class="col-2 m-2 p-2 btn c3 d-flex justify-content-center  ">
+                                        <i class='bx bx-chevron-right '></i> 
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex align-items-start py-3 border-bottom">
+                    <div class=" col-md-12 col-lg-12 col-xs-12 mb-sm-0">
+                        <div class="card h-75 mb-0 mt-0 justify-content-center d-flex ">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-5  p-2 c1 pt-3">
+                                        <p class="card-title">x documento</p> 
+                                    </div>
+                                  
+                                    <div class="col-4  p-2 c2 pt-3">
+                                        <h6 style="color: orange;">Caducado </h6>
+                                    </div>
+                                    <a href="#" class="col-2 m-2 p-2 btn c3 d-flex justify-content-center  ">
+                                        <i class='bx bx-chevron-right '></i> 
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex align-items-start py-3 border-bottom">
+                    <div class=" col-md-12 col-lg-12 col-xs-12 mb-sm-0">
+                        <div class="card h-75 mb-0 mt-0 justify-content-center d-flex ">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-5  p-2 c1 pt-3">
+                                        <p class="card-title">x documento</p> 
+                                    </div>
+                                  
+                                    <div class="col-4  p-2 c2 pt-3">
+                                        <h6 style="color: red;">Rechazado </h6>
+                                    </div>
+                                    <a href="#" class="col-2 m-2 p-2 btn c3 d-flex justify-content-center  ">
+                                        <i class='bx bx-chevron-right '></i> 
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="d-sm-flex justify-content-center  align-items-center pt-3" id="deactivate">
+                    <div class="ps-2 ml-auto">
+                        <a href="{% url 'proveedor:doc' %}" class="btn btn-dark ">Ver mas</a>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+{% endblock content%} 

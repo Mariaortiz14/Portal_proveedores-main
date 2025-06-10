@@ -1,0 +1,43 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12 col-md-12">
+            <div class="card border-0   col-md-12 col-lg-12 col-sm-12 col-xs-12">
+                <div class="card-body">
+                    {% if homologa.familia == None %}
+                    <form method="post" action="{%url 'compras:familia' id_registro=registro.id_registro%}">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-7">
+                                <div class="form-group">
+                                    <label for="tabla"  class="form-label">Asigne una familia a este proveedor</label>
+                                    <select class="form-select" name="familia" aria-label="Default select example">
+                                        <option value="">----------</option>
+                                        {%for f in familias%}
+                                            <option value="{{f.id}}">{{f.nombre}}</option>
+                                        {%endfor%}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-4 p-3 mt-1">
+                                <button type="submit" class="btn btn-primary">Guardar</button>
+                            </div>
+                        </div>
+                    </form>
+                    {% else %}
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="form-group">
+                                <label for="tabla"  class="form-label">Familia asignada</label>
+                                <input type="text" class="form-control" id="nombre" name="nombre" value="{{homologa.familia.nombre}}" disabled>
+                            
+                            </div>
+                        </div>
+                        <div class="col-12">
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
