@@ -7,6 +7,7 @@ from proveedores.models import actividad_eco_clase, matriz_doc, tipo_contribuyen
 from django.forms import formset_factory
 from datetime import date
 from django.contrib.auth.models import User
+from proveedores.models import registro_formulario
 
 class ProveedorForm_(forms.Form):
     tipo_persona = forms.ChoiceField(choices=[('', 'Seleccione uno'),('Natural', 'Natural'), ('Jurídica', 'Jurídica')], initial=None ,widget=forms.Select(attrs={'class': 'form-control '}))
@@ -109,3 +110,15 @@ class LoginForm(forms.Form):
         model = User
         fields = ['username', 'password']
 
+class PerfilProveedorForm(forms.ModelForm):
+    class Meta:
+        model = registro_formulario
+        fields = ['razon_social', 'documento', 'email', 'telefono', 'direccion','foto']
+        widgets = {
+            'razon_social': forms.TextInput(attrs={'class': 'form-control'}),
+            'documento': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+            'telefono': forms.TextInput(attrs={'class': 'form-control'}),
+            'direccion': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'foto': forms.FileInput(attrs={'class': 'form-control'}),
+        }

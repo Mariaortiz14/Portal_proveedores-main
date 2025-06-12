@@ -82,6 +82,7 @@ class tipo_contribuyente(models.Model):
         return (self.descripcion)   
     
 class registro_formulario(models.Model):
+    usuario = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
     id_registro = models.AutoField(primary_key=True)
     identificador = models.CharField(max_length=12)
     tipo_persona = models.CharField(max_length=10)
@@ -108,6 +109,7 @@ class registro_formulario(models.Model):
     cargo_trabajo_figura_publica = models.CharField(max_length=150, null=True)  
     responsabilidad_social = models.BooleanField()
     evidencia_RS = models.FileField(upload_to=id_documentos_directory_path, null=True)
+    foto = models.ImageField(upload_to='fotos_perfil/', null=True, blank=True)
     
     def save(self, *args, **kwargs):
         if self._state.adding:

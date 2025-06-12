@@ -36,7 +36,7 @@ def signup(request):
             formularios = [seccion1, seccion2, seccion3, seccion4, resolucion_formset, seccion5, seccion6, seccion7, seccion8, seccion9]
             if all(formulario.is_valid() for formulario in formularios):
                 with transaction.atomic():
-                    registro = registro_formulario.objects.create(**formularios[0].cleaned_data)
+                    registro = registro_formulario.objects.create(usuario=request.user, **formularios[0].cleaned_data)
                     for f in formularios[1]:
                         if f.cleaned_data and f.cleaned_data['tipo_identificacion']!=None:
                             composicion_accionaria.objects.create(id_registro=registro, **f.cleaned_data)
@@ -66,6 +66,9 @@ def signup(request):
                     productos_servicios_condiciones.objects.create(id_registro=registro, **formularios[8].cleaned_data)    
                     declaracion.objects.create(id_registro=registro, **formularios[9].cleaned_data)
                     homologacion.objects.create(id_registro=registro)
+                    messages.success(request, '¡Registro exitoso! Ya puedes iniciar sesión.')
+                    return redirect('users:login')
+
             else: 
                 text = "Error al registrar el formulario, por favor intente nuevamente."
                 url = reverse('users:signup')
@@ -151,5 +154,25 @@ def logout_(request):
     return redirect('users:login')
 
 def profile(request):
+    registro = registro_formulario.objects.filter(usuario=request.user).first()
     
-    return render(request, 'users/profile/profile.html')
+    if not registro:
+        messages.warning(request, 'Aún no tienes datos registrados como proveedor.')
+        return redirect('users:signup') 
+
+    if request.method == 'POST':
+        form = PerfilProveedorForm(request.POST, request.FILES, instance=registro)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Cambios guardados correctamente.')
+            return redirect('users:profile')
+        else:
+            messages.error(request, 'Error al guardar los cambios. Por favor, corrige los errores.')
+            return render(request, 'users/profile/profile.html', {'form': form, 'registro': registro})
+    else:
+        form = PerfilProveedorForm(instance=registro)
+    
+    return render(request, 'users/profile/profile.html', {
+        'form': form,
+        'registro': registro
+    })
