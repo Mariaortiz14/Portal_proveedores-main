@@ -1,59 +1,5 @@
- {% extends "_layout_proveedores.html" %}
-
-{% block Title %}
-    Proveedores
-{% endblock Title %}
-
-{%block style%}
-<style>
-    .preview-list .preview-item .preview-thumbnail .preview-icon, .preview-list .preview-item .preview-thumbnail img {
-        width: 40px;
-        height: 40px;
-        text-align: center;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    .preview-list .preview-item {
-        display: flex;
-        flex-direction: row;
-        align-items: flex-start;
-        padding: 1rem 0;
-        font-size: .875rem;
-    }
-
-    .preview-list .preview-item .preview-item-content {
-        line-height: 1;
-        padding-left: 15px;
-    }
-    .preview-list .preview-item .preview-thumbnail {
-        color: #fff;
-        position: relative;
-    }
-
-    .text-sm-right {
-        text-align: right!important;
-    }
-
-    .flex-grow {
-        flex-grow: 1;
-    }
-
-    @media(max-width: 50.98px) {
-        .preview-list .preview-item .preview-item-content {
-            padding-left: 0;
-        }
-
-        card-body {
-            padding: 6.25rem;
-        }
-    }
-
-
-</style>
-{%endblock style%}
-
-
+{% extends "_layout_proveedores.html" %}
+{% block Title %}Proveedores{% endblock Title %}
 {% block content %}
 <div class="pt-2">
     <div class="row d-flex flex-wrap">
@@ -167,9 +113,7 @@
         </div>
     </div>
 </div>
-
-{% endblock content %}
-
+{% endblock %}
 
 {% block grafico %}
 
@@ -196,3 +140,51 @@
     
 
 {%endblock grafico%}
+<!-- <{%block style%}
+<style>
+    .preview-list .preview-item .preview-thumbnail .preview-icon, .preview-list .preview-item .preview-thumbnail img {
+        width: 40px;
+        height: 40px;
+        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .preview-list .preview-item {
+        display: flex;
+        flex-direction: row;
+        align-items: flex-start;
+        padding: 1rem 0;
+        font-size: .875rem;
+    }
+
+    .preview-list .preview-item .preview-item-content {
+        line-height: 1;
+        padding-left: 15px;
+    }
+    .preview-list .preview-item .preview-thumbnail {
+        color: #fff;
+        position: relative;
+    }
+
+    .text-sm-right {
+        text-align: right!important;
+    }
+
+    .flex-grow {
+        flex-grow: 1;
+    }
+
+    @media(max-width: 50.98px) {
+        .preview-list .preview-item .preview-item-content {
+            padding-left: 0;
+        }
+
+        card-body {
+            padding: 6.25rem;
+        }
+    }
+
+
+</style>
+{%endblock style%}> -->

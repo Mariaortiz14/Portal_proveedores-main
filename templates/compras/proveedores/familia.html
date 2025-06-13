@@ -11,7 +11,7 @@
                                 <div class="form-group">
                                     <label for="tabla"  class="form-label">Asigne una familia a este proveedor</label>
                                     <select class="form-select" name="familia" aria-label="Default select example">
-                                        <option value="">----------</option>
+                                        <option value="">Seleccione una opcion</option>
                                         {%for f in familias%}
                                             <option value="{{f.id}}">{{f.nombre}}</option>
                                         {%endfor%}

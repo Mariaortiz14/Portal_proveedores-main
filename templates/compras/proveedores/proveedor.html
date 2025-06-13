@@ -88,7 +88,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <div class="card border-0 shadow p-3">
-                        <h5>El proveedor no ha cargado el catálogo. En caso de ser necesario, por favor, asigne la tarea correspondiente para que se complete esta acción</h5>
+                        <h5>El proveedor no ha cargado el catálogo, en caso de ser necesario, por favor asigne la tarea correspondiente para que se complete esta acción.</h5>
                     </div>
                 </div>
             </div>
@@ -132,7 +132,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="disapprovalModalLabel">Desaprobación de Documento</h5>
+                <h5 class="modal-title" id="disapprovalModalLabel">Desaprovacion de documentos</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="disapprovalForm" action="{%url 'compras:aprobacion' id_registro=registro.id_registro %}" method="post">
@@ -145,7 +145,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-danger" name="desaprobar" >Desaprobar</button>
+                    <button type="submit" class="btn btn-danger" name="desaprobar" >Desaprovado</button>
                 </div>
             </form>
         </div>
@@ -173,7 +173,7 @@
                         <textarea class="form-control" id="reason" rows="3" name="descripcion" required></textarea>
                     </div>
                     <div class="mb-3">
-                        <label for="reason" class="form-label">Fecha vencimiento para realizar tarea</label>
+                        <label for="reason" class="form-label">Fecha de vencimiento de ka tarea</label>
                         <input type="date" class="form-control" id="expiryDate" name="fecha_ven">
                     </div>
                 </div>

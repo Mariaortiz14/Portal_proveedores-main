@@ -1,6 +1,6 @@
 {% extends "_layout.html" %}
 {% load static %}
-{% block Title  %} Registrarse  {% endblock Title %}
+{% block Title  %}Registro{% endblock Title %}
 {% block style%}
 <link rel="stylesheet" href="{% static 'css/select2-bootstrap-5-theme.min.css' %}" />
 <link rel="stylesheet" href="{% static 'css/registro.css' %}">
@@ -589,7 +589,7 @@
                                 </div>
                                 <div class="d-flex justify-content-center col-md-12">
                                     <button onclick="previousSection(9)" type="button" class="btn btn-dark m-3">Anterior </button>
-                                    <button  class="btn btn-dark m-3" id="enviar" type="button" >Enviar </button>
+                                    <button class="btn btn-dark m-3" id="enviar" type="submit">Enviar</button>
                                 </div>
                             </div>
                         </div>
@@ -647,10 +647,6 @@
             localStorage.clear();
             location.reload();
         });
-        $("#enviar").click(function(){
-            $("#form").submit();
-        });
-
         $("#id_seccion4-tipo_contribuyente").change(function(){
             var tipo_contribuyente = $(this).val();
             if(tipo_contribuyente.includes("T03")) {

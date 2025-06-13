@@ -15,76 +15,126 @@ from django.urls import reverse
 from django.db import transaction
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User, Group
 
 
-def signup(request):   
-    seccion1 = ProveedorForm_(request.POST or None , prefix='seccion1')
-    ca = forms.formset_factory(composicion_accionaria_ , extra=1, max_num=8)
+def signup(request):
+    seccion1 = ProveedorForm_(request.POST or None, prefix='seccion1')
+    ca = forms.formset_factory(composicion_accionaria_, extra=1, max_num=8)
     seccion2 = ca(request.POST or None, prefix='seccion2')
     seccion3 = informacion_financiera_(request.POST or None, prefix='seccion3')
     seccion4 = informacion_tributaria_(request.POST or None, prefix='seccion4')
-    resolucion_formset = seccion4.resolucionT(request.POST or None, prefix='seccion4', initial=[{'Tcontribuyente': 'T03'}, {'Tcontribuyente': 'T04'}])
+    resolucion_formset = seccion4.resolucionT(request.POST or None, prefix='seccion4', initial=[
+        {'Tcontribuyente': 'T03'}, {'Tcontribuyente': 'T04'}
+    ])
     seccion5 = informacion_pagos_contable_(request.POST or None, prefix='seccion5')
     certificados = forms.formset_factory(certificacion_ or None, extra=8, max_num=8)
-    seccion6 = certificados(request.POST or None, request.FILES or None, initial=[{'certificacion': 20,'nombre': 'ISO 28000' }, {'certificacion': 21,'nombre': 'ISO 27000'}, {'certificacion': 22,'nombre': 'API'}, {'certificacion': 23,'nombre': 'OHSAS 18001'}, {'certificacion': 2,'nombre': 'ISO 14000'}, {'certificacion': 1,'nombre': 'ISO 9001'}, {'certificacion': 19,'nombre': 'RUC'}, {'certificacion': 24,'nombre': 'OEA'}], prefix='seccion6')
+    seccion6 = certificados(request.POST or None, request.FILES or None, initial=[
+        {'certificacion': 20, 'nombre': 'ISO 28000'},
+        {'certificacion': 21, 'nombre': 'ISO 27000'},
+        {'certificacion': 22, 'nombre': 'API'},
+        {'certificacion': 23, 'nombre': 'OHSAS 18001'},
+        {'certificacion': 2, 'nombre': 'ISO 14000'},
+        {'certificacion': 1, 'nombre': 'ISO 9001'},
+        {'certificacion': 19, 'nombre': 'RUC'},
+        {'certificacion': 24, 'nombre': 'OEA'}
+    ], prefix='seccion6')
     doc = forms.formset_factory(documentos_requeridos_, extra=1, max_num=8)
-    seccion7 = doc(request.POST or None, request.FILES or None,initial=[{'documento':26}, {'documento': 27}, {'documento':28},{'documento':29}, {'documento':30}, {'documento':31}, {'documento':46},{'documento':33},{'documento':32}], prefix='seccion7')
+    seccion7 = doc(request.POST or None, request.FILES or None, initial=[
+        {'documento': 26}, {'documento': 27}, {'documento': 28},
+        {'documento': 29}, {'documento': 30}, {'documento': 31},
+        {'documento': 46}, {'documento': 33}, {'documento': 32}
+    ], prefix='seccion7')
     seccion8 = condiciones_pago_catalogo_(request.POST or None, request.FILES or None, prefix='seccion8')
     seccion9 = declaracion_(request.POST or None, request.FILES or None, prefix='seccion9')
+
     if request.method == "POST":
         try:
-            formularios = [seccion1, seccion2, seccion3, seccion4, resolucion_formset, seccion5, seccion6, seccion7, seccion8, seccion9]
+            formularios = [
+                seccion1, seccion2, seccion3, seccion4,
+                resolucion_formset, seccion5, seccion6,
+                seccion7, seccion8, seccion9
+            ]
+
+            if request.user.is_authenticated:
+                if registro_formulario.objects.filter(usuario=request.user).exists():
+                    return redirect('users:profile')
+
             if all(formulario.is_valid() for formulario in formularios):
                 with transaction.atomic():
-                    registro = registro_formulario.objects.create(usuario=request.user, **formularios[0].cleaned_data)
+
+                    # Crear o asignar usuario
+                    if request.user.is_authenticated:
+                        user = request.user
+                    else:
+                        email = formularios[0].cleaned_data['email']
+                        documento = formularios[0].cleaned_data['documento']
+                        user = User.objects.create_user(username=documento, password='12345678', email=email)
+
+                        grupo, _ = Group.objects.get_or_create(name='Proveedor')
+                        user.groups.add(grupo)
+                        login(request, user)
+
+                    # Crear registro principal
+                    registro = registro_formulario.objects.create(usuario=user, **formularios[0].cleaned_data)
+
+                    # Guardar subsecciones
                     for f in formularios[1]:
-                        if f.cleaned_data and f.cleaned_data['tipo_identificacion']!=None:
+                        if f.cleaned_data and f.cleaned_data['tipo_identificacion']:
                             composicion_accionaria.objects.create(id_registro=registro, **f.cleaned_data)
+
                     info_financiera.objects.create(id_registro=registro, **formularios[2].cleaned_data)
-                    cleaned_data = formularios[3].cleaned_data.copy() 
-                    Tcontribuyente = cleaned_data['tipo_contribuyente']
-                    cleaned_data.pop('tipo_contribuyente')
-                    tribu= info_tributaria.objects.create(id_registro=registro, **cleaned_data)
+
+                    cleaned_data = formularios[3].cleaned_data.copy()
+                    Tcontribuyente = cleaned_data.pop('tipo_contribuyente')
+                    tribu = info_tributaria.objects.create(id_registro=registro, **cleaned_data)
+
                     for data in Tcontribuyente:
-                        if data.codigo!='T03' and data.codigo!='T04':
+                        if data.codigo != 'T03' and data.codigo != 'T04':
                             resolucion.objects.create(id_trib=tribu, Tcontribuyente=data)
                         else:
                             for f in formularios[4]:
-                                
-                                if f.cleaned_data and f.cleaned_data['Tcontribuyente'] != None:
+                                if f.cleaned_data and f.cleaned_data['Tcontribuyente']:
                                     resolucion.objects.create(id_trib=tribu, **f.cleaned_data)
+
                     info_pago.objects.create(id_registro=registro, **formularios[5].cleaned_data)
+
                     for f in formularios[6]:
-                        if f.cleaned_data and f.cleaned_data['file'] != None:
-                            f.cleaned_data.pop('nombre')
+                        if f.cleaned_data and f.cleaned_data['file']:
+                            f.cleaned_data.pop('nombre', None)
                             certificaciones_proveedores.objects.create(id_registro=registro, **f.cleaned_data)
+
                     for f in formularios[7]:
-                        if f.cleaned_data and f.cleaned_data['file'] != None:
-                            print(f.cleaned_data)
-                            documentos_requeridos.objects.create(id_registro=registro, **f.cleaned_data) 
-                        
-                    productos_servicios_condiciones.objects.create(id_registro=registro, **formularios[8].cleaned_data)    
+                        if f.cleaned_data and f.cleaned_data['file']:
+                            documentos_requeridos.objects.create(id_registro=registro, **f.cleaned_data)
+
+                    productos_servicios_condiciones.objects.create(id_registro=registro, **formularios[8].cleaned_data)
                     declaracion.objects.create(id_registro=registro, **formularios[9].cleaned_data)
                     homologacion.objects.create(id_registro=registro)
-                    messages.success(request, '¡Registro exitoso! Ya puedes iniciar sesión.')
-                    return redirect('users:login')
 
-            else: 
-                text = "Error al registrar el formulario, por favor intente nuevamente."
+                    messages.success(request, '¡Registro exitoso! Ya puedes ver tu perfil.')
+                    return redirect('users:profile')
+
+            else:
+                text = "Error al registrar el formulario, por favor intente nuevamente"
                 url = reverse('users:signup')
                 errores_form = [f.errors for f in formularios if f.errors]
                 error = f"Error en el formulario: {errores_form}"
                 return render(request, "error.html", {'texto': text, 'url': url, 'error': error})
-            
+
         except Exception as e:
-            text = "Error al registrar el formulario, por favor intente nuevamente."
+            text = "Error al registrar el formulario, por favor revise bien los datos e intente nuevamente"
             url = reverse('users:signup')
             print(e)
             return render(request, "error.html", {'texto': text, 'url': url, 'error': e})
-         
-    return render(request, "users/register/signup.html", {'seccion1': seccion1, 'seccion2': seccion2, 'seccion3': seccion3, 
-                                                    'seccion4': seccion4, 'seccion5': seccion5, 'seccion6': seccion6, 
-                                                    'seccion7': seccion7, 'seccion8': seccion8, 'seccion9': seccion9})
+
+    return render(request, "users/register/signup.html", {
+        'seccion1': seccion1, 'seccion2': seccion2, 'seccion3': seccion3,
+        'seccion4': seccion4, 'seccion5': seccion5, 'seccion6': seccion6,
+        'seccion7': seccion7, 'seccion8': seccion8, 'seccion9': seccion9
+    })
+
+
 
 def actividad_economica(request):
     codigo = request.GET.get('ciiu', None)
@@ -95,7 +145,7 @@ def actividad_economica(request):
             return JsonResponse({'actividad': act_data}, status=200)
             
         except actividad_eco_clase.DoesNotExist:
-            return JsonResponse({'error': 'Actividad no Encontrada '}, status=404)
+            return JsonResponse({'error': 'Actividad no encontrada'}, status=404)
     else:
         return JsonResponse({'error': 'Código no Proporcionado'}, status=400)
 
@@ -138,7 +188,7 @@ def login_(request):
                     elif user.is_superuser:
                         return redirect('/admin/')
                     else:
-                        messages.error(request, 'Tu cuenta no tiene un rol asignado.')
+                        messages.error(request, 'Tu cuenta aún no tiene un rol asignado.')
                         return render(request, 'users/register/login.html', {'form': form})
                 else:
                     messages.error(request, 'Usuario o contraseña incorrectos.')
@@ -164,7 +214,7 @@ def profile(request):
         form = PerfilProveedorForm(request.POST, request.FILES, instance=registro)
         if form.is_valid():
             form.save()
-            messages.success(request, 'Cambios guardados correctamente.')
+            messages.success(request, 'Los cambios fueron guardados correctamente')
             return redirect('users:profile')
         else:
             messages.error(request, 'Error al guardar los cambios. Por favor, corrige los errores.')
