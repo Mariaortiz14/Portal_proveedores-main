@@ -218,11 +218,16 @@ def profile(request):
             return redirect('users:profile')
         else:
             messages.error(request, 'Error al guardar los cambios. Por favor, corrige los errores.')
-            return render(request, 'users/profile/profile.html', {'form': form, 'registro': registro})
     else:
         form = PerfilProveedorForm(instance=registro)
-    
+
+    # Cargar documentos asociados al proveedor
+    docs = documentos_requeridos.objects.filter(id_registro=registro)
+    certs = certificaciones_proveedores.objects.filter(id_registro=registro)
+
     return render(request, 'users/profile/profile.html', {
         'form': form,
-        'registro': registro
+        'registro': registro,
+        'documentos': docs,
+        'certificaciones': certs,
     })

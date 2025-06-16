@@ -8,14 +8,16 @@
     <div class="row d-flex justify-content-center">
 
         <!-- Panel izquierdo: Información del perfil -->
-        <div class="wrapper bg-white mt-sm-3 m-3 shadow col-lg-6 col-md-12 col-sm-12 col-xs-12 c1 bg-white rounded h-60">
+        <div
+            class="wrapper bg-white mt-sm-3 m-3 shadow col-lg-6 col-md-12 col-sm-12 col-xs-12 c1 bg-white rounded h-60">
             <h4 class="pb-4 border-bottom">Configuración De Cuenta</h4>
 
             <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="d-flex align-items-start py-3 border-bottom">
                     <img src="{% if registro.foto %}{{ registro.foto.url }}{% else %}https://images.pexels.com/photos/1037995/pexels-photo-1037995.jpeg{% endif %}"
-                         class="img" alt="Foto de perfil" width="120" height="120" style="object-fit: cover; border-radius: 50%;">
+                        class="img" alt="Foto de perfil" width="120" height="120"
+                        style="object-fit: cover; border-radius: 50%;">
                     <div class="ps-5" id="img-section">
                         <b>{{ request.user.username }}</b>
                         <p>Foto de perfil</p>
@@ -25,9 +27,9 @@
 
                 <div class="py-2">
                     {% if messages %}
-                        {% for message in messages %}
-                            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-                        {% endfor %}
+                    {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                    {% endfor %}
                     {% endif %}
 
                     <div class="row py-2">
@@ -77,22 +79,32 @@
             </form>
         </div>
 
-        <!-- Panel derecho: documentos (estructura estática por ahora) -->
-        <div class="wrapper bg-white mt-sm-3 shadow c2 m-3 col-lg-5 col-md-12 col-sm-12 col-xs-12 bg-white rounded h-60">
+        <!-- Panel derecho: documentos -->
+        <div
+            class="wrapper bg-white mt-sm-3 shadow c2 m-3 col-lg-5 col-md-12 col-sm-12 col-xs-12 bg-white rounded h-60">
             <h4 class="pb-4 border-bottom">Documentos</h4>
+            {% if documentos or certificaciones %}
+            {# ... los bloques de documentos que ya tienes ... #}
+            {% else %}
+            <div class="alert alert-info text-center m-3">
+                No tienes documentos ni certificaciones cargadas aún.
+            </div>
+            {% endif %}
 
+            {% for doc in documentos %}
             <div class="d-flex align-items-start py-3 border-bottom">
                 <div class="col-md-12 col-lg-12 col-xs-12 mb-sm-0">
                     <div class="card h-75 mb-0 mt-0 justify-content-center d-flex">
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-5 p-2 c1 pt-3">
-                                    <p class="card-title">x documento</p>
+                                    <p class="card-title">{{ doc.documento.nombre }}</p>
                                 </div>
                                 <div class="col-4 p-2 c2 pt-3">
-                                    <h6 style="color: green;">Aceptado </h6>
+                                    <h6 style="color: #007bff;">Documento</h6>
                                 </div>
-                                <a href="#" class="col-2 m-2 p-2 btn c3 d-flex justify-content-center">
+                                <a href="{{ doc.file.url }}" target="_blank"
+                                    class="col-2 m-2 p-2 btn c3 d-flex justify-content-center">
                                     <i class='bx bx-chevron-right'></i>
                                 </a>
                             </div>
@@ -100,19 +112,22 @@
                     </div>
                 </div>
             </div>
+            {% endfor %}
 
+            {% for cert in certificaciones %}
             <div class="d-flex align-items-start py-3 border-bottom">
                 <div class="col-md-12 col-lg-12 col-xs-12 mb-sm-0">
                     <div class="card h-75 mb-0 mt-0 justify-content-center d-flex">
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-5 p-2 c1 pt-3">
-                                    <p class="card-title">x documento</p>
+                                    <p class="card-title">{{ cert.certificacion.nombre }}</p>
                                 </div>
                                 <div class="col-4 p-2 c2 pt-3">
-                                    <h6 style="color: orangered;">pendiente</h6>
+                                    <h6 style="color: #28a745;">Certificación</h6>
                                 </div>
-                                <a href="#" class="col-2 m-2 p-2 btn c3 d-flex justify-content-center">
+                                <a href="{{ cert.file.url }}" target="_blank"
+                                    class="col-2 m-2 p-2 btn c3 d-flex justify-content-center">
                                     <i class='bx bx-chevron-right'></i>
                                 </a>
                             </div>
@@ -120,26 +135,7 @@
                     </div>
                 </div>
             </div>
-
-            <div class="d-flex align-items-start py-3 border-bottom">
-                <div class="col-md-12 col-lg-12 col-xs-12 mb-sm-0">
-                    <div class="card h-75 mb-0 mt-0 justify-content-center d-flex">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-5 p-2 c1 pt-3">
-                                    <p class="card-title">x documento</p>
-                                </div>
-                                <div class="col-4 p-2 c2 pt-3">
-                                    <h6 style="color: red;">Rechazado </h6>
-                                </div>
-                                <a href="#" class="col-2 m-2 p-2 btn c3 d-flex justify-content-center">
-                                    <i class='bx bx-chevron-right'></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            {% endfor %}
 
             <div class="d-sm-flex justify-content-center align-items-center pt-3" id="deactivate">
                 <div class="ps-2 ml-auto">
@@ -147,6 +143,7 @@
                 </div>
             </div>
         </div>
+
 
     </div>
 </div>

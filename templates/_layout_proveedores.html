@@ -42,8 +42,14 @@
               <a role="button" href="{% url 'users:logout' %}" type="button" class="dropdown-item">Cerrar Sesión</a>
           </li>
         </ul>
-        <div class="header_img"> <img src="{% static 'img/icono.jpg'%}" alt="">
-        </div>
+        <div class="header_img">
+          {% if foto_perfil %}
+              <img src="{{ foto_perfil }}" alt="Foto perfil" style="object-fit: cover;">
+          {% else %}
+              <img src="https://images.pexels.com/photos/1037995/pexels-photo-1037995.jpeg" alt="Default" style="object-fit: cover;">
+          {% endif %}
+      </div>
+
     </div>
 </header>
   {% endblock sesion %}
@@ -51,7 +57,7 @@
   <div class="l-navbar" id="nav-bar">
     <nav class="nav_bar">
       <div> 
-        <a href="#" class="nav_logo"> <img src="{% static 'img/logos_final/11.png' %}" alt=""width="25" height="25"> 
+        <a href="{% url 'proveedor:dashboard' %}" class="nav_logo"> <img src="{% static 'img/logos_final/11.png' %}" alt=""width="25" height="25"> 
           <span class="nav_logo-name">Portal Proveedores</span> 
         </a>
         <div class="nav_list"> 

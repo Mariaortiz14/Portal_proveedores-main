@@ -113,16 +113,17 @@ class registro_formulario(models.Model):
     
     def save(self, *args, **kwargs):
         if self._state.adding:
-            last = registro_formulario.objects.all().last()
-            if not  last:
-                self.identificador = 'REG000001'                
+            last = registro_formulario.objects.order_by('-id_registro').first()
+            if last is None:
+                self.identificador = 'REG000001'
             else:
-                last =  last.identificador
-                num = int(last[3:])
-                new_num = num + 1
-                new_id = 'REG' + str(new_num).zfill(6)
+                num = int(last.identificador[3:])
+                new_id = 'REG' + str(num + 1).zfill(6)
                 self.identificador = new_id
-            super().save(*args, **kwargs)
+
+        # Esta línea debe estar fuera del if para que funcione en actualizaciones
+        super().save(*args, **kwargs)
+
 
 class info_financiera(models.Model):
     id = models.AutoField(primary_key=True)
