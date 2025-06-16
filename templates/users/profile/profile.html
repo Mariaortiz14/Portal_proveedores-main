@@ -83,13 +83,6 @@
         <div
             class="wrapper bg-white mt-sm-3 shadow c2 m-3 col-lg-5 col-md-12 col-sm-12 col-xs-12 bg-white rounded h-60">
             <h4 class="pb-4 border-bottom">Documentos</h4>
-            {% if documentos or certificaciones %}
-            {# ... los bloques de documentos que ya tienes ... #}
-            {% else %}
-            <div class="alert alert-info text-center m-3">
-                No tienes documentos ni certificaciones cargadas aún.
-            </div>
-            {% endif %}
 
             {% for doc in documentos %}
             <div class="d-flex align-items-start py-3 border-bottom">
@@ -97,22 +90,26 @@
                     <div class="card h-75 mb-0 mt-0 justify-content-center d-flex">
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-5 p-2 c1 pt-3">
+                                <div class="col-6 p-2 pt-3">
                                     <p class="card-title">{{ doc.documento.nombre }}</p>
                                 </div>
-                                <div class="col-4 p-2 c2 pt-3">
-                                    <h6 style="color: #007bff;">Documento</h6>
+                                <div class="col-4 p-2 pt-3">
+                                    <h6 class="text-muted">Cargado</h6>
                                 </div>
                                 <a href="{{ doc.file.url }}" target="_blank"
-                                    class="col-2 m-2 p-2 btn c3 d-flex justify-content-center">
-                                    <i class='bx bx-chevron-right'></i>
+                                    class="col-2 m-2 p-2 btn btn-outline-secondary d-flex justify-content-center">
+                                    <i class="bx bx-download"></i>
                                 </a>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+            {% empty %}
+            <div class="alert alert-warning">No tienes documentos cargados.</div>
             {% endfor %}
+
+            <h4 class="pt-4 pb-2 border-bottom">Certificaciones</h4>
 
             {% for cert in certificaciones %}
             <div class="d-flex align-items-start py-3 border-bottom">
@@ -120,21 +117,23 @@
                     <div class="card h-75 mb-0 mt-0 justify-content-center d-flex">
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-5 p-2 c1 pt-3">
+                                <div class="col-6 p-2 pt-3">
                                     <p class="card-title">{{ cert.certificacion.nombre }}</p>
                                 </div>
-                                <div class="col-4 p-2 c2 pt-3">
-                                    <h6 style="color: #28a745;">Certificación</h6>
+                                <div class="col-4 p-2 pt-3">
+                                    <h6 class="text-muted">Cargado</h6>
                                 </div>
                                 <a href="{{ cert.file.url }}" target="_blank"
-                                    class="col-2 m-2 p-2 btn c3 d-flex justify-content-center">
-                                    <i class='bx bx-chevron-right'></i>
+                                    class="col-2 m-2 p-2 btn btn-outline-secondary d-flex justify-content-center">
+                                    <i class="bx bx-download"></i>
                                 </a>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+            {% empty %}
+            <div class="alert alert-warning">No tienes certificaciones cargadas.</div>
             {% endfor %}
 
             <div class="d-sm-flex justify-content-center align-items-center pt-3" id="deactivate">
@@ -143,8 +142,6 @@
                 </div>
             </div>
         </div>
-
-
     </div>
 </div>
 
