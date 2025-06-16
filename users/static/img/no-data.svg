@@ -1,0 +1,2 @@
+<!-- ejemplo básico de no-data.svg -->
+<svg width="120" height="120" xmlns="http://www.w3.org/2000/svg" fill="#ccc"><circle cx="60" cy="60" r="50"></circle><text x="50%" y="54%" text-anchor="middle" font-size="14" fill="#fff">Sin datos</text></svg>

@@ -302,7 +302,15 @@ class propuestas_sol(models.Model):
     t_pago = models.CharField(max_length=50)
     validez = models.IntegerField(null=True, blank=True)
     conteo = models.IntegerField()
-    
+
+    ESTADOS_PROPUESTA = [
+        ('pendiente', 'Pendiente'),
+        ('aceptada', 'Aceptada'),
+        ('rechazada', 'Rechazada'),
+    ]
+    estado = models.CharField(max_length=20, choices=ESTADOS_PROPUESTA, default='pendiente')
+
+
     def save(self, *args, **kwargs):
         ultimo = propuestas_sol.objects.filter(id=self.id, id_homologacion=self.id_homologacion ).last()
         if not ultimo:

@@ -36,14 +36,10 @@
         </a>
         <ul class="dropdown-menu menu_bar">
             <li>
-                <a role="button" href="{% url 'users:profile' %}" type="button" class="dropdown-item">
-                    Mi Cuenta
-                </a>
+                <a role="button" href="{% url 'users:profile' %}" type="button" class="dropdown-item">Mi Cuenta</a>
             </li>
             <li>
-              <a role="button" href="{% url 'users:logout' %}" type="button" class="dropdown-item">
-                  Cerrar Sesión
-              </a>
+              <a role="button" href="{% url 'users:logout' %}" type="button" class="dropdown-item">Cerrar Sesión</a>
           </li>
         </ul>
         <div class="header_img"> <img src="{% static 'img/icono.jpg'%}" alt="">
@@ -77,7 +73,7 @@
           </a> 
         </div>
       </div> 
-      <a href="#" class="nav_link"> <i class="fa-solid fa-right-from-bracket"></i> <span class="nav_name">Cerrar Sesión</span> </a>
+      <a href="{% url 'users:logout' %}" class="nav_link"> <i class="fa-solid fa-right-from-bracket"></i> <span class="nav_name">Cerrar Sesión</span> </a>
     </nav>
   </div>
 

@@ -8,12 +8,14 @@ from compras.forms import caracteristicas
 from compras.models import caracteristicas_solicitud, solicitud, comentarios
 from .models import *
 from .forms import form_propuesta
-from django.shortcuts import redirect, get_object_or_404
+from django.shortcuts import redirect, get_object_or_404, render
 from django.contrib.auth.models import User
 from django.contrib import messages
 from compras.forms import ComentarioForm
 from django.urls import reverse
 from compras.views import send_email_task
+from proveedores.models import homologacion, propuestas_sol 
+from compras.models import solicitud
 
 def agregar_comentario(request, id, parent_id=None):
     solicitud_obj = get_object_or_404(solicitud, id=id)
@@ -56,8 +58,37 @@ def agregar_comentario(request, id, parent_id=None):
 
 
 def dashboard(request):
-    template = loader.get_template('proveedores/dashboard/index.html')
-    return HttpResponse(template.render())
+    propuestas = []
+    grafico_data = {
+        'pendientes': 0,
+        'aceptadas': 0,
+        'rechazadas': 0,
+    }
+    solicitudes = []
+
+    try:
+        homol = homologacion.objects.get(usuario_hologa=request.user)
+        propuestas = propuestas_sol.objects.filter(id_homologacion=homol)
+
+        grafico_data = {
+            'pendientes': propuestas.filter(estado='pendiente').count(),
+            'aceptadas': propuestas.filter(estado='aceptada').count(),
+            'rechazadas': propuestas.filter(estado='rechazada').count(),
+        }
+
+    except homologacion.DoesNotExist:
+        pass
+
+    # Obtener solicitudes activas
+    solicitudes = solicitud.objects.filter(estado__in=['Nueva', 'Abierta'])
+
+    context = {
+        'propuestas': propuestas,
+        'grafico_data': grafico_data,
+        'solicitudes': solicitudes,
+    }
+
+    return render(request, 'proveedores/dashboard/index.html', context)
 
 
 def doc(request):
@@ -134,7 +165,18 @@ def solicitud_id(request, id):
 
 
 def tareas(request):
-    return render(request, 'proveedores/tareas/tareas.html')
+    tareas_qs = Tarea.objects.filter(usuario=request.user).order_by('-fecha_creacion')
+    
+    tareas = []
+    for t in tareas_qs:
+        tareas.append({
+            'title': t.titulo,
+            'description': t.descripcion,
+            'due_date': t.fecha_vencimiento.strftime('%Y-%m-%d'),
+            'status': 'Hecha' if t.hecha else 'Pendiente'
+        })
+
+    return render(request, 'proveedores/tareas/tareas.html', {'tareas': tareas})
 
 def propuestas(request):
     propuestas = propuestas_sol.objects.filter(id_homologacion__usuario_hologa=request.user.id)
