@@ -1,35 +1,82 @@
 {% extends "_layout_proveedores.html" %}
 {% load static %}
 {% block Title %} Mis Propuestas {% endblock Title %}
+
 {% block content %}
+<style>
+    .propuesta-card {
+        border-left: 6px solid #198754;
+        transition: all 0.3s ease;
+        border-radius: 1rem;
+        background: linear-gradient(135deg, #fdfdfd, #f8f9fa);
+    }
+
+    .propuesta-card:hover {
+        transform: scale(1.02);
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .propuesta-icon {
+        font-size: 1.2rem;
+        margin-right: 6px;
+        color: #0d6efd;
+    }
+
+    .propuesta-label {
+        font-weight: 600;
+        color: #333;
+    }
+
+    .btn-archivo {
+        font-size: 0.9rem;
+        border-radius: 0.5rem;
+        transition: 0.2s;
+    }
+
+    .btn-archivo:hover {
+        background-color: #0d6efd;
+        color: white;
+    }
+</style>
+
 <div class="container mt-4">
-    <h2 class="mb-4">Mis Propuestas</h2>
+    <h2 class="mb-4 fw-bold text-success">
+        <i class="fa-solid fa-file-signature me-2"></i> Mis Propuestas
+    </h2>
 
     {% if propuestas %}
-    <div class="row">
-        {% for propuesta in propuestas %}
-        <div class="col-md-6 mb-4">
-            <div class="card shadow-sm h-100">
-                <div class="card-body">
-                    <h5 class="card-title">Solicitud: {{ propuesta.id_solicitud.TSolicitud }}</h5>
-                    <p class="card-text">Descripción: {{ propuesta.descripcion }}</p>
-                    <p class="card-text">Valor: ${{ propuesta.valor_t }}</p>
-                    <p class="card-text">Moneda: {{ propuesta.moneda }}</p>
-                    <p class="card-text">Entrega: {{ propuesta.tiempo_entrega_min }} - {{ propuesta.tiempo_entrega_max }} días</p>
-                    <p class="card-text">Forma de pago: {{ propuesta.t_pago }}</p>
-                    <p class="card-text"><small class="text-muted">Fecha: {{ propuesta.fecha|date:"d/m/Y" }}</small></p>
-                    {% if propuesta.file %}
-                        <a href="{{ propuesta.file.url }}" target="_blank" class="btn btn-outline-primary btn-sm">Ver archivo</a>
-                    {% endif %}
+        <div class="row">
+            {% for propuesta in propuestas %}
+                <div class="col-md-6 mb-4">
+                    <div class="card propuesta-card shadow-sm h-100">
+                        <div class="card-body">
+                            <h5 class="card-title fw-semibold mb-3">
+                                📄 Solicitud: {{ propuesta.id_solicitud.TSolicitud }}
+                            </h5>
+                            <p class="card-text"><span class="propuesta-label">📝 Descripción:</span> {{ propuesta.descripcion }}</p>
+                            <p class="card-text"><span class="propuesta-label">💰 Valor:</span> ${{ propuesta.valor_t }}</p>
+                            <p class="card-text"><span class="propuesta-label">🌍 Moneda:</span> {{ propuesta.moneda }}</p>
+                            <p class="card-text"><span class="propuesta-label">⏱️ Entrega:</span> {{ propuesta.tiempo_entrega_min }} - {{ propuesta.tiempo_entrega_max }} días</p>
+                            <p class="card-text"><span class="propuesta-label">💳 Forma de pago:</span> {{ propuesta.t_pago }}</p>
+                            <p class="card-text text-muted">
+                                <i class="fa-regular fa-calendar me-1"></i>
+                                <small>Fecha: {{ propuesta.fecha|date:"d/m/Y" }}</small>
+                            </p>
+
+                            {% if propuesta.file %}
+                                <a href="{{ propuesta.file.url }}" target="_blank" class="btn btn-outline-primary btn-archivo mt-2">
+                                    <i class="fa-solid fa-paperclip me-1"></i> Ver archivo
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
                 </div>
-            </div>
+            {% endfor %}
         </div>
-        {% endfor %}
-    </div>
     {% else %}
-    <div class="alert alert-info mt-4">
-        Aún no has registrado propuestas.
-    </div>
+        <div class="alert alert-info mt-4">
+            Aún no has registrado propuestas.
+        </div>
     {% endif %}
 </div>
 {% endblock %}

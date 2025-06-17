@@ -207,7 +207,7 @@ def profile(request):
     registro = registro_formulario.objects.filter(usuario=request.user).first()
     
     if not registro:
-        messages.warning(request, 'Aún no tienes datos registrados como proveedor.')
+        messages.warning(request, 'Aun no tienes datos registrados como proveedor.')
         return redirect('users:signup') 
 
     if request.method == 'POST':

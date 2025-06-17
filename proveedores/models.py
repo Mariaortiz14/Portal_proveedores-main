@@ -184,19 +184,34 @@ class FamiliaDocumento(models.Model):
     obligatoriedad = models.CharField(max_length=4, choices=OBLIGATORIEDAD_CHOICES, default='')
         
 class certificaciones_proveedores(models.Model):
+    ESTADOS = [
+        ('pendiente', 'Pendiente'),
+        ('aceptado', 'Aceptado'),
+        ('rechazado', 'Rechazado'),
+    ]
+
     id = models.AutoField(primary_key=True)
     id_registro = models.ForeignKey(registro_formulario, on_delete=models.CASCADE)
     certificacion = models.ForeignKey(matriz_doc, on_delete=models.CASCADE)
     fecha = models.DateField(null=True)
     numero_certificacion = models.CharField(max_length=300)
     file = models.FileField(upload_to=id_certificacion_directory_path, null=True)
+    estado = models.CharField(max_length=20, choices=ESTADOS, default='pendiente')
 
 
 class documentos_requeridos(models.Model):
+    ESTADOS = [
+        ('pendiente', 'Pendiente'),
+        ('aceptado', 'Aceptado'),
+        ('rechazado', 'Rechazado'),
+    ]
+
     id = models.AutoField(primary_key=True)
     id_registro = models.ForeignKey(registro_formulario, on_delete=models.CASCADE)
     documento = models.ForeignKey(matriz_doc, on_delete=models.CASCADE)
     file = models.FileField(upload_to=id_documentos_directory_path, null=True)
+    estado = models.CharField(max_length=20, choices=ESTADOS, default='pendiente')
+
     
     
 class info_tributaria(models.Model):

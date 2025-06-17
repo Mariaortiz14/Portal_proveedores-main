@@ -1,148 +1,207 @@
 {% extends "_layout_proveedores.html" %}
 {% load static %}
+{% load check_file %}
 {% block Title %} Mi Cuenta {% endblock Title %}
 
 {% block content %}
+<style>
+    .card-doc, .card-cert {
+        transition: all 0.3s ease-in-out;
+        border-left: 5px solid #0d6efd;
+        border-radius: 1rem;
+    }
 
-<div class="container-fluid m-0" style="background-color: #ffffff">
+    .card-doc:hover, .card-cert:hover {
+        box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.08);
+        transform: translateY(-4px);
+    }
+
+    .section-header {
+        font-size: 1.4rem;
+        font-weight: bold;
+        color: #0d6efd;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .profile-wrapper {
+        background: linear-gradient(145deg, #ffffff, #f0f0f0);
+        border-radius: 1rem;
+        padding: 1.5rem;
+    }
+
+    .profile-image {
+        object-fit: cover;
+        border-radius: 50%;
+        border: 4px solid #0d6efd33;
+    }
+
+    .form-control-sm {
+        font-size: 0.85rem;
+    }
+</style>
+
+<div class="container-fluid m-0 py-3">
     <div class="row d-flex justify-content-center">
 
-        <!-- Panel izquierdo: Información del perfil -->
-        <div
-            class="wrapper bg-white mt-sm-3 m-3 shadow col-lg-6 col-md-12 col-sm-12 col-xs-12 c1 bg-white rounded h-60">
-            <h4 class="pb-4 border-bottom">Configuración De Cuenta</h4>
+        <!-- Panel izquierdo: Perfil -->
+        <div class="col-lg-6 col-md-12 mb-4">
+            <div class="profile-wrapper shadow">
+                <h4 class="section-header border-bottom pb-2">
+                    <i class="fa-solid fa-user-gear"></i> Configuración De Cuenta
+                </h4>
 
-            <form method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                <div class="d-flex align-items-start py-3 border-bottom">
-                    <img src="{% if registro.foto %}{{ registro.foto.url }}{% else %}https://images.pexels.com/photos/1037995/pexels-photo-1037995.jpeg{% endif %}"
-                        class="img" alt="Foto de perfil" width="120" height="120"
-                        style="object-fit: cover; border-radius: 50%;">
-                    <div class="ps-5" id="img-section">
-                        <b>{{ request.user.username }}</b>
-                        <p>Foto de perfil</p>
-                        {{ form.foto }}
-                    </div>
-                </div>
-
-                <div class="py-2">
-                    {% if messages %}
-                    {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-                    {% endfor %}
-                    {% endif %}
-
-                    <div class="row py-2">
-                        <div class="col-md-6">
-                            <label for="razon_social">Nombre Empresa</label>
-                            {{ form.razon_social }}
-                        </div>
-                        <div class="col-md-6 pt-md-0 pt-3">
-                            <label for="documento">NIT</label>
-                            {{ form.documento }}
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="d-flex align-items-center py-3 border-bottom">
+                        <img src="{% if registro.foto %}{{ registro.foto.url }}{% else %}https://images.pexels.com/photos/1037995/pexels-photo-1037995.jpeg{% endif %}"
+                            class="profile-image" width="120" height="120" alt="Foto de perfil">
+                        <div class="ps-4">
+                            <h5 class="mb-1 fw-bold">{{ request.user.username }}</h5>
+                            <p class="text-muted mb-1">Foto de perfil</p>
+                            {{ form.foto }}
                         </div>
                     </div>
 
-                    <div class="row py-2">
-                        <div class="col-md-6">
-                            <label for="email">Correo</label>
-                            {{ form.email }}
-                        </div>
-                        <div class="col-md-6 pt-md-0 pt-3">
-                            <label for="telefono">Teléfono</label>
-                            {{ form.telefono }}
-                        </div>
-                    </div>
+                    <div class="py-3">
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                            {% endfor %}
+                        {% endif %}
 
-                    <div class="row py-2">
-                        <div class="col-md-12">
-                            <label for="direccion">Dirección</label>
-                            {{ form.direccion }}
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label>Nombre Empresa</label>
+                                {{ form.razon_social }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label>NIT</label>
+                                {{ form.documento }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label>Correo</label>
+                                {{ form.email }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label>Teléfono</label>
+                                {{ form.telefono }}
+                            </div>
+                            <div class="col-12 mb-3">
+                                <label>Dirección</label>
+                                {{ form.direccion }}
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="py-3 pb-4 border-bottom">
-                        <button type="submit" class="btn btn-success">Guardar cambios</button>
-                        <a href="{% url 'users:profile' %}" class="btn btn-outline-dark">Cancelar</a>
-                    </div>
+                        <div class="d-flex justify-content-between align-items-center border-top pt-3">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fa-solid fa-floppy-disk me-1"></i> Guardar cambios
+                            </button>
+                            <a href="{% url 'users:profile' %}" class="btn btn-outline-dark">
+                                <i class="fa-solid fa-ban me-1"></i> Cancelar
+                            </a>
+                        </div>
 
-                    <div class="d-sm-flex align-items-center pt-3" id="deactivate">
-                        <div>
-                            <b>Eliminar cuenta</b>
-                            <p>Su cuenta será eliminada después de 30 días</p>
-                        </div>
-                        <div class="ps-2 ml-auto">
-                            <button type="button" class="btn btn-danger">Eliminar</button>
+                        <div class="mt-4 border-top pt-3 d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>Eliminar cuenta</strong>
+                                <p class="text-muted small mb-0">Su cuenta será eliminada después de 30 días.</p>
+                            </div>
+                            <button type="button" class="btn btn-outline-danger">
+                                <i class="fa-solid fa-user-xmark me-1"></i> Eliminar
+                            </button>
                         </div>
                     </div>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
 
-        <!-- Panel derecho: documentos -->
-        <div
-            class="wrapper bg-white mt-sm-3 shadow c2 m-3 col-lg-5 col-md-12 col-sm-12 col-xs-12 bg-white rounded h-60">
-            <h4 class="pb-4 border-bottom">Documentos</h4>
+        <!-- Panel derecho: Documentos y Certificaciones -->
+        <div class="col-lg-5 col-md-12 mb-4">
+            <div class="profile-wrapper shadow">
+                <h4 class="section-header border-bottom pb-2">
+                    <i class="fa-solid fa-file-lines"></i> Documentos
+                </h4>
 
-            {% for doc in documentos %}
-            <div class="d-flex align-items-start py-3 border-bottom">
-                <div class="col-md-12 col-lg-12 col-xs-12 mb-sm-0">
-                    <div class="card h-75 mb-0 mt-0 justify-content-center d-flex">
+                {% for doc in documentos %}
+                    <div class="card card-doc mb-3">
                         <div class="card-body">
-                            <div class="row">
-                                <div class="col-6 p-2 pt-3">
-                                    <p class="card-title">{{ doc.documento.nombre }}</p>
+                            <div class="row align-items-center">
+                                <div class="col-md-5"><strong>{{ doc.documento.nombre }}</strong></div>
+                                <div class="col-md-4">
+                                    {% if doc.file and doc.file|file_exists %}
+                                        <span class="text-success"><i class="fa-solid fa-circle-check me-1"></i> Cargado</span>
+                                    {% else %}
+                                        <span class="text-danger"><i class="fa-solid fa-circle-xmark me-1"></i> No disponible</span>
+                                    {% endif %}
                                 </div>
-                                <div class="col-4 p-2 pt-3">
-                                    <h6 class="text-muted">Cargado</h6>
+                                <div class="col-md-3">
+                                    {% if doc.file and doc.file|file_exists %}
+                                        <a href="{{ doc.file.url }}" class="btn btn-outline-secondary btn-sm w-100" target="_blank">
+                                            <i class="fa-solid fa-eye me-1"></i> Ver
+                                        </a>
+                                    {% else %}
+                                        <form method="post" enctype="multipart/form-data" action="{% url 'proveedor:doc' %}">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="doc_id" value="{{ doc.id }}">
+                                            <input type="file" name="file" class="form-control form-control-sm mb-2" required>
+                                            <button type="submit" class="btn btn-outline-info btn-sm w-100">Cargar</button>
+                                        </form>
+                                    {% endif %}
                                 </div>
-                                <a href="{{ doc.file.url }}" target="_blank"
-                                    class="col-2 m-2 p-2 btn btn-outline-secondary d-flex justify-content-center">
-                                    <i class="bx bx-download"></i>
-                                </a>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-            {% empty %}
-            <div class="alert alert-warning">No tienes documentos cargados.</div>
-            {% endfor %}
+                {% empty %}
+                    <div class="alert alert-warning">No tienes documentos cargados.</div>
+                {% endfor %}
 
-            <h4 class="pt-4 pb-2 border-bottom">Certificaciones</h4>
+                <h4 class="section-header border-bottom pt-4 pb-2">
+                    <i class="fa-solid fa-certificate"></i> Certificaciones
+                </h4>
 
-            {% for cert in certificaciones %}
-            <div class="d-flex align-items-start py-3 border-bottom">
-                <div class="col-md-12 col-lg-12 col-xs-12 mb-sm-0">
-                    <div class="card h-75 mb-0 mt-0 justify-content-center d-flex">
+                {% for cert in certificaciones %}
+                    <div class="card card-cert mb-3">
                         <div class="card-body">
-                            <div class="row">
-                                <div class="col-6 p-2 pt-3">
-                                    <p class="card-title">{{ cert.certificacion.nombre }}</p>
+                            <div class="row align-items-center">
+                                <div class="col-md-5"><strong>{{ cert.certificacion.nombre }}</strong></div>
+                                <div class="col-md-4">
+                                    {% if cert.file and cert.file|file_exists %}
+                                        <span class="text-success"><i class="fa-solid fa-check-double me-1"></i> Cargado</span>
+                                    {% else %}
+                                        <span class="text-danger"><i class="fa-solid fa-times-circle me-1"></i> No disponible</span>
+                                    {% endif %}
                                 </div>
-                                <div class="col-4 p-2 pt-3">
-                                    <h6 class="text-muted">Cargado</h6>
+                                <div class="col-md-3">
+                                    {% if cert.file and cert.file|file_exists %}
+                                        <a href="{{ cert.file.url }}" class="btn btn-outline-secondary btn-sm w-100" target="_blank">
+                                            <i class="fa-solid fa-eye me-1"></i> Ver
+                                        </a>
+                                    {% else %}
+                                        <form method="post" enctype="multipart/form-data" action="{% url 'proveedor:doc' %}">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="cert_id" value="{{ cert.id }}">
+                                            <input type="file" name="file" class="form-control form-control-sm mb-2" required>
+                                            <button type="submit" class="btn btn-outline-primary btn-sm w-100">Cargar</button>
+                                        </form>
+                                    {% endif %}
                                 </div>
-                                <a href="{{ cert.file.url }}" target="_blank"
-                                    class="col-2 m-2 p-2 btn btn-outline-secondary d-flex justify-content-center">
-                                    <i class="bx bx-download"></i>
-                                </a>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-            {% empty %}
-            <div class="alert alert-warning">No tienes certificaciones cargadas.</div>
-            {% endfor %}
+                {% empty %}
+                    <div class="alert alert-warning">No tienes certificaciones cargadas.</div>
+                {% endfor %}
 
-            <div class="d-sm-flex justify-content-center align-items-center pt-3" id="deactivate">
-                <div class="ps-2 ml-auto">
-                    <a href="{% url 'proveedor:doc' %}" class="btn btn-dark">Ver más</a>
+                <div class="text-center mt-3">
+                    <a href="{% url 'proveedor:doc' %}" class="btn btn-outline-secondary">
+                        <i class="fa-solid fa-arrow-right me-1"></i> Ver más
+                    </a>
                 </div>
             </div>
         </div>
+
     </div>
 </div>
-
-{% endblock content %}
+{% endblock %}

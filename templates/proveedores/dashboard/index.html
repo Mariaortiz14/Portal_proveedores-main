@@ -2,47 +2,77 @@
 {% block Title %}Inicio Proveedores{% endblock Title %}
 
 {% block content %}
+<style>
+    .donut-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 300px;
+        /* controla el espacio mínimo disponible */
+    }
+        .donut-canvas {
+        width: 100%;
+        max-width: 450px;
+        height: auto;
+        padding: 0.5rem;
+    }
+</style>
+
 <div class="pt-2">
     <div class="row d-flex flex-wrap">
-        <!-- GRÁFICO DE PROPUESTAS -->
-        <div class="col-md-4 col-sm-12">
-            <div class="card p-2 h-100 flex-fill">
-                <div class="card-body">
-                    <h3 class="card-title mb-1" style="color: #3F3F3F; font-weight: bold;">Propuestas</h3>
-                    <canvas id="donutChart"></canvas>
+        <!-- GRÁFICO DE PROPUESTAS - más ancho -->
+        <div class="col-md-5 col-sm-12 mb-4">
+            <div class="card p-3 h-100 flex-fill shadow-sm border-0" style="border-radius: 1rem;">
+                <div class="card-body d-flex flex-column align-items-center">
+                    <h3 class="card-title mb-3 text-primary fw-bold" style="font-size: 1.5rem;">
+                        <i class="fa-solid fa-chart-pie me-2"></i> Propuestas
+                    </h3>
+                    <div class="donut-container">
+                        <canvas id="donutChart" class="donut-canvas"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- LISTA DE PROPUESTAS -->
-        <div class="col-md-8 col-sm-12">
-            <div class="card p-2 h-100 flex-fill">
+
+        <!-- LISTA DE PROPUESTAS - más estrecho -->
+        <div class="col-md-7 col-sm-12">
+            <div class="card p-3 h-100 flex-fill shadow-sm border-0" style="border-radius: 1rem;">
                 <div class="card-body">
-                    <h3 class="card-title mb-1" style="color: #3F3F3F; font-weight: bold;">Propuestas</h3>
+                    <h3 class="card-title mb-3 text-primary fw-bold" style="font-size: 1.6rem;">
+                        <i class="fa-solid fa-lightbulb me-2"></i> Propuestas
+                    </h3>
                     <div class="row">
                         <div class="col-12">
                             <div class="preview-list">
                                 {% for propuesta in propuestas %}
-                                <div class="preview-item border-bottom">
-                                    <div class="preview-thumbnail">
-                                        <div class="preview-icon bg-primary">
-                                            <i class="fa-solid fa-file-signature"></i>
+                                <div class="preview-item p-3 mb-2 bg-light border-start border-4 border-primary rounded shadow-sm transition"
+                                    style="transition: 0.3s;">
+                                    <div class="d-flex align-items-start">
+                                        <div class="me-3">
+                                            <div class="preview-icon bg-gradient-primary text-white rounded-circle d-flex align-items-center justify-content-center"
+                                                style="width: 40px; height: 40px;">
+                                                <i class="fa-solid fa-file-signature"></i>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="preview-item-content d-sm-flex flex-grow">
-                                        <div class="flex-grow">
-                                            <h6 class="preview-subject">Solicitud: {{ propuesta.id_solicitud.TSolicitud
-                                                }}</h6>
-                                            <p class="text-muted mb-0">Estado: {{ propuesta.estado }}</p>
+                                        <div class="flex-grow-1">
+                                            <h6 class="mb-1 text-dark fw-semibold">
+                                                Solicitud: {{ propuesta.id_solicitud.TSolicitud }}
+                                            </h6>
+                                            <p class="mb-0 text-muted">
+                                                Estado:
+                                                <span class="badge bg-secondary">{{ propuesta.estado }}</span>
+                                            </p>
                                         </div>
-                                        <div class="mr-auto text-sm-right pt-2 pt-sm-0">
-                                            <p class="text-muted mb-0">Fecha: {{ propuesta.fecha_creacion|date:"d M Y"
-                                                }}</p>
+                                        <div class="text-end ms-3">
+                                            <small class="text-muted">📅 {{ propuesta.fecha_creacion|date:"d M
+                                                Y"}}</small>
                                         </div>
                                     </div>
                                 </div>
                                 {% empty %}
-                                <p class="text-muted">No hay propuestas registradas.</p>
+                                <p class="text-muted fst-italic">No hay propuestas registradas todavía. ¡Anímate a crear
+                                    una!</p>
                                 {% endfor %}
                             </div>
                         </div>
@@ -51,46 +81,50 @@
             </div>
         </div>
     </div>
+</div>
 
-    <!-- NUEVA SECCIÓN: SOLICITUDES FEPCO -->
-    <div class="row mt-4">
-        <div class="col-12">
-            <div class="card p-3">
-                <div class="card-body">
-                    <h3 class="card-title mb-3" style="color: #3F3F3F; font-weight: bold;">Solicitudes Fepco activas
-                    </h3>
-                    {% if solicitudes %}
-                    <div class="table-responsive">
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Identificador</th>
-                                    <th>Tipo</th>
-                                    <th>Descripción</th>
-                                    <th>Estado</th>
-                                    <th>Fecha de creación</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for solicitud in solicitudes %}
-                                <tr>
-                                    <td>{{ solicitud.identificador }}</td>
-                                    <td>{{ solicitud.TSolicitud }}</td>
-                                    <td>{{ solicitud.descripcion }}</td>
-                                    <td>{{ solicitud.estado }}</td>
-                                    <td>{{ solicitud.fecha_creacion|date:"d M Y" }}</td>
-                                </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                    {% else %}
-                    <p class="text-muted">No hay solicitudes activas en este momento.</p>
-                    {% endif %}
+<!-- NUEVA SECCIÓN: SOLICITUDES FEPCO -->
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card p-3 shadow-sm border-0" style="border-radius: 1rem;">
+            <div class="card-body">
+                <h3 class="card-title mb-3 text-dark fw-bold">
+                    <i class="fa-solid fa-list-check me-2 text-success"></i> Solicitudes Fepco activas
+                </h3>
+                {% if solicitudes %}
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Identificador</th>
+                                <th>Tipo</th>
+                                <th>Descripción</th>
+                                <th>Estado</th>
+                                <th>Fecha de creación</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for solicitud in solicitudes %}
+                            <tr>
+                                <td>{{ solicitud.identificador }}</td>
+                                <td>{{ solicitud.TSolicitud }}</td>
+                                <td>{{ solicitud.descripcion }}</td>
+                                <td>
+                                    <span class="badge bg-info text-dark">{{ solicitud.estado }}</span>
+                                </td>
+                                <td>{{ solicitud.fecha_creacion|date:"d M Y" }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
                 </div>
+                {% else %}
+                <p class="text-muted fst-italic">No hay solicitudes activas en este momento.</p>
+                {% endif %}
             </div>
         </div>
     </div>
+</div>
 </div>
 {% endblock %}
 
@@ -102,21 +136,37 @@
         var rechazadas = parseInt("{{ grafico_data.rechazadas|default:0 }}");
         var pendientes = parseInt("{{ grafico_data.pendientes|default:0 }}");
 
-        var donutChart = new Chart(ctx, {
+        new Chart(ctx, {
             type: 'doughnut',
             data: {
                 labels: ['Aceptadas', 'Rechazadas', 'Pendientes'],
                 datasets: [{
                     data: [aceptadas, rechazadas, pendientes],
-                    backgroundColor: ['#7CFC00', '#FF0000', '#FFD700'],
-                    hoverBackgroundColor: ['#228B22', '#8B0000', '#FFC300']
+                    backgroundColor: ['#4CAF50', '#F44336', '#FFC107'],
+                    hoverBackgroundColor: ['#388E3C', '#D32F2F', '#FFB300'],
+                    borderWidth: 2
                 }]
             },
             options: {
                 responsive: true,
+                cutout: '65%',
                 plugins: {
                     legend: {
-                        position: 'bottom'
+                        position: 'bottom',
+                        labels: {
+                            color: '#333',
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function (context) {
+                                return `${context.label}: ${context.parsed}`;
+                            }
+                        }
                     }
                 }
             }

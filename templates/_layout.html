@@ -37,6 +37,17 @@
       width: 100%;
       background: rgba(255, 255, 255, 0); /* Cambia esto a la transparencia que desees */
     }
+    .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.table-hover tbody tr:hover {
+    background-color: #f1f1f1;
+    transition: background-color 0.2s ease;
+}
+
   </style>
     
   {% endblock style %}

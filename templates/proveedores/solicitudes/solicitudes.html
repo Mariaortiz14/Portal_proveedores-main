@@ -4,21 +4,89 @@
 {% block Title %} Solicitudes FEPCO {% endblock Title %}
 
 {% block content %}
+<style>
+    .solicitud-card {
+        border-left: 6px solid #0d6efd;
+        transition: all 0.3s ease;
+        border-radius: 1rem;
+        background: linear-gradient(135deg, #f8f9fa, #ffffff);
+    }
+
+    .solicitud-card:hover {
+        transform: scale(1.02);
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .solicitud-icon {
+        font-size: 2rem;
+        margin-right: 10px;
+    }
+
+    .estado-badge {
+        font-weight: bold;
+        padding: 0.35em 0.7em;
+        border-radius: 0.5rem;
+    }
+
+    .estado-Aceptada {
+        background-color: #d4edda;
+        color: #155724;
+    }
+
+    .estado-Pendiente {
+        background-color: #fff3cd;
+        color: #856404;
+    }
+
+    .estado-Rechazada {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+</style>
+
 <div class="container mt-4">
-    <h2 class="mb-4">Solicitudes FEPCO</h2>
+    <h2 class="mb-4 fw-bold text-primary">
+        <i class="fa-solid fa-list-check me-2"></i>Solicitudes FEPCO
+    </h2>
 
     {% if solicitudes %}
         <div class="row">
             {% for solicitud in solicitudes %}
                 <div class="col-md-6 mb-4">
-                    <div class="card shadow-sm h-100">
+                    <div class="card solicitud-card shadow-sm h-100">
                         <div class="card-body">
-                            <h5 class="card-title">{{ solicitud.TSolicitud }}</h5>
-                            <p class="card-text">{{ solicitud.descripcion }}</p>
+                            <div class="d-flex align-items-start mb-2">
+                                <div class="solicitud-icon text-primary">
+                                    {% if solicitud.estado == "Aceptada" %}
+                                        ✅
+                                    {% elif solicitud.estado == "Pendiente" %}
+                                        ⏳
+                                    {% elif solicitud.estado == "Rechazada" %}
+                                        ❌
+                                    {% else %}
+                                        📦
+                                    {% endif %}
+                                </div>
+                                <div>
+                                    <h5 class="card-title fw-semibold text-dark">{{ solicitud.TSolicitud }}</h5>
+                                    <p class="card-text text-muted">{{ solicitud.descripcion }}</p>
+                                </div>
+                            </div>
                             <p class="card-text"><strong>Cantidad:</strong> {{ solicitud.cantidad }}</p>
-                            <p class="card-text"><strong>Estado:</strong> {{ solicitud.estado }}</p>
-                            <p class="card-text"><small class="text-muted">Fecha de creación: {{ solicitud.fecha_creacion }}</small></p>
-                            <a href="{% url 'proveedor:solicitud_id' solicitud.identificador %}" class="btn btn-primary mt-2">Detalles</a>
+                            <p class="card-text">
+                                <strong>Estado:</strong>
+                                <span class="estado-badge estado-{{ solicitud.estado }}">
+                                    {{ solicitud.estado }}
+                                </span>
+                            </p>
+                            <p class="card-text">
+                                <small class="text-muted">
+                                    Fecha de creación: {{ solicitud.fecha_creacion|date:"d M Y" }}
+                                </small>
+                            </p>
+                            <a href="{% url 'proveedor:solicitud_id' solicitud.identificador %}" class="btn btn-primary mt-2">
+                                <i class="fa-solid fa-eye me-1"></i> Ver detalles
+                            </a>
                         </div>
                     </div>
                 </div>

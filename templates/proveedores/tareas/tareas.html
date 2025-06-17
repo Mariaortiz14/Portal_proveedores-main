@@ -1,31 +1,85 @@
 {% extends '_layout_proveedores.html' %}
 {% block Title %}Lista De Tareas{% endblock Title %}
+
 {% block content %}
-<div class="row m-0  ps-lg-0 p-md-0 p-sm-0 p-xs-0 d-flex justify-content-center  ">
-    <div class="jumbotron">
-        <h2 class=" pt-3 ps-5 ">Lista De Tareas</h2>
-        <p class="ps-5 lead">Aquí encontrarás la lista de tareas asignadas.</p>
-    </div>
-    <div class="col-md-11 col-sm-12 col-xs-12 shadow bg-white rounded" style="background-color: hsl(0, 0%, 0%)">
-        <div class="row p-3 gx-3 gy-3 ">
-            <h3 class="mb-4">Tareas Asignadas</h3>
+<style>
+    .tarea-card {
+        border-left: 5px solid #0d6efd;
+        border-radius: 1rem;
+        transition: 0.3s ease;
+        background: linear-gradient(to right, #ffffff, #f8f9fa);
+    }
+
+    .tarea-card:hover {
+        transform: scale(1.015);
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.07);
+    }
+
+    .badge-pendiente {
+        background-color: #ffc107;
+        color: #212529;
+    }
+
+    .badge-completado {
+        background-color: #28a745;
+    }
+
+    .badge-en_progreso {
+        background-color: #0dcaf0;
+        color: #000;
+    }
+
+    .btn-accion {
+        margin-left: 0.4rem;
+        border-radius: 0.5rem;
+        transition: 0.2s ease-in-out;
+    }
+
+    .btn-accion:hover {
+        transform: scale(1.05);
+    }
+</style>
+
+<div class="row m-0 d-flex justify-content-center">
+    <div class="col-lg-10 col-md-11 col-sm-12">
+        <div class="jumbotron bg-transparent px-3 pt-4 pb-1">
+            <h2 class="fw-bold text-primary">
+                <i class="fa-solid fa-list-check me-2"></i>Lista De Tareas
+            </h2>
+            <p class="lead text-muted">Aquí encontrarás la lista de tareas asignadas.</p>
+        </div>
+
+        <div class="shadow bg-white rounded p-4">
+            <h4 class="mb-4"><i class="fa-solid fa-clipboard-list me-2 text-success"></i>Tareas Asignadas</h4>
             <ul class="list-group">
-                
                 {% for task in tareas %}
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <div>
-                            <h5>{{ task.title }}</h5>
+                    <li class="list-group-item tarea-card d-flex justify-content-between align-items-center flex-wrap mb-3">
+                        <div class="mb-2 mb-md-0" style="flex: 1 1 auto;">
+                            <h5 class="fw-semibold">{{ task.title }}</h5>
                             <p class="mb-1">{{ task.description }}</p>
-                            <small class="text-muted">Vence el: {{ task.due_date }}</small>
+                            <small class="text-muted"><i class="fa-regular fa-clock me-1"></i>Vence el: {{ task.due_date }}</small>
                         </div>
-                        <div>
-                            <span class="badge badge-{{ task.status|lower }} mr-2">{{ task.status }}</span>
-                            <button class="btn btn-sm btn-warning">Editar</button>
-                            <button class="btn btn-sm btn-danger">Eliminar</button>
+                        <div class="text-end" style="min-width: 180px;">
+                            <span class="badge 
+                                {% if task.status|lower == 'pendiente' %}badge-pendiente
+                                {% elif task.status|lower == 'completado' %}badge-completado
+                                {% elif task.status|lower == 'en progreso' %}badge-en_progreso
+                                {% else %}bg-secondary
+                                {% endif %}
+                                px-3 py-2 me-2">
+                                {{ task.status }}
+                            </span>
+                            <button class="btn btn-outline-warning btn-sm btn-accion">
+                                <i class="fa-solid fa-pen-to-square me-1"></i>Editar
+                            </button>
+                            <button class="btn btn-outline-danger btn-sm btn-accion">
+                                <i class="fa-solid fa-trash me-1"></i>Eliminar
+                            </button>
                         </div>
                     </li>
                 {% empty %}
-                    <li class="list-group-item">
+                    <li class="list-group-item text-center text-muted py-4">
+                        <i class="fa-regular fa-face-smile-beam fa-lg me-2 text-primary"></i>
                         No tienes tareas asignadas en este momento.
                     </li>
                 {% endfor %}
@@ -33,5 +87,4 @@
         </div>
     </div>
 </div>
-
 {% endblock %}

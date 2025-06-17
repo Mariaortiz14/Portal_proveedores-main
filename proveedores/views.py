@@ -14,7 +14,7 @@ from django.contrib import messages
 from compras.forms import ComentarioForm
 from django.urls import reverse
 from compras.views import send_email_task
-from proveedores.models import homologacion, propuestas_sol 
+from proveedores.models import homologacion, propuestas_sol, documentos_requeridos, certificaciones_proveedores, registro_formulario
 from compras.models import solicitud
 
 def agregar_comentario(request, id, parent_id=None):
@@ -92,17 +92,49 @@ def dashboard(request):
 
 
 def doc(request):
-    template = loader.get_template('proveedores/doc/documentos.html')
-    media_path = os.path.join(settings.BASE_DIR, 'media')
+    if request.method == 'POST':
+        file = request.FILES.get('file')
 
-    # Obtener una lista de archivos PDF en el directorio de medios
-    pdf_files = [f for f in os.listdir(media_path) if f.endswith('.pdf')]
+        if 'doc_id' in request.POST:
+            doc_id = request.POST.get('doc_id')
+            try:
+                documento = documentos_requeridos.objects.get(id=doc_id)
+                documento.file = file
+                documento.estado = 'pendiente'  # Reiniciar estado tras nueva carga
+                documento.save()
+                messages.success(request, 'Documento cargado correctamente.')
+            except documentos_requeridos.DoesNotExist:
+                messages.error(request, 'El documento no existe.')
+        
+        elif 'cert_id' in request.POST:
+            cert_id = request.POST.get('cert_id')
+            try:
+                cert = certificaciones_proveedores.objects.get(id=cert_id)
+                cert.file = file
+                cert.estado = 'pendiente'  # Reiniciar estado tras nueva carga
+                cert.save()
+                messages.success(request, 'Certificación cargada correctamente.')
+            except certificaciones_proveedores.DoesNotExist:
+                messages.error(request, 'La certificación no existe.')
 
-    # Renderizar la plantilla con la lista de archivos PDF
-    file_names = [os.path.splitext(f)[0] for f in pdf_files]
-    pdf = files_and_names = list(zip(pdf_files, file_names))
+        return redirect('users:profile')
 
-    return HttpResponse(render(request, "proveedores/doc/documentos.html", {"pdf": pdf}))
+    # Si es GET, mostrar todos los documentos del proveedor clasificados por estado
+    registro = registro_formulario.objects.filter(usuario=request.user).first()
+    documentos = documentos_requeridos.objects.filter(id_registro=registro)
+    certificaciones = certificaciones_proveedores.objects.filter(id_registro=registro)
+
+    # Agrupar por estado
+    estados = ['pendiente', 'aceptado', 'rechazado']
+    documentos_por_estado = {estado: documentos.filter(estado=estado) for estado in estados}
+    certificaciones_por_estado = {estado: certificaciones.filter(estado=estado) for estado in estados}
+
+    context = {
+        'documentos_por_estado': documentos_por_estado,
+        'certificaciones_por_estado': certificaciones_por_estado,
+    }
+
+    return render(request, "proveedores/doc/documentos.html", context)
 
 
 def listar_archivos(request):
