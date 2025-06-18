@@ -15,10 +15,11 @@ from compras.forms import ComentarioForm
 from django.urls import reverse
 from compras.views import send_email_task
 from proveedores.models import homologacion, propuestas_sol, documentos_requeridos, certificaciones_proveedores, registro_formulario
-from compras.models import solicitud
+from compras.models import solicitud as Solicitud
+
 
 def agregar_comentario(request, id, parent_id=None):
-    solicitud_obj = get_object_or_404(solicitud, id=id)
+    solicitud_obj = Solicitud.objects.get(id=id)
     parent_comentario = None
     if parent_id:
         parent_comentario = get_object_or_404(comentarios, id=parent_id)
@@ -49,7 +50,7 @@ def agregar_comentario(request, id, parent_id=None):
                     'solicitud_id': solicitud_obj.id,
                 }
                 send_email_task(f'Comentario en solicitud {id}', correos, 'compras/correo/email_comentario.html', context)
-            return redirect('proveedor:solicitud_id', id=id)
+            return redirect('proveedor:solicitud_id', identificador=solicitud_obj.identificador)
         else:
             print(form.errors)
             return redirect('proveedor:solicitud_id', id=id)
@@ -67,7 +68,7 @@ def dashboard(request):
     solicitudes = []
 
     try:
-        homol = homologacion.objects.get(usuario_hologa=request.user)
+        homol = homologacion.objects.filter(usuario_hologa=request.user).first()
         propuestas = propuestas_sol.objects.filter(id_homologacion=homol)
 
         grafico_data = {
@@ -175,26 +176,49 @@ def solicitudes(request):
         solicitudes = []
     return render(request, 'proveedores/solicitudes/solicitudes.html', {'solicitudes':solicitudes})
 
-def solicitud_id(request, id):
-    solicitud_ = solicitud.objects.get(id=id)
+def solicitud_id(request, identificador):
+    solicitud_ = solicitud.objects.get(identificador=identificador)
     caracteristicas = caracteristicas_solicitud.objects.filter(solicitud=solicitud_)
     form = form_propuesta()
     form_comentario = ComentarioForm()
     comentarios_usuario = comentarios.objects.filter(solicitud=solicitud_, usuario=request.user).exclude(parent__isnull=False)  
+
     if request.method == 'POST':
         form = form_propuesta(request.POST, request.FILES)
-        id_homolo = homologacion.objects.filter(usuario_hologa=request.user.id).first()
-        if form.is_valid():
-            propuestas_sol.objects.create(
-                id_homologacion = id_homolo,
-                id_solicitud = solicitud_,
-                **form.cleaned_data  
-            )
-            return redirect('proveedor:solicitud_id', id=id)
-        else:
-            print(form.errors)
-    return render(request, 'proveedores/solicitudes/solicitud_id.html', {'solicitud':solicitud_, 'caracteristicas':caracteristicas, 'form':form, 'form_comentario':form_comentario, 'comentarios_usuario':comentarios_usuario})
+        id_homolo = homologacion.objects.filter(
+                     usuario_hologa=request.user,
+                     familia=solicitud_.familia
+                        ).first()
 
+
+        # 🚨 Validación: asegurarse que el usuario tenga homologación
+        if not id_homolo:
+            messages.error(request, 'No tienes una homologación válida para esta solicitud.')
+            return redirect('proveedor:solicitud_id', identificador=identificador)
+
+        if form.is_valid():
+            print("Homologación usada:", id_homolo)
+            print("Solicitud asociada:", solicitud_)
+            print("Datos del formulario:", form.cleaned_data)
+
+            propuestas_sol.objects.create(
+                id_homologacion=id_homolo,
+                id_solicitud=solicitud_,
+                **form.cleaned_data
+            )
+            messages.success(request, 'Propuesta enviada con éxito.')   
+            return redirect('proveedor:solicitud_id', identificador=solicitud_.identificador)
+        else:
+            messages.error(request, 'Ocurrió un error al enviar la propuesta. Verifica los campos.')
+            print(form.errors)
+
+    return render(request, 'proveedores/solicitudes/solicitud_id.html', {
+        'solicitud': solicitud_,
+        'caracteristicas': caracteristicas,
+        'form': form,
+        'form_comentario': form_comentario,
+        'Comentarios_usuario': comentarios_usuario
+    })
 
 def tareas(request):
     tareas_qs = Tarea.objects.filter(usuario=request.user).order_by('-fecha_creacion')
@@ -211,5 +235,13 @@ def tareas(request):
     return render(request, 'proveedores/tareas/tareas.html', {'tareas': tareas})
 
 def propuestas(request):
-    propuestas = propuestas_sol.objects.filter(id_homologacion__usuario_hologa=request.user.id)
-    return render(request, 'proveedores/propuestas/propuestas.html', {'propuestas':propuestas})
+    from proveedores.models import propuestas_sol, homologacion
+
+    homologaciones = homologacion.objects.filter(usuario_hologa=request.user)
+    propuestas = propuestas_sol.objects.filter(id_homologacion__in=homologaciones).order_by('-fecha')
+
+    print("Propuestas encontradas:", propuestas)
+
+    return render(request, 'proveedores/propuestas/propuestas.html', {
+        'propuestas': propuestas
+    })

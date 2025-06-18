@@ -4,186 +4,272 @@
     {{solicitud.identificador}}
 {% endblock Title %}
 
-
 {% block content %}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-<div class="row m-0  ps-lg-0 p-md-0 p-sm-0 p-xs-0 d-flex justify-content-center  ">
-    <div class="justify-content-between d-flex  ">
+<style>
+    h2, h5 {
+        font-weight: 700;
+    }
+
+    .user-photo {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-right: 12px;
+        border: 2px solid #0d6efd;
+    }
+
+    .card {
+        border: none;
+        border-radius: 1rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        transition: 0.3s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    }
+
+    .card-title i {
+        color: #0d6efd;
+        margin-right: 8px;
+    }
+
+    .card-header {
+        background: linear-gradient(90deg, #e9f0ff, #f4f9ff);
+        border-top-left-radius: 1rem;
+        border-top-right-radius: 1rem;
+    }
+
+    .card-body p b, .list-group-item b {
+        color: #0d6efd;
+    }
+
+    .btn-dark {
+        background: linear-gradient(90deg, #0d6efd, #0a58ca);
+        border: none;
+        border-radius: 50px;
+        padding: 0.5rem 1.5rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+
+    .btn-dark:hover {
+        background: #084298;
+    }
+
+    .btn-success {
+        border-radius: 50px;
+        font-weight: 600;
+        transition: background 0.2s ease;
+    }
+
+    .list-group-item {
+        border-left: 5px solid #0d6efd;
+        background-color: #f8f9fa;
+        border-radius: 0.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .comentario-box {
+        border-left: 3px solid #0d6efd;
+        padding-left: 15px;
+        margin-top: 10px;
+        margin-bottom: 15px;
+    }
+
+    .comentario-box:hover {
+        background-color: #f2f7ff;
+        border-left-color: #084298;
+    }
+
+    .respuesta {
+        margin-left: 40px;
+        border-left: 2px dashed #6c757d;
+        padding-left: 15px;
+    }
+
+    .modal-content {
+        border-radius: 1.5rem;
+    }
+
+    textarea, input[type="text"], input[type="number"], select {
+        border-radius: 0.75rem !important;
+    }
+
+    input[type="file"] {
+        border: 2px dashed #0d6efd;
+        background-color: #f8fbff;
+        padding: 0.75rem;
+        border-radius: 0.5rem;
+        width: 100%;
+    }
+
+    input[type="file"]:hover {
+        background-color: #e7f1ff;
+    }
+</style>
+<div class="row m-0 ps-lg-0 p-md-0 p-sm-0 p-xs-0 d-flex justify-content-center">
+    <div class="justify-content-between d-flex">
         <h2 class="p-3 ps-md-5">{{solicitud.TSolicitud|lower}}</h2>
     </div>
-    <div class="col-md-11 col-sm-12 col-xs-12  bg-white rounded mb-3">
-        <div class="row color-row">            
-            <div class="card m-0 mb-3 p-0 border shadow col-md-12 h-75 col-lg-12 col-sm-12 col-xs-12" >
-                <div class="card-header">
-                    <h5 class="card-title text-center text-uppercase text-secondary">Información Solicitud</h5>
-                </div>
-                <div class="card-body">
-                    <div class="col-12">
-                        <div class="row">
-                            <div class="col-lg-6 col-sm-12 col-md-6 mb-3">
-                                <p class="card-text"><b>Numero de solicitud:</b> {{solicitud.identificador}}</p>
-                                <p class="card-text"><b>Fecha de creación:</b> {{solicitud.fecha_creacion}}</p>
-                                <p class="card-text"><b>Fecha de finalización:</b> {{solicitud.fecha_fin}}</p>
-                                <p class="card-text"><b>Estado:</b> {{solicitud.estado}}</p>
-                                {%for c in caracteristicas%}
-                                    <p class="card-text"><i class="fa-solid fa-circle fa-2xs pe-2"></i>{{c.caracteristica}}</p>
-                                {%endfor%}
-                            </div>
-                            <div class="col-lg-6 col-sm-12 col-md-6 mb-3">
-                                <p class="card-text"><b>Descripción:</b> {{solicitud.descripcion|lower}}</p>
-                                <p class="card-text"><b>Observaciones:</b> {{solicitud.observaciones}}</p>
-                            </div>
-                            <div class="col-12 d-flex justify-content-center">
-                                {% if solicitud.estado == 'Nueva' %}
-                                <button type="button" class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-                                    Presentar propuesta
-                                </button>
-                                {% endif %}
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    <div class="col-md-11 col-sm-12 col-xs-12 bg-white rounded-4 shadow-sm mb-4 p-3 animate__animated animate__fadeIn">
+        <div class="card mb-4">
+            <div class="card-header bg-light">
+                <h5 class="card-title text-center text-uppercase text-primary fw-bold">Información de la Solicitud</h5>
             </div>
-            <div class="card border shadow mt-2 col-md-12 col-lg-12 col-sm-12 col-xs-12">
-                <div class="card-body">
-                    <div class="col-12">
-                        <h5 class="card-title text-center text-uppercase text-secondary">Comentarios</h5>
-                        <div class="mb-3">
-                            <form method="post" action="{%url 'proveedor:agregar_comentario' id=solicitud.id %}">
-                                {% csrf_token %}
-                                {{ form_comentario.as_p }}
-                                
-                                <div class="d-flex justify-content-end mt-2">
-                                    <button type="submit"  class="btn btn-success">Enviar</button>
-                                </div>
-                            </form>
-                            
-                        </div>
-                        <div class="list-group">
-                            {% for comentario in solicitud.comentarios_set.all %}
-                            <div class="list-group-item list-group-item-action flex-column align-items-start">
-                                <div class="d-flex w-100 justify-content-between">
-                                    <div class="d-flex align-items-center">
-                                        <img src="{%static 'img/perfil.png'%}" alt="{{ comentario.usuario.username }}" class="user-photo">
-                                        <h5 class="mb-1 ml-3">{{ comentario.usuario.username }}</h5>
-                                    </div>
-                                    <small>{{ comentario.fecha }}</small>
-                                </div>
-                                <p class="mb-1">{{ comentario.comentario }}</p>
-                                <a href="#" class="btn btn-link" onclick="document.getElementById('respuesta-form-{{ comentario.id }}').style.display='block'">Responder</a>
-                                <div id="respuesta-form-{{ comentario.id }}" style="display:none;">
-                                    <form method="post" action="{% url 'proveedor:agregar_comentario' id=solicitud.id parent_id=comentario.id  %}">
-                                        {% csrf_token %}
-                                        {{ form_comentario.as_p }}                              
-                                        <div class="d-flex justify-content-end mt-2">
-                                            <button type="submit"  class="btn btn-success">Enviar</button>
-                                        </div>
-                                    </form>
-                                </div>
-                                <div class="list-group mt-3 ml-4">
-                                {% for reply in comentario.replies.all %}
-                                    <div class="list-group-item list-group-item-action flex-column align-items-start">
-                                        <div class="d-flex w-100 justify-content-between">
-                                            <div class="d-flex align-items-center">
-                                                <img src="{%static 'img/perfil.png'%}" alt="{{ reply.usuario.username }}" class="user-photo">
-                                                <h5 class="mb-1 ml-3">{{ reply.usuario.username }}</h5>
-                                            </div>
-                                            <small>{{ reply.fecha }}</small>
-                                        </div>
-                                        <p class="mb-1">{{ reply.comentario }}</p>
-                                    </div>
-                                {% endfor %}
-                                </div>
-                            </div>
-                            {% endfor %}
-                        </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-6 mb-3">
+                        <p class="card-text"><b>Numero de solicitud:</b> {{solicitud.identificador}}</p>
+                        <p class="card-text"><b>Fecha de creación:</b> {{solicitud.fecha_creacion}}</p>
+                        <p class="card-text"><b>Fecha de finalización:</b> {{solicitud.fecha_fin}}</p>
+                        <p class="card-text"><b>Estado:</b> {{solicitud.estado}}</p>
+                        {% for c in caracteristicas %}
+                            <p class="card-text"><i class="fa-solid fa-circle fa-2xs pe-2"></i>{{c.caracteristica}}</p>
+                        {% endfor %}
+                    </div>
+                    <div class="col-lg-6 mb-3">
+                        <p class="card-text"><b>Descripción:</b> {{solicitud.descripcion|lower}}</p>
+                        <p class="card-text"><b>Observaciones:</b> {{solicitud.observaciones}}</p>
+                    </div>
+                    <div class="col-12 d-flex justify-content-center">
+                        {% if solicitud.estado == 'Nueva' %}
+                        <button type="button" class="btn btn-dark btn-lg" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                            Presentar propuesta
+                        </button>
+                        {% endif %}
                     </div>
                 </div>
             </div>
         </div>
+        <div class="card border shadow">
+            <div class="card-body">
+                <h5 class="card-title text-center text-uppercase text-secondary">Comentarios</h5>
+                <div class="mb-3">
+                    <form method="post" action="{% url 'proveedor:agregar_comentario' id=solicitud.id %}">
+                        {% csrf_token %}
+                        {{ form_comentario.as_p }}
+                        <div class="d-flex justify-content-end mt-2">
+                            <button type="submit" class="btn btn-success">Enviar</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="list-group">
+                    {% for comentario in solicitud.comentarios_set.all %}
+                    <div class="list-group-item flex-column align-items-start">
+                        <div class="d-flex w-100 justify-content-between">
+                            <div class="d-flex align-items-center">
+                                <img src="{% static 'img/perfil.png' %}" alt="{{ comentario.usuario.username }}" class="user-photo">
+                                <h5 class="mb-1">{{ comentario.usuario.username }}</h5>
+                            </div>
+                            <small>{{ comentario.fecha }}</small>
+                        </div>
+                        <p class="mb-1">{{ comentario.comentario }}</p>
+                        <a href="#" class="btn btn-link" onclick="document.getElementById('respuesta-form-{{ comentario.id }}').style.display='block'">Responder</a>
+                        <div id="respuesta-form-{{ comentario.id }}" style="display:none;">
+                            <form method="post" action="{% url 'proveedor:agregar_comentario' id=solicitud.id parent_id=comentario.id %}">
+                                {% csrf_token %}
+                                {{ form_comentario.as_p }}
+                                <div class="d-flex justify-content-end mt-2">
+                                    <button type="submit" class="btn btn-success">Enviar</button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="list-group mt-3 ms-4">
+                            {% for reply in comentario.replies.all %}
+                            <div class="list-group-item flex-column align-items-start">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <div class="d-flex align-items-center">
+                                        <img src="{% static 'img/perfil.png' %}" alt="{{ reply.usuario.username }}" class="user-photo">
+                                        <h5 class="mb-1">{{ reply.usuario.username }}</h5>
+                                    </div>
+                                    <small>{{ reply.fecha }}</small>
+                                </div>
+                                <p class="mb-1">{{ reply.comentario }}</p>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
     </div>
-    <!-- Sección de Comentarios -->
 </div>
-
 {% endblock content %}
 
 {% block modal %}
-<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down modal-dialog-scrollable">
-        <form class="modal-content" method="post" enctype="multipart/form-data" action="{%url 'proveedor:solicitud_id' id=solicitud.id%}">
+        <form class="modal-content" method="post" enctype="multipart/form-data" action="{% url 'proveedor:solicitud_id' identificador=solicitud.identificador %}">
             {% csrf_token %}
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="staticBackdropLabel">Presentar propuesta</h1>
+                <h1 class="modal-title fs-5">Presentar propuesta</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div class="mb-3">
-                    <label for="{{form.descripcion.id_for_label}}" class="form-label">Descripción de la propuesta*:</label>
+                    <label class="form-label">Descripción de la propuesta*:</label>
                     {{form.descripcion}}
                 </div>
                 <div class="mb-3">
-                    <label for="{{form.valor_t.id_for_label}}" class="form-label">Valor total de la propuesta (sin comas ni puntos)*:</label>
+                    <label class="form-label">Valor total (sin comas ni puntos)*:</label>
                     {{form.valor_t}}
                 </div>
                 <div class="mb-3 row">
-                    <label for="{{form.tiempo_entrega_min.id_for_label}}" class="form-label">Tiempo de entrega (Días) Ingrese el tiempo mínimo. El tiempo máximo es opcional. Deje en blanco si no aplica:</label>
-                    <div class="col-5">
-                        {{form.tiempo_entrega_min}}
-                    </div>
-                    <div class="col-2 d-flex justify-content-center align-items-center">
-                        <p class="m-0">A</p>
-                    </div>
-
-                    <div class="col-5">
-                        {{form.tiempo_entrega_max}}
-                    </div>
+                    <label class="form-label">Tiempo de entrega (Días):</label>
+                    <div class="col-5">{{form.tiempo_entrega_min}}</div>
+                    <div class="col-2 d-flex justify-content-center align-items-center"><p class="m-0">A</p></div>
+                    <div class="col-5">{{form.tiempo_entrega_max}}</div>
                 </div>
                 <div class="mb-3">
-                    <label for="{{form.moneda.id_for_label}}" class="form-label">Modena de negociación*:</label>
+                    <label class="form-label">Moneda de negociación*:</label>
                     {{form.moneda}}
                 </div>
                 <div class="mb-3">
-                    <label for="{{form.garantia.id_for_label}}" class="form-label">Garantía*:</label>
+                    <label class="form-label">Garantía*:</label>
                     {{form.garantia}}
                 </div>
                 <div class="mb-3">
-                    <label for="{{form.t_pago.id_for_label}}" class="form-label">Términos de pago*:</label>
+                    <label class="form-label">Términos de pago*:</label>
                     {{form.t_pago}}
                 </div>
                 <div class="mb-3">
-                    <label for="{{form.validez.id_for_label}}" class="form-label">Validez de la propuesta (Dias):</label>
+                    <label class="form-label">Validez (Días):</label>
                     {{form.validez}}
                 </div>
-                <div class="mb-3">    
-                    <label for="{{form.file.id_for_label}}" class="form-label">Adjuntar archivo*:</label>
+                <div class="mb-3">
+                    <label class="form-label">Adjuntar archivo*:</label>
                     {{form.file}}
-                    <div class="form-text">Solo se permiten archivos en formato PDF.</div>
+                    <div class="form-text">Solo se permiten archivos PDF, máximo 1MB.</div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                 <button type="submit" class="btn btn-success">Enviar</button>
             </div>
-        <form>
+        </form>
     </div>
 </div>
 
-<div id="myModal" class=" modal fade " tabindex="-1">
-    <div class="modal-dialog modal-dialog-centered modal-sm ">
-        <div class="modal-content bg-danger">
+<div id="myModal" class="modal fade" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content bg-danger text-white">
             <div class="modal-header">
-                <h5 class="modal-title text-white" id="modal-title ">Modal Title</h5>
+                <h5 class="modal-title" id="modal-title">Modal Title</h5>
             </div>
-            <div class="modal-body text-white" id="modal-msg">
+            <div class="modal-body" id="modal-msg">
                 <p>...</p>
             </div>
         </div>
     </div>
 </div>
-
-
 {% endblock modal %}
-
 
 {% block script %}
 <script>
@@ -191,26 +277,21 @@
         $('input[type="file"]').on('change', function(){
             var ext = $( this ).val().split('.').pop();
             if ($( this ).val() != '') {
-            if(ext == "pdf"){
-                if($(this)[0].files[0].size > 1048576){
-                    console.log("El documento excede el tamaño máximo");
+                if(ext === "pdf"){
+                    if($(this)[0].files[0].size > 1048576){
+                        $('#modal-title').text('¡Precaución!');
+                        $('#modal-msg').html("Se solicita un archivo no mayor a 1MB. Por favor verifica.");
+                        $(this).val('');
+                        $("#myModal").modal('show');
+                    }
+                } else {
                     $('#modal-title').text('¡Precaución!');
-                    $('#modal-msg').html("Se solicita un archivo no mayor a 1MB. Por favor verifica.");
-                    $("#myModal").modal('show');         
-                $(this).val('');
-                }else{
-
+                    $('#modal-msg').html("Solo se aceptan archivos PDF.");
+                    $(this).val('');
+                    $("#myModal").modal('show');
                 }
-            }else{
-                $('#modal-title').text('¡Precaución!');
-                $('#modal-msg').html("Solo se aceptan pdf .");
-                $("#myModal").modal('show');   
-    
-                $(this).val('');
-            }
             }
         });
     });
-
 </script>
-{% endblock script %}       
+{% endblock script %}

@@ -6,28 +6,36 @@ from django.contrib.auth.models import User
 
 class solicitud(models.Model):
     id = models.AutoField(primary_key=True)
-    identificador = models.CharField(max_length=12)
-    TSolicitud= models.CharField(max_length=50)
+    identificador = models.CharField(max_length=12, unique=True)
+    TSolicitud = models.CharField(max_length=50)
     descripcion = models.CharField(max_length=400)
     cantidad = models.IntegerField()
-    familia = models.ForeignKey('proveedores.familias',  on_delete=models.CASCADE)
-    estado= models.CharField(max_length=50)
+    familia = models.ForeignKey('proveedores.familias', on_delete=models.CASCADE)
+    estado = models.CharField(max_length=50)
     fecha_creacion = models.DateField(auto_now_add=True)
     fecha_final = models.DateField(null=True)
     observaciones = models.CharField(max_length=400)
-    
+
     def save(self, *args, **kwargs):
-        if self._state.adding:
-            last = solicitud.objects.all().last()
-            if not  last:
-                self.identificador = 'SOL000001'
+        if self._state.adding and not self.identificador:
+            last = self.__class__.objects.order_by('-id').first()
+            if not last:
+                new_id = 'SOL000001'
             else:
-                last =  last.identificador
-                num = int(last[3:])
-                new_num = num + 1
+                last_num = int(last.identificador[3:])
+                new_num = last_num + 1
                 new_id = 'SOL' + str(new_num).zfill(6)
-                self.identificador = new_id
-            super().save(*args, **kwargs)
+
+            while self.__class__.objects.filter(identificador=new_id).exists():
+                new_num += 1
+                new_id = 'SOL' + str(new_num).zfill(6)
+
+            self.identificador = new_id
+
+        super(solicitud, self).save(*args, **kwargs)
+
+
+
     
 class caracteristicas_solicitud(models.Model):
     id = models.AutoField(primary_key=True)

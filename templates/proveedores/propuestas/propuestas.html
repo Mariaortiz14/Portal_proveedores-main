@@ -45,38 +45,48 @@
     </h2>
 
     {% if propuestas %}
-        <div class="row">
-            {% for propuesta in propuestas %}
-                <div class="col-md-6 mb-4">
-                    <div class="card propuesta-card shadow-sm h-100">
-                        <div class="card-body">
-                            <h5 class="card-title fw-semibold mb-3">
-                                📄 Solicitud: {{ propuesta.id_solicitud.TSolicitud }}
-                            </h5>
-                            <p class="card-text"><span class="propuesta-label">📝 Descripción:</span> {{ propuesta.descripcion }}</p>
-                            <p class="card-text"><span class="propuesta-label">💰 Valor:</span> ${{ propuesta.valor_t }}</p>
-                            <p class="card-text"><span class="propuesta-label">🌍 Moneda:</span> {{ propuesta.moneda }}</p>
-                            <p class="card-text"><span class="propuesta-label">⏱️ Entrega:</span> {{ propuesta.tiempo_entrega_min }} - {{ propuesta.tiempo_entrega_max }} días</p>
-                            <p class="card-text"><span class="propuesta-label">💳 Forma de pago:</span> {{ propuesta.t_pago }}</p>
-                            <p class="card-text text-muted">
-                                <i class="fa-regular fa-calendar me-1"></i>
-                                <small>Fecha: {{ propuesta.fecha|date:"d/m/Y" }}</small>
-                            </p>
+    <p>Propuestas encontradas: {{ propuestas|length }}</p>
+    <ul>
+        {% for propuesta in propuestas %}
+        <li>ID: {{ propuesta.id }} | Solicitud: {{ propuesta.id_solicitud }}</li>
+        {% endfor %}
+    </ul>
 
-                            {% if propuesta.file %}
-                                <a href="{{ propuesta.file.url }}" target="_blank" class="btn btn-outline-primary btn-archivo mt-2">
-                                    <i class="fa-solid fa-paperclip me-1"></i> Ver archivo
-                                </a>
-                            {% endif %}
-                        </div>
-                    </div>
+    <div class="row">
+        {% for propuesta in propuestas %}
+        <div class="col-md-6 mb-4">
+            <div class="card propuesta-card shadow-sm h-100">
+                <div class="card-body">
+                    <h5 class="card-title fw-semibold mb-3">
+                        📄 Solicitud: {{ propuesta.id_solicitud.TSolicitud }}
+                    </h5>
+                    <p class="card-text"><span class="propuesta-label">📝 Descripción:</span> {{ propuesta.descripcion
+                        }}</p>
+                    <p class="card-text"><span class="propuesta-label">💰 Valor:</span> ${{ propuesta.valor_t }}</p>
+                    <p class="card-text"><span class="propuesta-label">🌍 Moneda:</span> {{ propuesta.moneda }}</p>
+                    <p class="card-text"><span class="propuesta-label">⏱️ Entrega:</span> {{
+                        propuesta.tiempo_entrega_min }} - {{ propuesta.tiempo_entrega_max }} días</p>
+                    <p class="card-text"><span class="propuesta-label">💳 Forma de pago:</span> {{ propuesta.t_pago }}
+                    </p>
+                    <p class="card-text text-muted">
+                        <i class="fa-regular fa-calendar me-1"></i>
+                        <small>Fecha: {{ propuesta.fecha|date:"d/m/Y" }}</small>
+                    </p>
+
+                    {% if propuesta.file %}
+                    <a href="{{ propuesta.file.url }}" target="_blank" class="btn btn-outline-primary btn-archivo mt-2">
+                        <i class="fa-solid fa-paperclip me-1"></i> Ver archivo
+                    </a>
+                    {% endif %}
                 </div>
-            {% endfor %}
+            </div>
         </div>
+        {% endfor %}
+    </div>
     {% else %}
-        <div class="alert alert-info mt-4">
-            Aún no has registrado propuestas.
-        </div>
+    <div class="alert alert-info mt-4">
+        Aún no has registrado propuestas.
+    </div>
     {% endif %}
 </div>
 {% endblock %}
