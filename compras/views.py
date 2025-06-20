@@ -3,7 +3,7 @@ import re
 import os
 from django.shortcuts import render
 from django.http import HttpResponse
-from weasyprint import HTML, CSS
+#from weasyprint import HTML, CSS
 from collections import defaultdict
 from django.db.models import Count, Max, F, ExpressionWrapper, fields, DurationField, Value, OuterRef, Subquery
 from django.db.models.functions import Coalesce
@@ -26,7 +26,9 @@ from django.template.loader import render_to_string
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import Group
 from .chart import *
-
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render
+from django.contrib.auth.models import Group
 
 logger = logging.getLogger(__name__)
 
@@ -105,8 +107,6 @@ def matriz(request):
 
     return render(request, 'compras/tablas/matriz.html', {'familias':familias_, 'doc_generales': doc_generales, 'doc_certificados': doc_certificados, 'doc_regla': doc_regla, 'doc_varios': doc_varios, 'doc_lic': doc_lic, 'doc_califi': doc_califi})
 
-
-
 def matriz_info(request, familia):
     familia_doc = FamiliaDocumento.objects.filter(familia=familia)
     if familia_doc:
@@ -114,16 +114,19 @@ def matriz_info(request, familia):
     else:
         return JsonResponse({'familia': familia, 'documentos': 'No hay documentos asociados a esta familia'})
     
-
 def Misproveedores(request):
     reg = registro_formulario.objects.all()
-    registros= {}
-    
+    registros = {}
+
     for r in reg:
-        homologa = homologacion.objects.get(id_registro=r.id_registro)
-        registros[r.id_registro] = [r, homologa]
-    
+        homologa = homologacion.objects.filter(id_registro=r.id_registro).first()
+        if homologa:
+            registros[r.id_registro] = [r, homologa]
+        else:
+            registros[r.id_registro] = [r, None]  # o puedes simplemente omitir si prefieres
+
     return render(request, 'compras/proveedores/index.html', {'registros': registros})
+
 
 def Proveedor(request, id_registro):
 
@@ -417,7 +420,11 @@ def get_propuestas_chart(request, id):
     for propuesta in propuestas:
         propuestas_por_homologacion[propuesta.id_homologacion].append(propuesta)
         
-    mx_conteo = max(propuesta.conteo for propuesta in propuestas)
+    if propuestas:
+        mx_conteo = max(p.conteo for p in propuestas)
+    else:
+        mx_conteo = 1  # o 0 según lo que tenga más sentido
+
       
     return JsonResponse({
         "title": f"Ranking propuestas por Proveedor",
@@ -502,17 +509,18 @@ def generar_pdf(request, id_registro):
     })
 
     # Crear el PDF
-    html = HTML(string=html_string)
+'''  html = HTML(string=html_string)
     bootstrap_css_path = os.path.join(settings.STATIC_ROOT, "bootstrap/css/bootstrap.min.css")
     pdf = html.write_pdf(stylesheets=[CSS(bootstrap_css_path)])
     
     # Devolver el PDF como respuesta HTTP
     response = HttpResponse(pdf, content_type='application/pdf')
     response['Content-Disposition'] = f'inline; filename=registro_{id_registro}.pdf'
-    return response
+    return response'''
 
 
 def editar_solicitud(request, solicitud_id):
+
     solicitud_ = get_object_or_404(solicitud, id=solicitud_id)
     if request.method == 'POST':
         form = SolicitudForm(request.POST, instance=solicitud_)
@@ -522,3 +530,23 @@ def editar_solicitud(request, solicitud_id):
     else:
         form = SolicitudForm(instance=solicitud_)
     return render(request, 'editar_solicitud.html', {'form': form, 'solicitud': solicitud_})
+
+
+#def perfil_comprador(request):
+    #user = request.user
+
+    # Verificamos si es del grupo Comprador
+    #if user.groups.filter(name='Comprador').exists():
+      #  return render(request, 'users/profile/comprador.html', {
+     #       'usuario': user
+    #    })
+
+    # Si no es comprador, denegamos acceso
+   # return render(request, 'compras/acceso_denegado.html')
+def perfil_comprador(request):
+    # if not request.user.groups.filter(name='Comprador').exists():
+    #     return render(request, 'compras/acceso_denegado.html')
+
+    return render(request, 'users/profile/comprador.html', {
+        'usuario': request.user
+    })

@@ -25,7 +25,7 @@ urlpatterns = [
     path('', RedirectView.as_view(url='users/login/', permanent=False), name='redirection_principal'),
     path('users/', include('users.urls')),
     path('proveedores/', include('proveedores.urls')),
-    path('compras/', include('compras.urls')),
+    path('compras/', include(('compras.urls', 'compras'), namespace='compras')),
     path('admin/', admin.site.urls),
     
 ]

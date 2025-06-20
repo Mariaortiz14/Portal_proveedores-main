@@ -1,105 +1,75 @@
 {% extends "_layout_compras.html" %}
-
-{% block Title %}
-    FEPCO
-{% endblock %}
+{% block Title %} FEPCO {% endblock %}
 
 {% block content %}
-{%load static%}
-        <div class="row d-flex g-3 ">
-            <div class="col-12">
-                <div class="row g-3 d-flex justify-content-center ">
-                    <div class="col-md-3 col-sm-6 h-100 ">
-                        <div class="shadow py-3 bg-white rounded" style="background-color: hsl(0, 0%, 0%)">
-                            <div class="container h-100 ">
-                                <div class="row">
-                                        <div class="card col-md-12 col-lg-12 col-sm-12 col-xs-12">
-                                            <div class="card-body">
-                                                <h5 class="card-title text-center">Proveedores</h5>
-                                                <canvas  id="myChart"></canvas>
-                                            </div>
-                                        </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-sm-6 h-100 ">
-                        <div class=" shadow py-3 bg-white rounded" style="background-color: hsl(0, 0%, 0%)">
-                            <div class="container h-100 ">
-                                <div class="row">
-                                    <div class="card col-md-12 col-lg-12 col-sm-12 col-xs-12">
-                                        <div class="card-body">
-                                            <h5 class="card-title text-center">Solicitudes</h5>
-                                            <canvas  id="myChart2"></canvas>
-                                        </div>
-                                    </div>
+{% load static %}
+<div class="container mt-4">
+    <div class="text-center mb-4">
+        <h2 class="fw-bold text-primary"><i class="bi bi-pie-chart"></i> Panel de Indicadores</h2>
+        <p class="text-muted">Visualiza un resumen general de proveedores, solicitudes y más.</p>
+    </div>
 
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-3 col-sm-6 h-100 ">
-                        <div class="shadow bg-white py-3 rounded" style="background-color: hsl(0, 0%, 0%)">
-                            <div class="container h-100 ">
-                                <div class="row">
-                                    <div class="card col-md-12 col-lg-12 col-sm-12 col-xs-12">
-                                        <div class="card-body">
-                                            <h5 class="card-title text-center">#</h5>
-                                            <canvas  id="myChart3"></canvas>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+    <div class="row g-4 justify-content-center">
+        <!-- TARJETA 1 -->
+        <div class="col-lg-4 col-md-6 col-sm-12">
+            <div class="card shadow-sm border-0 h-100 animate__animated animate__fadeIn">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-primary fw-bold"><i class="bi bi-people-fill me-2"></i>Proveedores</h5>
+                    <canvas id="myChart" style="max-height: 220px;"></canvas>
                 </div>
-                
             </div>
-            <div class="container c2 p-1 ">
-               
-
-            </div> 
-            
         </div>
+
+        <!-- TARJETA 2 -->
+        <div class="col-lg-4 col-md-6 col-sm-12">
+            <div class="card shadow-sm border-0 h-100 animate__animated animate__fadeIn">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-success fw-bold"><i class="bi bi-clipboard-data me-2"></i>Solicitudes</h5>
+                    <canvas id="myChart2" style="max-height: 220px;"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- TARJETA 3 -->
+        <div class="col-lg-4 col-md-6 col-sm-12">
+            <div class="card shadow-sm border-0 h-100 animate__animated animate__fadeIn">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-danger fw-bold"><i class="bi bi-bar-chart me-2"></i>Otras Métricas</h5>
+                    <canvas id="myChart3" style="max-height: 220px;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
-{%block grafico%}
+{% block grafico %}
 <script>
- const graph = document.querySelector("#myChart");
- const graph2 = document.querySelector("#myChart2");
- const graph3 = document.querySelector("#myChart3");
- 
- 
+    const data = {
+        labels: ['Rojo', 'Rojo Oscuro', 'Gris'],
+        datasets: [{
+            label: 'Estado',
+            data: [300, 50, 100],
+            backgroundColor: ['#fa3434', '#733738', '#848484'],
+            hoverOffset: 4
+        }]
+    };
 
-const data = {
-  labels: [
-    'Red',
-    'Red',
-    'Yellow'
-  ],
-  datasets: [{
-    label: 'My First Dataset',
-    data: [300, 50, 100],
-    backgroundColor: [
-      '#fa3434',
-      '#733738',
-      '#848484'
-    ],
-    hoverOffset: 4
-  }]
-};
+    const config = {
+        type: 'doughnut',
+        data: data,
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            }
+        }
+    };
 
-const config = {
-  type: 'doughnut',
-  data: data,
-};
-
-new Chart(graph, config);
-new Chart(graph2, config);
-new Chart(graph3, config);
-
-
-  </script>
-
-{%endblock%}
+    new Chart(document.getElementById("myChart"), config);
+    new Chart(document.getElementById("myChart2"), config);
+    new Chart(document.getElementById("myChart3"), config);
+</script>
+{% endblock %}

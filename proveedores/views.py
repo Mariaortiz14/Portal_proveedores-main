@@ -8,54 +8,71 @@ from compras.forms import caracteristicas
 from compras.models import caracteristicas_solicitud, solicitud, comentarios
 from .models import *
 from .forms import form_propuesta
-from django.shortcuts import redirect, get_object_or_404, render
+from django.shortcuts import redirect, get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib import messages
+from django.core.mail import EmailMessage
 from compras.forms import ComentarioForm
 from django.urls import reverse
 from compras.views import send_email_task
 from proveedores.models import homologacion, propuestas_sol, documentos_requeridos, certificaciones_proveedores, registro_formulario
 from compras.models import solicitud as Solicitud
-
+from django.shortcuts import redirect, get_object_or_404
+from django.urls import reverse
+from django.conf import settings
+from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
+from django.contrib import messages
+from .models import comentarios
+from compras.models import solicitud
 
 def agregar_comentario(request, id, parent_id=None):
-    solicitud_obj = Solicitud.objects.get(id=id)
-    parent_comentario = None
-    if parent_id:
-        parent_comentario = get_object_or_404(comentarios, id=parent_id)
+    solicitud_obj = get_object_or_404(solicitud, id=id)
 
     if request.method == 'POST':
         form = ComentarioForm(request.POST)
-        enviado = False
         if form.is_valid():
             comentario = form.save(commit=False)
             comentario.solicitud = solicitud_obj
             comentario.usuario = request.user
-            if parent_comentario:
-                comentario.parent = parent_comentario
-                correos = [comentario.parent.usuario.email]
-                context = {
-                    'titulo': solicitud_obj.TSolicitud,
-                    'url': reverse('compras:solicitud_id', args=[solicitud_obj.id]),
-                    'solicitud_id': solicitud_obj.id,
-                }
-                send_email_task(f'Comentario en solicitud {id}', correos, 'compras/correo/email_comentario.html', context)
-                enviado = True
+            if parent_id:
+                comentario.parent_id = parent_id
             comentario.save()
-            if not enviado:
-                correos = User.objects.filter(groups__name='Compras').values_list('email', flat=True)
-                context = {
-                    'titulo': solicitud_obj.TSolicitud,
-                    'url': reverse('compras:solicitud_id', args=[solicitud_obj.id]),
-                    'solicitud_id': solicitud_obj.id,
-                }
-                send_email_task(f'Comentario en solicitud {id}', correos, 'compras/correo/email_comentario.html', context)
-            return redirect('proveedor:solicitud_id', identificador=solicitud_obj.identificador)
+
+            # Construcción segura de la URL
+            protocol = getattr(settings, 'DEFAULT_HTTP_PROTOCOL', 'http')
+            domain = request.get_host()
+            full_url = f"{protocol}://{domain}{reverse('proveedor:solicitud_id', kwargs={'identificador': solicitud_obj.identificador})}"
+
+            # Preparar y enviar correo
+            subject = f"[Nuevo comentario] en la solicitud: {solicitud_obj.TSolicitud}"
+            context = {
+                'titulo': solicitud_obj.TSolicitud,
+                'url': full_url,
+                'solicitud_id': solicitud_obj.id,
+            }
+
+            html_content = render_to_string('compras/correo/email_comentario.html', context)
+
+            try:
+                email = EmailMessage(
+                    subject,
+                    html_content,
+                    settings.DEFAULT_FROM_EMAIL,
+                    to=['ymorales@fepco.com.co', 'myito1612@gmail.com']  
+                )
+                email.content_subtype = 'html'
+                email.send()
+            except Exception as e:
+                print("Error al enviar el correo:", str(e))
+
+            messages.success(request, 'Comentario agregado correctamente.')
+
         else:
-            print(form.errors)
-            return redirect('proveedor:solicitud_id', id=id)
-    else:
-        return redirect('proveedor:solicitud_id', id=id)
+            messages.error(request, 'Error al enviar el comentario. Verifica el formulario.')
+
+    return redirect('proveedor:solicitud_id', identificador=solicitud_obj.identificador)
+
 
 
 def dashboard(request):

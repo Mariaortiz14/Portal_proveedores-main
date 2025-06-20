@@ -168,20 +168,29 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # settings.py
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'fepco-com-co.mail.protection.outlook.com' 
-EMAIL_PORT = 25
-EMAIL_USE_TLS=False
+#EMAIL_HOST = 'fepco-com-co.mail.protection.outlook.com' 
+EMAIL_HOST = 'smtp.office365.com'
+EMAIL_PORT = 587
+#EMAIL_PORT = 25
+EMAIL_USE_TLS= True
 EMAIL_USE_SSL=False
-EMAIL_HOST_USER= None
-EMAIL_HOST_PASSWORD= None
-DEFAULT_FROM_EMAIL= 'plataformas@fepco.com.co'
-DEFAULT_FROM_EMAIL = 'plataformas@fepco.com.co'
+#EMAIL_HOST_USER= None
+#EMAIL_HOST_PASSWORD= None
+EMAIL_HOST_USER = 'ymorales@fepco.com.co'
+EMAIL_HOST_PASSWORD = 'Pr0gr42025!'
+
+#DEFAULT_FROM_EMAIL= 'plataformas@fepco.com.co'
+DEFAULT_FROM_EMAIL='ymorales@fepco.com.co'
+#DEFAULT_FROM_EMAIL = 'plataformas@fepco.com.co'
+DEFAULT_FROM_EMAIL = 'ymorales@fepco.com.co'
 EMAIL_SUBJECT_PREFIX = '[Portal_Proveedores] '
 
 ADMINS = [('Yessica Morales', 'ymorales@fepco.com.co'),]
 #ADMINS = [('Jennyfer Sanchez', 'jcsanchez@fepco.com.co'), ]  # Lista de receptores de los errores
 MANAGERS = ADMINS
-SERVER_EMAIL = 'plataformas@fepco.com.co'
+#SERVER_EMAIL = 'plataformas@fepco.com.co'
+SERVER_EMAIL = 'ymorales@fepco.com.co'
+
 
 # En tu archivo settings.py
 PASSWORD_RESET_CONFIRM_URL = 'password_reset/reset/{uidb64}/{token}/'
@@ -196,3 +205,6 @@ sentry_sdk.init(
     profiles_sample_rate=1.0,
     environment="development",
 )
+
+DEFAULT_HTTP_PROTOCOL = 'http'
+

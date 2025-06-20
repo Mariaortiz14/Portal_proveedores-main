@@ -8,6 +8,7 @@ urlpatterns = [
     path('login/', views.login_, name='login'),
     path('logout/', views.logout_, name='logout'),
     path('profile/', views.profile, name='profile'),
+    path('profile/', views.profile, name='comprador'),
     path('actividad_economica/', views.actividad_economica, name='actividad_economica'),
     path('get_municipios/', views.get_municipios, name='get_municipios'),
     # Otras rutas relacionadas con los usuarios
