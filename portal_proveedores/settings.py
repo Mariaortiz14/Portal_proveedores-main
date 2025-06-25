@@ -9,14 +9,14 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-
-import os
-from pathlib import Path
-import re
 from django.utils.translation import gettext_lazy as _
 from dotenv import load_dotenv
 from decouple import Config
+from pathlib import Path 
 import sentry_sdk
+import os
+import re
+
 load_dotenv(".env")
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
