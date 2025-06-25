@@ -2,11 +2,9 @@ from django.http import HttpResponse
 from django.template import loader
 from django.conf import settings
 from django.shortcuts import get_object_or_404
-import os
 from django.shortcuts import render, redirect
 from compras.forms import caracteristicas
 from compras.models import caracteristicas_solicitud, solicitud, comentarios
-from .models import *
 from .forms import form_propuesta
 from django.shortcuts import redirect, get_object_or_404
 from django.contrib.auth.models import User
@@ -25,6 +23,9 @@ from django.template.loader import render_to_string
 from django.contrib import messages
 from .models import comentarios
 from compras.models import solicitud
+from django.db import transaction 
+import os
+from .models import *
 
 def agregar_comentario(request, id, parent_id=None):
     solicitud_obj = get_object_or_404(solicitud, id=id)
@@ -32,46 +33,50 @@ def agregar_comentario(request, id, parent_id=None):
     if request.method == 'POST':
         form = ComentarioForm(request.POST)
         if form.is_valid():
-            comentario = form.save(commit=False)
-            comentario.solicitud = solicitud_obj
-            comentario.usuario = request.user
-            if parent_id:
-                comentario.parent_id = parent_id
-            comentario.save()
-
-            # Construcción segura de la URL
-            protocol = getattr(settings, 'DEFAULT_HTTP_PROTOCOL', 'http')
-            domain = request.get_host()
-            full_url = f"{protocol}://{domain}{reverse('proveedor:solicitud_id', kwargs={'identificador': solicitud_obj.identificador})}"
-
-            # Preparar y enviar correo
-            subject = f"[Nuevo comentario] en la solicitud: {solicitud_obj.TSolicitud}"
-            context = {
-                'titulo': solicitud_obj.TSolicitud,
-                'url': full_url,
-                'solicitud_id': solicitud_obj.id,
-            }
-
-            html_content = render_to_string('compras/correo/email_comentario.html', context)
-
             try:
-                email = EmailMessage(
-                    subject,
-                    html_content,
-                    settings.DEFAULT_FROM_EMAIL,
-                    to=['ymorales@fepco.com.co', 'myito1612@gmail.com']  
-                )
-                email.content_subtype = 'html'
-                email.send()
+                with transaction.atomic():  # 👈 NUEVO
+                    comentario = form.save(commit=False)
+                    comentario.solicitud = solicitud_obj
+                    comentario.usuario = request.user
+                    if parent_id:
+                        comentario.parent_id = parent_id
+
+                    # Construcción segura de la URL
+                    protocol = getattr(settings, 'DEFAULT_HTTP_PROTOCOL', 'http')
+                    domain = request.get_host()
+                    full_url = f"{protocol}://{domain}{reverse('proveedor:solicitud_id', kwargs={'identificador': solicitud_obj.identificador})}"
+
+                    subject = f"[Nuevo comentario] en la solicitud: {solicitud_obj.TSolicitud}"
+                    context = {
+                        'titulo': solicitud_obj.TSolicitud,
+                        'url': full_url,
+                        'solicitud_id': solicitud_obj.id,
+                    }
+
+                    html_content = render_to_string('compras/correo/email_comentario.html', context)
+
+                    email = EmailMessage(
+                        subject,
+                        html_content,
+                        settings.DEFAULT_FROM_EMAIL,
+                        to=['ymorales@fepco.com.co', 'myito1612@gmail.com']
+                    )
+                    email.content_subtype = 'html'
+                    email.send()  
+
+                    comentario.save()  
+
+                messages.success(request, 'Comentario agregado correctamente.')
+
             except Exception as e:
                 print("Error al enviar el correo:", str(e))
-
-            messages.success(request, 'Comentario agregado correctamente.')
+                messages.error(request, 'No se pudo enviar el comentario. Intenta de nuevo.')
 
         else:
-            messages.error(request, 'Error al enviar el comentario. Verifica el formulario.')
+            messages.error(request, 'Formulario inválido. Revisa los campos.')
 
     return redirect('proveedor:solicitud_id', identificador=solicitud_obj.identificador)
+
 
 
 
@@ -118,7 +123,7 @@ def doc(request):
             try:
                 documento = documentos_requeridos.objects.get(id=doc_id)
                 documento.file = file
-                documento.estado = 'pendiente'  # Reiniciar estado tras nueva carga
+                documento.estado = 'pendiente'  
                 documento.save()
                 messages.success(request, 'Documento cargado correctamente.')
             except documentos_requeridos.DoesNotExist:
@@ -129,7 +134,7 @@ def doc(request):
             try:
                 cert = certificaciones_proveedores.objects.get(id=cert_id)
                 cert.file = file
-                cert.estado = 'pendiente'  # Reiniciar estado tras nueva carga
+                cert.estado = 'pendiente'  
                 cert.save()
                 messages.success(request, 'Certificación cargada correctamente.')
             except certificaciones_proveedores.DoesNotExist:
@@ -137,12 +142,11 @@ def doc(request):
 
         return redirect('users:profile')
 
-    # Si es GET, mostrar todos los documentos del proveedor clasificados por estado
+   
     registro = registro_formulario.objects.filter(usuario=request.user).first()
     documentos = documentos_requeridos.objects.filter(id_registro=registro)
     certificaciones = certificaciones_proveedores.objects.filter(id_registro=registro)
 
-    # Agrupar por estado
     estados = ['pendiente', 'aceptado', 'rechazado']
     documentos_por_estado = {estado: documentos.filter(estado=estado) for estado in estados}
     certificaciones_por_estado = {estado: certificaciones.filter(estado=estado) for estado in estados}
@@ -206,9 +210,6 @@ def solicitud_id(request, identificador):
                      usuario_hologa=request.user,
                      familia=solicitud_.familia
                         ).first()
-
-
-        # 🚨 Validación: asegurarse que el usuario tenga homologación
         if not id_homolo:
             messages.error(request, 'No tienes una homologación válida para esta solicitud.')
             return redirect('proveedor:solicitud_id', identificador=identificador)

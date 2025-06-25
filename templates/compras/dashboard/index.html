@@ -1,5 +1,5 @@
 {% extends "_layout_compras.html" %}
-{% block Title %} FEPCO {% endblock %}
+{% block Title %} Compras-Dashboard {% endblock %}
 
 {% block content %}
 {% load static %}
@@ -15,7 +15,7 @@
             <div class="card shadow-sm border-0 h-100 animate__animated animate__fadeIn">
                 <div class="card-body text-center">
                     <h5 class="card-title text-primary fw-bold"><i class="bi bi-people-fill me-2"></i>Proveedores</h5>
-                    <canvas id="myChart" style="max-height: 220px;"></canvas>
+                    <canvas id="chartProveedores" style="max-height: 220px;"></canvas>
                 </div>
             </div>
         </div>
@@ -25,7 +25,7 @@
             <div class="card shadow-sm border-0 h-100 animate__animated animate__fadeIn">
                 <div class="card-body text-center">
                     <h5 class="card-title text-success fw-bold"><i class="bi bi-clipboard-data me-2"></i>Solicitudes</h5>
-                    <canvas id="myChart2" style="max-height: 220px;"></canvas>
+                    <canvas id="chartSolicitudes" style="max-height: 220px;"></canvas>
                 </div>
             </div>
         </div>
@@ -34,8 +34,8 @@
         <div class="col-lg-4 col-md-6 col-sm-12">
             <div class="card shadow-sm border-0 h-100 animate__animated animate__fadeIn">
                 <div class="card-body text-center">
-                    <h5 class="card-title text-danger fw-bold"><i class="bi bi-bar-chart me-2"></i>Otras Métricas</h5>
-                    <canvas id="myChart3" style="max-height: 220px;"></canvas>
+                    <h5 class="card-title text-danger fw-bold"><i class="bi bi-bar-chart me-2"></i>Propuestas</h5>
+                    <canvas id="chartPropuestas" style="max-height: 220px;"></canvas>
                 </div>
             </div>
         </div>
@@ -45,31 +45,64 @@
 
 {% block grafico %}
 <script>
-    const data = {
-        labels: ['Rojo', 'Rojo Oscuro', 'Gris'],
-        datasets: [{
-            label: 'Estado',
-            data: [300, 50, 100],
-            backgroundColor: ['#fa3434', '#733738', '#848484'],
-            hoverOffset: 4
-        }]
-    };
-
-    const config = {
-        type: 'doughnut',
-        data: data,
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    display: false
+    // Función para inicializar un gráfico tipo donut
+    function renderDoughnutChart(ctx, labels, data, colors) {
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Cantidad',
+                    data: data,
+                    backgroundColor: colors,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
                 }
             }
-        }
-    };
+        });
+    }
 
-    new Chart(document.getElementById("myChart"), config);
-    new Chart(document.getElementById("myChart2"), config);
-    new Chart(document.getElementById("myChart3"), config);
+    // Esperar que el DOM esté listo
+    document.addEventListener('DOMContentLoaded', function () {
+        fetch('/compras/dashboard/data/')
+            .then(response => response.json())
+            .then(data => {
+                console.log("Datos del backend:", data);
+
+                // Gráfico 1: Proveedores
+                renderDoughnutChart(
+                    document.getElementById("myChart"),
+                    ['Activos', 'Inactivos'],
+                    data.proveedores,
+                    ['#28a745', '#6c757d']
+                );
+
+                // Gráfico 2: Solicitudes
+                renderDoughnutChart(
+                    document.getElementById("myChart2"),
+                    ['Abiertas', 'Cerradas', 'Canceladas'],
+                    data.solicitudes,
+                    ['#17a2b8', '#ffc107', '#dc3545']
+                );
+
+                // Gráfico 3: Propuestas
+                renderDoughnutChart(
+                    document.getElementById("myChart3"),
+                    ['Enviadas', 'Rechazadas', 'Aceptadas'],
+                    data.propuestas,
+                    ['#007bff', '#dc3545', '#28a745']
+                );
+            })
+            .catch(error => {
+                console.error('Error al cargar los datos:', error);
+            });
+    });
 </script>
 {% endblock %}

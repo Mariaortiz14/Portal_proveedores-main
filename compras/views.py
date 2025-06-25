@@ -1,44 +1,70 @@
-from django.urls import reverse
-import re 
-import os
-from django.shortcuts import render
-from django.http import HttpResponse
-#from weasyprint import HTML, CSS
-from collections import defaultdict
 from django.db.models import Count, Max, F, ExpressionWrapper, fields, DurationField, Value, OuterRef, Subquery
+from .forms import Evaluacion_inicial, caracteristicas, crear_solicitud, ComentarioForm, SolicitudForm
+from django.shortcuts import render, redirect, get_object_or_404
+from portal_proveedores.settings import DEFAULT_FROM_EMAIL as s
+from django.contrib.auth.decorators import login_required
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.http import HttpResponse, JsonResponse
 from django.db.models.functions import Coalesce
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, JsonResponse
-from django.template import loader
-from sqlalchemy import False_, desc
-from django.apps import apps
-from django.db import transaction
-from proveedores.models import *
-from .forms import Evaluacion_inicial, caracteristicas, crear_solicitud, ComentarioForm, SolicitudForm
-from .models import *
-from django.contrib import messages
-from django.core.mail import EmailMultiAlternatives
 from django.template.loader import get_template
-from portal_proveedores.settings import DEFAULT_FROM_EMAIL as s
-import logging
-from django.conf import settings
-from django.template.loader import render_to_string
-from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import Group
-from .chart import *
-from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
-from django.contrib.auth.models import Group
+from collections import defaultdict
+from sqlalchemy import False_, desc
+from django.shortcuts import render
+from django.contrib import messages
+from django.template import loader
+from django.db import transaction
+from django.conf import settings
+from django.urls import reverse
+from proveedores.models import *
+from django.apps import apps
+from compras.models import *
+from .models import *
+from .chart import *
+import logging
+import re 
+import os
+#from weasyprint import HTML, CSS
+
+
 
 logger = logging.getLogger(__name__)
 
-# Create your views here.
-def dashboardc(request):
-    return render(request, 'compras/dashboard/index.html', {})
+# Funcion de vista de dashboard
+def dashboard_compras(request):
+    return render(request, 'compras/dashboard/index.html')
 
+#Funcion de vista de dashboard
+def get_dashboard_data(request):
+
+    total_proveedores = homologacion.objects.count()
+    proveedores_activos = homologacion.objects.filter(estado='activo').count()
+    proveedores_inactivos = total_proveedores - proveedores_activos
+
+    solicitudes_abiertas = solicitud.objects.filter(estado='abierta').count()
+    solicitudes_revision = solicitud.objects.filter(estado='en revisión').count()
+    solicitudes_cerradas = solicitud.objects.filter(estado='cerrada').count()
+
+    propuestas_aceptadas = propuestas_sol.objects.filter(estado='aceptada').count()
+    propuestas_rechazadas = propuestas_sol.objects.filter(estado='rechazada').count()
+    propuestas_enviadas = propuestas_sol.objects.exclude(estado__in=['aceptada', 'rechazada']).count()
+
+    data = {
+        'proveedores': [proveedores_activos, proveedores_inactivos],
+        'solicitudes': [solicitudes_abiertas, solicitudes_revision, solicitudes_cerradas],
+        'propuestas': [propuestas_aceptadas, propuestas_rechazadas, propuestas_enviadas],
+    }
+
+    return JsonResponse(data)
+
+#Función de tablas básicas
 def t_basicas(request):
     return render(request, 'compras/tablas/t_basicas.html', {})
 
+# funcion de vista de tablas
 def tablas(request, t):
     app_config = apps.get_app_config('proveedores')
     for model in app_config.get_models():
@@ -54,11 +80,13 @@ def tablas(request, t):
 
     return render(request, 'compras/tablas/tablas.html', {'t_nombre': nombre_t, 'objetos': objetos, 'nombre': nombre})
 
+# Funcion de Eliminar tablas
 def eliminar(request, tablas, id):
     tabla = apps.get_model('proveedores', tablas)
     tabla.objects.filter(id=id).delete()
     
     return redirect('compras:tablas', t=tablas)
+# Funcion de crear tablas
 
 def Crear_editar(request, tablas):
     tabla = apps.get_model('proveedores', tablas)
@@ -76,6 +104,7 @@ def Crear_editar(request, tablas):
             tabla.objects.filter(id=id).update(nombre=nombre_modelo)    
 
     return redirect('compras:tablas', t=tablas)
+#Función de matriz de datos
 
 def matriz(request):
     familias_= familias.objects.all()
@@ -107,13 +136,15 @@ def matriz(request):
 
     return render(request, 'compras/tablas/matriz.html', {'familias':familias_, 'doc_generales': doc_generales, 'doc_certificados': doc_certificados, 'doc_regla': doc_regla, 'doc_varios': doc_varios, 'doc_lic': doc_lic, 'doc_califi': doc_califi})
 
+# Función de información de matriz
 def matriz_info(request, familia):
     familia_doc = FamiliaDocumento.objects.filter(familia=familia)
     if familia_doc:
         return JsonResponse({'familia': familia, 'documentos': list(familia_doc.values())})
     else:
         return JsonResponse({'familia': familia, 'documentos': 'No hay documentos asociados a esta familia'})
-    
+
+# Función de vista de proveedores-comprador
 def Misproveedores(request):
     reg = registro_formulario.objects.all()
     registros = {}
@@ -127,7 +158,7 @@ def Misproveedores(request):
 
     return render(request, 'compras/proveedores/index.html', {'registros': registros})
 
-
+#Funcion de crear proveedores
 def Proveedor(request, id_registro):
 
     registro= registro_formulario.objects.get(id_registro=id_registro)
@@ -220,6 +251,7 @@ def Proveedor(request, id_registro):
                                                            'condition': condition, 'faltantes':faltantes, 'doc_pendientes': doc_pendientes,
                                                            'doc_aceptados': doc_aceptados, 'doc_rechazados': doc_rechazados, 'mensaje_matriz': mensaje_matriz})
 
+# Funcion de verificar documentos y certificados por familia
 def verificar_documentos_y_certificados_por_familia(familia_id, id_registro):
     # Obtén todos los documentos requeridos para la familia
     documentos_matriz = FamiliaDocumento.objects.filter(familia_id=familia_id)
@@ -242,6 +274,7 @@ def verificar_documentos_y_certificados_por_familia(familia_id, id_registro):
     # Devuelve la condición y los arrays de documentos y certificados faltantes
     return condition, documentos_faltantes, certificados_faltantes
 
+# Finción para aprobvar dovumentos
 def aprobar_documento(request, id_registro):
     if request.method == 'POST' and 'aprobar' in request.POST:
         try:
@@ -268,7 +301,7 @@ def aprobar_documento(request, id_registro):
             print(e)
     return redirect('compras:proveedor', id_registro=id_registro)
 
-
+#Funcion para la homologación de los proveedores
 def homologacion_proveedor(request, id_registro):
     form = Evaluacion_inicial(request.POST or None)
     if request.method == 'POST' and form.is_valid():
@@ -283,7 +316,7 @@ def homologacion_proveedor(request, id_registro):
         homologa.save()
     return redirect('compras:proveedor', id_registro=id_registro)  
         
-
+#Funcion para asignarle familia a los proveedores desde la vista de comprador
 def asigancion_familia(request, id_registro):
     if request.method == 'POST':
         homo= homologacion.objects.get(id_registro=id_registro)
@@ -292,13 +325,12 @@ def asigancion_familia(request, id_registro):
         homo.save()
     return redirect('compras:proveedor', id_registro= id_registro)
 
-
+#Funcion para ver las solicitudes de ccompras de un proveedor 
 def MisSolicitudes(request):
     solicitudes = solicitud.objects.all()
     return render(request, 'compras/solicitudes/solicitudes.html', {'solicitudes':solicitudes})
 
-
-
+# Función de enviar email cuando se crea una solicitud de compra
 def send_email_task(subject, recipient_list, template_name, context):
     try:        
         if not isinstance(recipient_list, (list, tuple)):
@@ -336,6 +368,7 @@ def send_email_task(subject, recipient_list, template_name, context):
         print(e)
         logger.error(f"Error al enviar el correo: {e}")
 
+#Función para crear solicitudes de compra desde la vista del proveedor
 def crear_solicitudes(request):
     form = crear_solicitud(request.POST or None)
     if request.method=='POST':
@@ -389,11 +422,12 @@ def crear_solicitudes(request):
 
     return render(request, 'compras/solicitudes/crear_soli.html', {'form':form})
 
-
+#Función para eliminar una solicitud desde la vista de proveedor
 def eliminar_solicitud(request, id):
     solicitud.objects.filter(id=id).delete()
     return redirect('compras:missolicitudes')
 
+#Función para mostrar las solicitudes de un proveedor individualemnte 
 def solicitud_id(request, id):
 
     solicitudes = solicitud.objects.get(id=id)    
@@ -413,6 +447,7 @@ def solicitud_id(request, id):
     form = ComentarioForm()                                                                                                                                                                                                                                                                                                                                                                         
     return render(request, 'compras/solicitudes/solicitud_id.html', {'solicitud': solicitudes, 'form_comentarios': form, 'propuestas_ultimas': propuestas_ultimas, 'propuestas_ranking': propuestas_ranking})
 
+#Función para obtener las propuestas que tienen los mismos proveedores
 def get_propuestas_chart(request, id):
     propuestas= propuestas_sol.objects.filter(id_solicitud_id=id)
  
@@ -443,14 +478,13 @@ def get_propuestas_chart(request, id):
         },
     })
 
-
+#Función para crear un comentario en una solicitud
 def agregar_comentario(request, id, parent_id=None):
     solicitud_obj = get_object_or_404(solicitud, id=id)
     parent_comentario = None
     if parent_id:
         parent_comentario = get_object_or_404(comentarios, id=parent_id)
 
-    if request.method == 'POST':
         form = ComentarioForm(request.POST)
         if form.is_valid():
             comentario = form.save(commit=False)
@@ -473,13 +507,12 @@ def agregar_comentario(request, id, parent_id=None):
     else:
         return redirect('compras:solicitud_id', id=id)
     
-    
+#Función para crear tareas para los proveedores
 def tareas(request):
     tareas = Tarea.objects.all()
     return render(request, 'compras/tareas/tareas.html', {'tareas': tareas})
 
-
-
+#Funcion para asignar tareas desde compras a un proveedor
 def asignar_tarea_doc(request, id_registro):
     if request.method == 'POST':
         id_doc = request.POST['id']
@@ -490,6 +523,7 @@ def asignar_tarea_doc(request, id_registro):
         
     return redirect('compras:tareas')
 
+#Función para general un pdf con la información de un registro de compras
 def generar_pdf(request, id_registro):
     registro = get_object_or_404(registro_formulario, id_registro=id_registro)
     homologa = get_object_or_404(homologacion, id_registro=id_registro)
@@ -518,7 +552,7 @@ def generar_pdf(request, id_registro):
     response['Content-Disposition'] = f'inline; filename=registro_{id_registro}.pdf'
     return response'''
 
-
+#Función para editar una solicitud de compras
 def editar_solicitud(request, solicitud_id):
 
     solicitud_ = get_object_or_404(solicitud, id=solicitud_id)
@@ -543,6 +577,8 @@ def editar_solicitud(request, solicitud_id):
 
     # Si no es comprador, denegamos acceso
    # return render(request, 'compras/acceso_denegado.html')
+
+#Función para ver los datos del comprador en el apartado de mi cuenta
 def perfil_comprador(request):
     # if not request.user.groups.filter(name='Comprador').exists():
     #     return render(request, 'compras/acceso_denegado.html')

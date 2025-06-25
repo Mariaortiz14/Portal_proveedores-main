@@ -3,7 +3,8 @@ from . import views
 
 app_name = 'compras'
 urlpatterns = [
-    path('dashboard/', views.dashboardc , name='dashboard'),
+    path('dashboard/', views.dashboard_compras, name='dashboard'),
+    path('dashboard/data/', views.get_dashboard_data, name='dashboard_data'),
     path('mis_proveedores/', views.Misproveedores, name='misproveedores'),
     path('mis_proveedores/proveedor/<str:id_registro>/', views.Proveedor, name='proveedor'),
     path('mis_proveedores/proveedor/<str:id_registro>/familia/',views.asigancion_familia , name='familia'), 

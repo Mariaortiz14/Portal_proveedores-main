@@ -1,9 +1,9 @@
-from turtle import mode
+from django.contrib.auth.models import User
 from django.db import models
 from django.apps import apps
-from django.contrib.auth.models import User
-# Create your models here.
+from turtle import mode
 
+# Clase de la tabla de los proveedores
 class solicitud(models.Model):
     id = models.AutoField(primary_key=True)
     identificador = models.CharField(max_length=12, unique=True)
@@ -34,9 +34,7 @@ class solicitud(models.Model):
 
         super(solicitud, self).save(*args, **kwargs)
 
-
-
-    
+# Clase de la caracteristica de la solicitud
 class caracteristicas_solicitud(models.Model):
     id = models.AutoField(primary_key=True)
     solicitud = models.ForeignKey(solicitud, on_delete=models.CASCADE)
@@ -46,7 +44,7 @@ class caracteristicas_solicitud(models.Model):
         return self.caracteristica
     
 
-        
+#Clase de los comentarios de la solicitud       
 class comentarios(models.Model):
     homologacion = models.ForeignKey('proveedores.homologacion', null=True, blank=True, on_delete=models.CASCADE)
     id = models.AutoField(primary_key=True)
