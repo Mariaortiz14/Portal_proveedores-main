@@ -1,25 +1,32 @@
+from proveedores.models import homologacion, propuestas_sol, documentos_requeridos, certificaciones_proveedores, registro_formulario
+from compras.models import caracteristicas_solicitud, solicitud, comentarios
+from django.shortcuts import redirect, get_object_or_404
+from django.template.loader import render_to_string
+
+
+
+
 from django.http import HttpResponse
 from django.template import loader
 from django.conf import settings
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render, redirect
 from compras.forms import caracteristicas
-from compras.models import caracteristicas_solicitud, solicitud, comentarios
+
 from .forms import form_propuesta
-from django.shortcuts import redirect, get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.core.mail import EmailMessage
 from compras.forms import ComentarioForm
 from django.urls import reverse
 from compras.views import send_email_task
-from proveedores.models import homologacion, propuestas_sol, documentos_requeridos, certificaciones_proveedores, registro_formulario
+
 from compras.models import solicitud as Solicitud
-from django.shortcuts import redirect, get_object_or_404
+
 from django.urls import reverse
 from django.conf import settings
 from django.core.mail import EmailMessage
-from django.template.loader import render_to_string
+
 from django.contrib import messages
 from .models import comentarios
 from compras.models import solicitud

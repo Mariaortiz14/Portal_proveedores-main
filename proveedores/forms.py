@@ -1,12 +1,13 @@
+from django.contrib.auth.models import User
+from django.forms import formset_factory
+from django import contrib, forms
 from logging import PlaceHolder
 from mimetypes import init
+from datetime import date
 from pydoc import doc
 import re
-from django import contrib, forms
-from django.forms import formset_factory
-from datetime import date
-from django.contrib.auth.models import User
 
+#Clase del formulario de propuesta
 class form_propuesta(forms.Form):
     descripcion= forms.CharField(widget=forms.Textarea(attrs={'class': 'form-control ', 'rows': 4, 'placeholder': 'Descripción'}))
     file = forms.FileField(widget=forms.FileInput(attrs={'class': 'form-control '}))

@@ -1,11 +1,12 @@
-from math import e
-from sys import api_version
-from django.db import models
 from users.models import Departamento, Municipio
-from compras.models import *
 from django.contrib.auth.models import User
+from django.db import models
+from compras.models import *
+from sys import api_version
+from math import e
 
-# Create your models here.
+
+# Clase de plazos
 class plazos(models.Model):
     id = models.AutoField(primary_key=True)
     valor = models.IntegerField()
@@ -13,6 +14,7 @@ class plazos(models.Model):
     
     def __str__(self):
         return self.descripcion
+
 
 def id_documentos_directory_path(instance, filename):
     id_registro = instance.id_registro.identificador
@@ -27,8 +29,11 @@ def id_propuestas_directory_path(instance, filename):
     return f'{id_sol}/Propuestas/{filename}'
 
 def id_declaracion_directory_path(instance, filename):
+
     id_registro = instance.id_registro.identificador
     return f'{id_registro}/Declaracion/{filename}' 
+
+#Clase de la seccion de economia
 class actividad_eco_seccion(models.Model):
     codigo = models.CharField(max_length=3, primary_key=True)
     descripcion = models.CharField(max_length=180)
@@ -36,6 +41,7 @@ class actividad_eco_seccion(models.Model):
     def __str__(self):
         return (self.codigo + " - " + self.descripcion)
 
+#Clase de la division de economia
 class actividad_eco_division(models.Model):
     codigo = models.CharField(max_length=5, primary_key=True)
     descripcion = models.CharField(max_length=230)
@@ -44,6 +50,7 @@ class actividad_eco_division(models.Model):
     def __str__(self):
         return (self.codigo + " - " + self.descripcion)
 
+#Clase de la clase de economia
 class actividad_eco_grupo(models.Model):
     codigo= models.CharField(max_length=4, primary_key=True)
     descripcion = models.CharField(max_length=300)
@@ -52,6 +59,7 @@ class actividad_eco_grupo(models.Model):
     def __str__(self):
         return (self.codigo + " - " + self.descripcion)   
 
+#Clase de la clase de economia
 class  actividad_eco_clase(models.Model):
     codigo = models.CharField(max_length=5, primary_key=True)
     descripcion = models.CharField(max_length=300)
@@ -60,13 +68,15 @@ class  actividad_eco_clase(models.Model):
     def __str__(self):
         return (self.codigo + " - " + self.descripcion)    
 
+#Clase de la clase de economia
 class tipo_persona(models.Model):
     codigo = models.CharField(max_length=5, primary_key=True)
     descripcion = models.CharField(max_length=300)
 
     def __str__(self):
         return (self.descripcion)
-    
+
+#Clase de la clase de economia
 class tipo_identificacion(models.Model):
     codigo = models.CharField(max_length=5, primary_key=True)
     descripcion = models.CharField(max_length=300)
@@ -74,13 +84,15 @@ class tipo_identificacion(models.Model):
     def __str__(self):
         return (self.descripcion)
 
+#Clase de la clase de economia
 class tipo_contribuyente(models.Model):
     codigo = models.CharField(max_length=5, primary_key=True)
     descripcion = models.CharField(max_length=300)
 
     def __str__(self):
         return (self.descripcion)   
-    
+
+#Clase de la clase de economia
 class registro_formulario(models.Model):
     usuario = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
     id_registro = models.AutoField(primary_key=True)
@@ -124,7 +136,7 @@ class registro_formulario(models.Model):
         # Esta línea debe estar fuera del if para que funcione en actualizaciones
         super().save(*args, **kwargs)
 
-
+#Clase de la clase de economia
 class info_financiera(models.Model):
     id = models.AutoField(primary_key=True)
     id_registro = models.ForeignKey(registro_formulario, on_delete=models.CASCADE)
@@ -140,7 +152,7 @@ class info_financiera(models.Model):
     otro_tipo_empresa = models.CharField(max_length=100)
     num_empleados = models.CharField(max_length=100)
     
-
+#Clase de la clase de economia
 class composicion_accionaria(models.Model):
     id = models.AutoField(primary_key=True)
     id_registro = models.ForeignKey(registro_formulario, on_delete=models.CASCADE)
@@ -149,13 +161,14 @@ class composicion_accionaria(models.Model):
     identificacion = models.CharField(max_length=11)
     porcentaje = models.CharField(max_length=3)
     
-    
+#Función para la creación de la clase de economia
 def id_certificacion_directory_path(instance, filename):
     # Aquí se obtiene el id del registro
     id_registro = instance.id_registro.id_registro
     # Se construye la ruta completa
     return f'{id_registro}/certificaciones/{filename}' 
 
+#Clase de la clase de economia
 class familias(models.Model):
     id = models.AutoField(primary_key=True)
     nombre =  models.CharField(max_length=50)  
@@ -163,12 +176,13 @@ class familias(models.Model):
     def __str__(self):
         return self.nombre
      
-
+#Clase de la clase de economia
 class matriz_doc(models.Model):
     id = models.AutoField(primary_key=True)
     tipo = models.CharField(max_length=3)
     nombre = models.CharField(max_length=300)
-    
+
+#Clase de la clase de economia
 class FamiliaDocumento(models.Model):
     OBLIGATORIEDAD_CHOICES = [
         ('', 'No especificado'),
@@ -182,7 +196,8 @@ class FamiliaDocumento(models.Model):
     familia = models.ForeignKey(familias, on_delete=models.CASCADE)
     documento = models.ForeignKey(matriz_doc, on_delete=models.CASCADE)
     obligatoriedad = models.CharField(max_length=4, choices=OBLIGATORIEDAD_CHOICES, default='')
-        
+
+#Clase de la clase de economia
 class certificaciones_proveedores(models.Model):
     ESTADOS = [
         ('pendiente', 'Pendiente'),
@@ -198,7 +213,7 @@ class certificaciones_proveedores(models.Model):
     file = models.FileField(upload_to=id_certificacion_directory_path, null=True)
     estado = models.CharField(max_length=20, choices=ESTADOS, default='pendiente')
 
-
+#Clase de la clase de economia
 class documentos_requeridos(models.Model):
     ESTADOS = [
         ('pendiente', 'Pendiente'),
@@ -212,8 +227,7 @@ class documentos_requeridos(models.Model):
     file = models.FileField(upload_to=id_documentos_directory_path, null=True)
     estado = models.CharField(max_length=20, choices=ESTADOS, default='pendiente')
 
-    
-    
+#Clase de la clase de economia
 class info_tributaria(models.Model):
     id = models.AutoField(primary_key=True)
     id_registro = models.ForeignKey(registro_formulario, on_delete=models.CASCADE)
@@ -224,7 +238,7 @@ class info_tributaria(models.Model):
     codigo_actividad_economica_p = models.ForeignKey(actividad_eco_clase, on_delete=models.CASCADE, related_name='codigo_actividad_p', null=True)
     codigo_actividad_economica_s = models.ForeignKey(actividad_eco_clase, on_delete=models.CASCADE, related_name='codigo_actividad_s', null=True)
     
-        
+#Clase de la clase de economia
 class resolucion(models.Model):
     id = models.AutoField(primary_key=True)
     id_trib = models.ForeignKey(info_tributaria, on_delete=models.CASCADE)
@@ -232,7 +246,7 @@ class resolucion(models.Model):
     fecha = models.DateField(null=True)
     resolucion = models.CharField(max_length=300, null=True)
     
-
+#Clase de la clase de economia
 class info_pago(models.Model):
     id = models.AutoField(primary_key=True)
     id_registro = models.ForeignKey(registro_formulario, on_delete=models.CASCADE)
@@ -245,8 +259,7 @@ class info_pago(models.Model):
     municipio_contable = models.ForeignKey(Municipio, on_delete=models.CASCADE)
     departamento_contable = models.ForeignKey(Departamento, on_delete=models.CASCADE)
     
-
-    
+#Clase de la clase de economia
 class productos_servicios_condiciones(models.Model):
     id = models.AutoField(primary_key=True)
     id_registro = models.ForeignKey(registro_formulario, on_delete=models.CASCADE)
@@ -256,13 +269,15 @@ class productos_servicios_condiciones(models.Model):
     periodo_consignacion = models.CharField(max_length=100)
     describa_productos = models.CharField(max_length=300)
     
+
+#Clase de la clase de economia   
 class declaracion(models.Model):
     id = models.AutoField(primary_key=True)
     id_registro = models.ForeignKey(registro_formulario, on_delete=models.CASCADE)
     fecha = models.DateField(auto_now_add=True)
     file = models.FileField(upload_to=id_declaracion_directory_path)
     
-    
+#Clase de la clase de economia    
 class homologacion(models.Model):
     id = models.AutoField(primary_key=True)
     id_registro = models.ForeignKey(registro_formulario, on_delete=models.CASCADE)
@@ -274,7 +289,8 @@ class homologacion(models.Model):
         if self._state.adding:
             self.estado = 'Pendiente'
         super().save(*args, **kwargs)
-     
+
+#Clase de la clase de economia     
 class aprobacion_doc(models.Model):
     documento = models.ForeignKey(documentos_requeridos, on_delete=models.CASCADE, null=True)
     certificados = models.ForeignKey(certificaciones_proveedores, on_delete=models.CASCADE, null=True)
@@ -284,7 +300,7 @@ class aprobacion_doc(models.Model):
     aprobado= models.BooleanField()
     descripcion = models.CharField(max_length=300)
     
-    
+#Clase de la clase de economia    
 class evaluacion_inicial(models.Model):
     calidad = models.IntegerField()
     descripcion_c= models.CharField(max_length=300)
@@ -302,7 +318,7 @@ class evaluacion_inicial(models.Model):
     descripcion_ex=models.CharField(max_length=300)
     id_registro = models.ForeignKey(registro_formulario, on_delete=models.CASCADE)
     
-    
+#Clase de la clase de economia    
 class propuestas_sol(models.Model):
     id = models.AutoField(primary_key=True)
     id_homologacion = models.ForeignKey(homologacion, on_delete=models.CASCADE)
@@ -341,7 +357,8 @@ class TipoTarea(models.Model):
 
     def __str__(self):
         return self.nombre
-    
+
+#Clase de la clase de economia   
 class Tarea(models.Model):
     tipo = models.ForeignKey(TipoTarea, on_delete=models.CASCADE)
     titulo = models.CharField(max_length=100)
@@ -360,8 +377,4 @@ class Tarea(models.Model):
         if self.tipo.id == 1:
             self.titulo = "Carga de documento"
         elif self.tipo.id == 2:
-            self.titulo = "Presentar evaluacion"  
-    
-    
-    
-    
+            self.titulo = "Presentar evaluacion"   
