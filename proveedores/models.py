@@ -1,8 +1,8 @@
 from users.models import Departamento, Municipio
 from django.contrib.auth.models import User
 from django.db import models
-from compras.models import *
 from sys import api_version
+from compras.models import *
 from math import e
 
 
