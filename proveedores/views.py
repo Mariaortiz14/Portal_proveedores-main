@@ -2,38 +2,26 @@ from proveedores.models import homologacion, propuestas_sol, documentos_requerid
 from compras.models import caracteristicas_solicitud, solicitud, comentarios
 from django.shortcuts import redirect, get_object_or_404
 from django.template.loader import render_to_string
-
-
-
-
-from django.http import HttpResponse
-from django.template import loader
-from django.conf import settings
+from compras.models import solicitud as Solicitud
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render, redirect
-from compras.forms import caracteristicas
-
-from .forms import form_propuesta
 from django.contrib.auth.models import User
-from django.contrib import messages
+from compras.forms import caracteristicas
 from django.core.mail import EmailMessage
-from compras.forms import ComentarioForm
-from django.urls import reverse
 from compras.views import send_email_task
-
-from compras.models import solicitud as Solicitud
-
-from django.urls import reverse
-from django.conf import settings
-from django.core.mail import EmailMessage
-
-from django.contrib import messages
-from .models import comentarios
+from compras.forms import ComentarioForm
+from django.http import HttpResponse
 from compras.models import solicitud
+from django.contrib import messages
+from django.template import loader
+from .forms import form_propuesta
 from django.db import transaction 
-import os
+from django.conf import settings
+from django.urls import reverse
 from .models import *
+import os
 
+#Función para agregar un nuevo comentario
 def agregar_comentario(request, id, parent_id=None):
     solicitud_obj = get_object_or_404(solicitud, id=id)
 
@@ -84,9 +72,7 @@ def agregar_comentario(request, id, parent_id=None):
 
     return redirect('proveedor:solicitud_id', identificador=solicitud_obj.identificador)
 
-
-
-
+#Funcion para mostrar el dashboard de proveedor
 def dashboard(request):
     propuestas = []
     grafico_data = {
@@ -120,7 +106,7 @@ def dashboard(request):
 
     return render(request, 'proveedores/dashboard/index.html', context)
 
-
+#Función para mostrar los documentos
 def doc(request):
     if request.method == 'POST':
         file = request.FILES.get('file')
@@ -165,7 +151,7 @@ def doc(request):
 
     return render(request, "proveedores/doc/documentos.html", context)
 
-
+#Función para listar todos los archivos
 def listar_archivos(request):
     media_path = os.path.join(settings.BASE_DIR, 'media')
 
@@ -176,6 +162,7 @@ def listar_archivos(request):
     # Renderizar la plantilla con la lista de archivos PDF
     return render(request, 'proveedores/doc/documentos.html', {'pdf': pdf_files})
 
+#Función para descargar los archivos pdf
 def descargar_archivo(request, path):
     # Construir la ruta completa al archivo en el directorio MEDIA_ROOT
     ruta_completa = os.path.join(settings.MEDIA_ROOT, path)
@@ -195,6 +182,7 @@ def descargar_archivo(request, path):
         # Manejar el caso en que el archivo no existe
         return HttpResponse("El archivo no existe", status=404)
 
+#Función para listar las solicitudes
 def solicitudes(request):
     homologacion_obj = homologacion.objects.filter(usuario_hologa=request.user.id).first()
     familia_ = homologacion_obj.familia if homologacion_obj else None
@@ -204,6 +192,7 @@ def solicitudes(request):
         solicitudes = []
     return render(request, 'proveedores/solicitudes/solicitudes.html', {'solicitudes':solicitudes})
 
+#Función para listar las solicitudes por identificador
 def solicitud_id(request, identificador):
     solicitud_ = solicitud.objects.get(identificador=identificador)
     caracteristicas = caracteristicas_solicitud.objects.filter(solicitud=solicitud_)
@@ -245,6 +234,7 @@ def solicitud_id(request, identificador):
         'Comentarios_usuario': comentarios_usuario
     })
 
+#Funcion para listar las tareas que asignaron a proveedores
 def tareas(request):
     tareas_qs = Tarea.objects.filter(usuario=request.user).order_by('-fecha_creacion')
     
@@ -259,6 +249,7 @@ def tareas(request):
 
     return render(request, 'proveedores/tareas/tareas.html', {'tareas': tareas})
 
+#Funcion para listar las propuestas hechas por el proveedor
 def propuestas(request):
     from proveedores.models import propuestas_sol, homologacion
 

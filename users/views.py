@@ -1,23 +1,23 @@
-from email.mime import message
-import re
-from datetime import date, datetime, time
-from logging import info
-from django.http import HttpResponse, JsonResponse
-from django.template import loader
-from django.shortcuts import render, redirect
-from .forms import *
-from .models import *
-from proveedores.models import *
-from django.core import serializers
-from django.utils.html import escape
-from django import forms
-from django.urls import reverse
-from django.db import transaction
-from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
+from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.models import User, Group
+from django.shortcuts import render, redirect
+from datetime import date, datetime, time
+from django.utils.html import escape
+from django.core import serializers
+from django.contrib import messages
+from django.template import loader
+from django.db import transaction
+from proveedores.models import *
+from django.urls import reverse
+from email.mime import message
+from django import forms
+from logging import info
+from .models import *
+from .forms import *
+import re
 
-
+#Función para llenar el formulario de registro
 def signup(request):
     seccion1 = ProveedorForm_(request.POST or None, prefix='seccion1')
     ca = forms.formset_factory(composicion_accionaria_, extra=1, max_num=8)
@@ -134,8 +134,7 @@ def signup(request):
         'seccion7': seccion7, 'seccion8': seccion8, 'seccion9': seccion9
     })
 
-
-
+#Funcion para mostrarv la actividad economica en el formulario
 def actividad_economica(request):
     codigo = request.GET.get('ciiu', None)
     if codigo:
@@ -149,6 +148,7 @@ def actividad_economica(request):
     else:
         return JsonResponse({'error': 'Código no Proporcionado'}, status=400)
 
+#Función para traer los municipios de la base de datos
 def get_municipios(request):
     departamento_id = request.GET.get('departamento_id', None)
     if departamento_id:
@@ -158,6 +158,7 @@ def get_municipios(request):
     else:
         return JsonResponse({'error': 'Departamento no proporcionado'}, status=400)
 
+#Función para iniciar sesion
 def login_(request):
     if request.user.is_authenticated and request.user.groups.filter(name='Proveedor').exists():
         return redirect('proveedor:dashboard')
@@ -197,12 +198,12 @@ def login_(request):
 
     return render(request, 'users/register/login.html', {'form': form})
 
-
-
+#Función para cerrar sesión
 def logout_(request):
     logout(request)
     return redirect('users:login')
 
+#Función para ver el perfil del proveedor
 def profile(request):
     registro = registro_formulario.objects.filter(usuario=request.user).first()
     
