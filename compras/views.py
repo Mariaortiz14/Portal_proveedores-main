@@ -39,7 +39,6 @@ def dashboard_compras(request):
 
 #Funcion de vista de dashboard
 def get_dashboard_data(request):
-
     total_proveedores = homologacion.objects.count()
     proveedores_activos = homologacion.objects.filter(estado='activo').count()
     proveedores_inactivos = total_proveedores - proveedores_activos
@@ -52,13 +51,11 @@ def get_dashboard_data(request):
     propuestas_rechazadas = propuestas_sol.objects.filter(estado='rechazada').count()
     propuestas_enviadas = propuestas_sol.objects.exclude(estado__in=['aceptada', 'rechazada']).count()
 
-    data = {
-        'proveedores': [proveedores_activos, proveedores_inactivos],
-        'solicitudes': [solicitudes_abiertas, solicitudes_revision, solicitudes_cerradas],
-        'propuestas': [propuestas_aceptadas, propuestas_rechazadas, propuestas_enviadas],
-    }
-
-    return JsonResponse(data)
+    return JsonResponse({
+        "proveedores": [proveedores_activos, proveedores_inactivos],
+        "solicitudes": [solicitudes_abiertas, solicitudes_revision, solicitudes_cerradas],
+        "propuestas": [propuestas_aceptadas, propuestas_rechazadas, propuestas_enviadas],
+    })
 
 #Función de tablas básicas
 def t_basicas(request):
@@ -381,6 +378,7 @@ def crear_solicitudes(request):
                         descripcion=form.cleaned_data['descripcion'],
                         familia=form.cleaned_data['familia'],
                         cantidad=form.cleaned_data['cantidad'],
+                        fecha_final=form.cleaned_data.get('fecha_final'),
                         estado='Nueva'
                     )
                     for c in carac.cleaned_data:
@@ -412,7 +410,7 @@ def crear_solicitudes(request):
                             'url': url,
                             'solicitud_id': id,
                         }
-                        send_email_task('error al enviar [Solicitud FEPCO]', 'jcsanchez@fepco.com.co', 'compras/correo/email_notsoli.html', context)
+                        send_email_task('error al enviar [Solicitud FEPCO]', 'ymorales@fepco.com.co', 'compras/correo/email_notsoli.html', context)
                     return redirect('compras:missolicitudes')
                 else:
                     messages.error(request, 'Formulario inválido')

@@ -74,6 +74,13 @@ class crear_solicitud(forms.Form):
     carasteristicas= formset_factory(caracteristicas, extra=1)
     familia = forms.ModelChoiceField(queryset=familias.objects.all(), widget=forms.Select(attrs={'class': 'form-control '}))
     cantidad = forms.IntegerField(widget=forms.NumberInput(attrs={'class': 'form-control ', 'placeholder': 'Cantidad'}))
+    fecha_final = forms.DateField(
+        widget=forms.DateInput(attrs={
+            'class': 'form-control',
+            'type': 'date',  # Muestra selector de fecha
+        }),
+        required=False,
+        label='Fecha de finalización')
 
 #Clase de  comentarios
 class ComentarioForm(forms.ModelForm):

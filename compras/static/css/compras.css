@@ -61,3 +61,6 @@ input, select, textarea {
     display: none;
 }
 
+.text-fepco {
+  color: rgba(231, 38, 31) !important;
+}

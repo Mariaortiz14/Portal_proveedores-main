@@ -6,7 +6,7 @@
 {% block content %}
 <style>
     .solicitud-card {
-        border-left: 6px solid #0d6efd;
+        border-left: 6px solid rgba(231, 38, 31);
         transition: all 0.3s ease;
         border-radius: 1rem;
         background: linear-gradient(135deg, #f8f9fa, #ffffff);
@@ -45,7 +45,7 @@
 </style>
 
 <div class="container mt-4">
-    <h2 class="mb-4 fw-bold text-primary">
+    <h2 class="mb-4 fw-bold text-fepco">
         <i class="fa-solid fa-list-check me-2"></i>Solicitudes FEPCO
     </h2>
 
@@ -84,7 +84,7 @@
                                     Fecha de creación: {{ solicitud.fecha_creacion|date:"d M Y" }}
                                 </small>
                             </p>
-                            <a href="{% url 'proveedor:solicitud_id' solicitud.identificador %}" class="btn btn-primary mt-2">Ver más</a>
+                            <a href="{% url 'proveedor:solicitud_id' solicitud.identificador %}" class="btn btn-danger" mt-2">Ver más</a>
                         </div>
                     </div>
                 </div>
@@ -92,7 +92,7 @@
         </div>
     {% else %}
         <div class="alert alert-info mt-4">
-            Actualmente no hay solicitudes disponibles para tu familia de productos.
+            Actualmente no hay solicitudes pendientes para tu familia de proveedores.
         </div>
     {% endif %}
 </div>

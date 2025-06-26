@@ -167,7 +167,7 @@ SESSION_COOKIE_AGE = 86400
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # settings.py
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 #EMAIL_HOST = 'fepco-com-co.mail.protection.outlook.com' 
 #EMAIL_HOST = 'smtp.office365.com'
 EMAIL_PORT = 587

@@ -15,7 +15,7 @@
             <div class="card shadow-sm border-0 h-100 animate__animated animate__fadeIn">
                 <div class="card-body text-center">
                     <h5 class="card-title text-primary fw-bold"><i class="bi bi-people-fill me-2"></i>Proveedores</h5>
-                    <canvas id="chartProveedores" style="max-height: 220px;"></canvas>
+                    <canvas id="graficoProveedores" style="max-height: 220px;"></canvas>
                 </div>
             </div>
         </div>
@@ -25,7 +25,7 @@
             <div class="card shadow-sm border-0 h-100 animate__animated animate__fadeIn">
                 <div class="card-body text-center">
                     <h5 class="card-title text-success fw-bold"><i class="bi bi-clipboard-data me-2"></i>Solicitudes</h5>
-                    <canvas id="chartSolicitudes" style="max-height: 220px;"></canvas>
+                    <canvas id="graficoSolicitudes" style="max-height: 220px;"></canvas>
                 </div>
             </div>
         </div>
@@ -35,7 +35,7 @@
             <div class="card shadow-sm border-0 h-100 animate__animated animate__fadeIn">
                 <div class="card-body text-center">
                     <h5 class="card-title text-danger fw-bold"><i class="bi bi-bar-chart me-2"></i>Propuestas</h5>
-                    <canvas id="chartPropuestas" style="max-height: 220px;"></canvas>
+                    <canvas id="graficoPropuestas" style="max-height: 220px;"></canvas>
                 </div>
             </div>
         </div>
@@ -44,51 +44,58 @@
 {% endblock %}
 
 {% block grafico %}
+<script src="{% static 'js/chart.min.js' %}"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        fetch("/compras/dashboard/data/")
-            .then(response => response.json())
-            .then(data => {
-                // Gráfico 1: Proveedores
-                new Chart(document.getElementById("myChart"), {
-                    type: 'doughnut',
-                    data: {
-                        labels: ['Aprobados', 'Total'],
-                        datasets: [{
-                            data: data.proveedores,
-                            backgroundColor: ['#28a745', '#dee2e6']
-                        }]
-                    },
-                    options: { responsive: true, plugins: { legend: { display: true } } }
-                });
+  document.addEventListener("DOMContentLoaded", function () {
+    fetch('/compras/dashboard/data/')
+      .then(res => res.json())
+      .then(data => {
+        const ctx1 = document.getElementById('graficoProveedores');
+        const ctx2 = document.getElementById('graficoSolicitudes');
+        const ctx3 = document.getElementById('graficoPropuestas');
 
-                // Gráfico 2: Solicitudes
-                new Chart(document.getElementById("myChart2"), {
-                    type: 'doughnut',
-                    data: {
-                        labels: ['Pendientes', 'En revisión', 'Finalizadas'],
-                        datasets: [{
-                            data: data.solicitudes,
-                            backgroundColor: ['#ffc107', '#17a2b8', '#6f42c1']
-                        }]
-                    },
-                    options: { responsive: true, plugins: { legend: { display: true } } }
-                });
+        if (ctx1 && ctx2 && ctx3) {
+          new Chart(ctx1, {
+            type: 'doughnut',
+            data: {
+              labels: ['Activos', 'Inactivos'],
+              datasets: [{
+                data: data.proveedores,
+                backgroundColor: ['#4caf50', '#f44336'],
+              }]
+            }
+          });
 
-                // Gráfico 3: Propuestas
-                new Chart(document.getElementById("myChart3"), {
-                    type: 'doughnut',
-                    data: {
-                        labels: ['Rechazadas', 'Pendientes', 'Aceptadas'],
-                        datasets: [{
-                            data: data.propuestas,
-                            backgroundColor: ['#dc3545', '#fd7e14', '#198754']
-                        }]
-                    },
-                    options: { responsive: true, plugins: { legend: { display: true } } }
-                });
-            })
-            .catch(error => console.error("Error al obtener los datos:", error));
-    });
+          new Chart(ctx2, {
+            type: 'doughnut',
+            data: {
+              labels: ['Abiertas', 'En revisión', 'Cerradas'],
+              datasets: [{
+                data: data.solicitudes,
+                backgroundColor: ['#2196f3', '#ff9800', '#9c27b0'],
+              }]
+            }
+          });
+
+          new Chart(ctx3, {
+            type: 'doughnut',
+            data: {
+              labels: ['Aceptadas', 'Rechazadas', 'Enviadas'],
+              datasets: [{
+                data: data.propuestas,
+                backgroundColor: ['#00bcd4', '#e91e63', '#cddc39'],
+              }]
+            }
+          });
+        } else {
+          console.error('Uno o más canvas no fueron encontrados.');
+        }
+      })
+      .catch(err => {
+        console.error("Error al cargar datos del dashboard:", err);
+      });
+  });
 </script>
+
 {% endblock %}
+

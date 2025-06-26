@@ -338,6 +338,9 @@ select:focus{
     background-color: #e20404;
     color: #fff;
 }
+.text-fepco {
+  color: rgba(231, 38, 31) !important;
+}
 @media(max-width:876px){
     .wrapper{
         padding: 20px 20px;
