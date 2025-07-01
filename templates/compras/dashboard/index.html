@@ -54,7 +54,7 @@
         const ctx2 = document.getElementById('graficoSolicitudes');
         const ctx3 = document.getElementById('graficoPropuestas');
 
-        if (ctx1 && ctx2 && ctx3) {
+        if (ctx1 && data.proveedores.reduce((a,b)=>a+b,0) > 0) {
           new Chart(ctx1, {
             type: 'doughnut',
             data: {
@@ -65,7 +65,9 @@
               }]
             }
           });
+        }
 
+        if (ctx2 && data.solicitudes.reduce((a,b)=>a+b,0) > 0) {
           new Chart(ctx2, {
             type: 'doughnut',
             data: {
@@ -76,7 +78,11 @@
               }]
             }
           });
+        } else if (ctx2) {
+          ctx2.parentNode.innerHTML = '<p class="text-muted">No hay solicitudes para mostrar.</p>';
+        }
 
+        if (ctx3 && data.propuestas.reduce((a,b)=>a+b,0) > 0) {
           new Chart(ctx3, {
             type: 'doughnut',
             data: {
@@ -87,8 +93,6 @@
               }]
             }
           });
-        } else {
-          console.error('Uno o más canvas no fueron encontrados.');
         }
       })
       .catch(err => {
@@ -96,6 +100,5 @@
       });
   });
 </script>
-
 {% endblock %}
 

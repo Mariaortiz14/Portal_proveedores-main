@@ -173,14 +173,21 @@ def solicitud_id(request, identificador):
     caracteristicas = caracteristicas_solicitud.objects.filter(solicitud=solicitud_)
     form = form_propuesta()
     form_comentario = ComentarioForm()
-    comentarios_usuario = comentarios.objects.filter(solicitud=solicitud_, usuario=request.user).exclude(parent__isnull=False)  
+    comentarios_usuario = comentarios.objects.filter(solicitud=solicitud_, usuario=request.user).exclude(parent__isnull=False)
+
+    # Obtener todas las propuestas asociadas a esta solicitud y este usuario
+    id_homolo = homologacion.objects.filter(
+        usuario_hologa=request.user,
+        familia=solicitud_.familia
+    ).first()
+
+    propuestas_asociadas = propuestas_sol.objects.filter(
+        id_solicitud=solicitud_,
+        id_homologacion=id_homolo
+    ) if id_homolo else []
 
     if request.method == 'POST':
         form = form_propuesta(request.POST, request.FILES)
-        id_homolo = homologacion.objects.filter(
-                     usuario_hologa=request.user,
-                     familia=solicitud_.familia
-                        ).first()
         if not id_homolo:
             messages.error(request, 'No tienes una homologación válida para esta solicitud.')
             return redirect('proveedor:solicitud_id', identificador=identificador)
@@ -190,12 +197,14 @@ def solicitud_id(request, identificador):
             print("Solicitud asociada:", solicitud_)
             print("Datos del formulario:", form.cleaned_data)
 
-            propuestas_sol.objects.create(
+            propuesta = propuestas_sol.objects.create(
                 id_homologacion=id_homolo,
                 id_solicitud=solicitud_,
+                estado='pendiente',  
                 **form.cleaned_data
             )
-            messages.success(request, 'Propuesta enviada con éxito.')   
+            propuesta.save() 
+            messages.success(request, 'Propuesta enviada con éxito.')
             return redirect('proveedor:solicitud_id', identificador=solicitud_.identificador)
         else:
             messages.error(request, 'Ocurrió un error al enviar la propuesta. Verifica los campos.')
@@ -206,8 +215,10 @@ def solicitud_id(request, identificador):
         'caracteristicas': caracteristicas,
         'form': form,
         'form_comentario': form_comentario,
-        'Comentarios_usuario': comentarios_usuario
+        'Comentarios_usuario': comentarios_usuario,
+        'propuestas': propuestas_asociadas  # ✅ propuestas visibles
     })
+
 
 #Funcion para listar las tareas que asignaron a proveedores
 def tareas(request):
@@ -226,13 +237,15 @@ def tareas(request):
 
 #Funcion para listar las propuestas hechas por el proveedor
 def propuestas(request):
-    from proveedores.models import propuestas_sol, homologacion
-
+    # Todas las homologaciones asociadas al usuario logueado
     homologaciones = homologacion.objects.filter(usuario_hologa=request.user)
-    propuestas = propuestas_sol.objects.filter(id_homologacion__in=homologaciones).order_by('-fecha')
 
-    print("Propuestas encontradas:", propuestas)
+    # Mostrar todas las propuestas vinculadas a cualquiera de esas homologaciones
+    propuestas = propuestas_sol.objects.filter(
+        id_homologacion__in=homologaciones
+    ).order_by('-fecha')
 
     return render(request, 'proveedores/propuestas/propuestas.html', {
         'propuestas': propuestas
     })
+
