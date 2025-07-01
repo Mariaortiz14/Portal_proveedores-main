@@ -1,7 +1,7 @@
 {% extends "_layout_proveedores.html" %}
 {% load static %}
 {% block Title %}
-    {{solicitud.identificador}}
+{{solicitud.identificador}}
 {% endblock Title %}
 
 {% block content %}
@@ -9,7 +9,8 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
-    h2, h5 {
+    h2,
+    h5 {
         font-weight: 700;
     }
 
@@ -22,20 +23,20 @@
         border: 2px solid rgba(231, 38, 31);
     }
 
-    .card  {
+    .card {
         border: none;
         border-radius: 1rem;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
         transition: 0.3s ease;
     }
 
     .card:hover {
         transform: translateY(-3px);
-        box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
     }
 
     .card-title i {
-        color:rgba(231, 38, 31);
+        color: rgba(231, 38, 31);
         margin-right: 8px;
     }
 
@@ -45,8 +46,9 @@
         border-top-right-radius: 1rem;
     }
 
-    .card-body p b, .list-group-item b {
-        color:rgba(231, 38, 31);
+    .card-body p b,
+    .list-group-item b {
+        color: rgba(231, 38, 31);
     }
 
     .btn-dark {
@@ -84,7 +86,7 @@
 
     .comentario-box:hover {
         background-color: #f2f7ff;
-        border-left-color:rgba(231, 38, 31);
+        border-left-color: rgba(231, 38, 31);
     }
 
     .respuesta {
@@ -97,7 +99,10 @@
         border-radius: 1.5rem;
     }
 
-    textarea, input[type="text"], input[type="number"], select {
+    textarea,
+    input[type="text"],
+    input[type="number"],
+    select {
         border-radius: 0.75rem !important;
     }
 
@@ -130,7 +135,7 @@
                         <p class="card-text"><b>Fecha de finalización:</b> {{solicitud.fecha_fin}}</p>
                         <p class="card-text"><b>Estado:</b> {{solicitud.estado}}</p>
                         {% for c in caracteristicas %}
-                            <p class="card-text"><i class="fa-solid fa-circle fa-2xs pe-2"></i>{{c.caracteristica}}</p>
+                        <p class="card-text"><i class="fa-solid fa-circle fa-2xs pe-2"></i>{{c.caracteristica}}</p>
                         {% endfor %}
                     </div>
                     <div class="col-lg-6 mb-3">
@@ -139,7 +144,8 @@
                     </div>
                     <div class="col-12 d-flex justify-content-center">
                         {% if solicitud.estado == 'Nueva' %}
-                        <button type="button" class="btn btn-dark btn-lg" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                        <button type="button" class="btn btn-dark btn-lg" data-bs-toggle="modal"
+                            data-bs-target="#staticBackdrop">
                             Presentar propuesta
                         </button>
                         {% endif %}
@@ -160,19 +166,23 @@
                     </form>
                 </div>
                 <div class="list-group">
-                    {% for comentario in solicitud.comentarios_set.all %}
+                    {% for comentario in solicitud.comentarios_set.all|dictsort:"fecha" %}
+                    {% if not comentario.parent %}
                     <div class="list-group-item flex-column align-items-start">
                         <div class="d-flex w-100 justify-content-between">
                             <div class="d-flex align-items-center">
-                                <img src="{% static 'img/perfil.png' %}" alt="{{ comentario.usuario.username }}" class="user-photo">
+                                <img src="{% static 'img/perfil.png' %}" alt="{{ comentario.usuario.username }}"
+                                    class="user-photo">
                                 <h5 class="mb-1">{{ comentario.usuario.username }}</h5>
                             </div>
                             <small>{{ comentario.fecha }}</small>
                         </div>
                         <p class="mb-1">{{ comentario.comentario }}</p>
-                        <a href="#" class="btn btn-link" onclick="document.getElementById('respuesta-form-{{ comentario.id }}').style.display='block'">Responder</a>
+                        <a href="#" class="btn btn-link"
+                            onclick="document.getElementById('respuesta-form-{{ comentario.id }}').style.display='block'">Responder</a>
                         <div id="respuesta-form-{{ comentario.id }}" style="display:none;">
-                            <form method="post" action="{% url 'proveedor:agregar_comentario' id=solicitud.id parent_id=comentario.id %}">
+                            <form method="post"
+                                action="{% url 'proveedor:agregar_comentario' id=solicitud.id parent_id=comentario.id %}">
                                 {% csrf_token %}
                                 {{ form_comentario.as_p }}
                                 <div class="d-flex justify-content-end mt-2">
@@ -185,7 +195,8 @@
                             <div class="list-group-item flex-column align-items-start">
                                 <div class="d-flex w-100 justify-content-between">
                                     <div class="d-flex align-items-center">
-                                        <img src="{% static 'img/perfil.png' %}" alt="{{ reply.usuario.username }}" class="user-photo">
+                                        <img src="{% static 'img/perfil.png' %}" alt="{{ reply.usuario.username }}"
+                                            class="user-photo">
                                         <h5 class="mb-1">{{ reply.usuario.username }}</h5>
                                     </div>
                                     <small>{{ reply.fecha }}</small>
@@ -195,6 +206,7 @@
                             {% endfor %}
                         </div>
                     </div>
+                    {% endif %}
                     {% endfor %}
                 </div>
             </div>
@@ -206,7 +218,8 @@
 {% block modal %}
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down modal-dialog-scrollable">
-        <form class="modal-content" method="post" enctype="multipart/form-data" action="{% url 'proveedor:solicitud_id' identificador=solicitud.identificador %}">
+        <form class="modal-content" method="post" enctype="multipart/form-data"
+            action="{% url 'proveedor:solicitud_id' identificador=solicitud.identificador %}">
             {% csrf_token %}
             <div class="modal-header">
                 <h1 class="modal-title fs-5">Presentar propuesta</h1>
@@ -224,7 +237,9 @@
                 <div class="mb-3 row">
                     <label class="form-label">Tiempo de entrega (Días):</label>
                     <div class="col-5">{{form.tiempo_entrega_min}}</div>
-                    <div class="col-2 d-flex justify-content-center align-items-center"><p class="m-0">A</p></div>
+                    <div class="col-2 d-flex justify-content-center align-items-center">
+                        <p class="m-0">A</p>
+                    </div>
                     <div class="col-5">{{form.tiempo_entrega_max}}</div>
                 </div>
                 <div class="mb-3">
@@ -273,12 +288,12 @@
 
 {% block script %}
 <script>
-    $(document).ready(function(){
-        $('input[type="file"]').on('change', function(){
-            var ext = $( this ).val().split('.').pop();
-            if ($( this ).val() != '') {
-                if(ext === "pdf"){
-                    if($(this)[0].files[0].size > 1048576){
+    $(document).ready(function () {
+        $('input[type="file"]').on('change', function () {
+            var ext = $(this).val().split('.').pop();
+            if ($(this).val() != '') {
+                if (ext === "pdf") {
+                    if ($(this)[0].files[0].size > 1048576) {
                         $('#modal-title').text('¡Precaución!');
                         $('#modal-msg').html("Se solicita un archivo no mayor a 1MB. Por favor verifica.");
                         $(this).val('');

@@ -21,7 +21,6 @@ from django.urls import reverse
 from .models import *
 import os
 
-#Función para agregar un nuevo comentario
 def agregar_comentario(request, id, parent_id=None):
     solicitud_obj = get_object_or_404(solicitud, id=id)
 
@@ -29,48 +28,24 @@ def agregar_comentario(request, id, parent_id=None):
         form = ComentarioForm(request.POST)
         if form.is_valid():
             try:
-                with transaction.atomic():  # 👈 NUEVO
+                with transaction.atomic():
                     comentario = form.save(commit=False)
                     comentario.solicitud = solicitud_obj
                     comentario.usuario = request.user
                     if parent_id:
                         comentario.parent_id = parent_id
+                    comentario.save()
 
-                    # Construcción segura de la URL
-                    protocol = getattr(settings, 'DEFAULT_HTTP_PROTOCOL', 'http')
-                    domain = request.get_host()
-                    full_url = f"{protocol}://{domain}{reverse('proveedor:solicitud_id', kwargs={'identificador': solicitud_obj.identificador})}"
-
-                    subject = f"[Nuevo comentario] en la solicitud: {solicitud_obj.TSolicitud}"
-                    context = {
-                        'titulo': solicitud_obj.TSolicitud,
-                        'url': full_url,
-                        'solicitud_id': solicitud_obj.id,
-                    }
-
-                    html_content = render_to_string('compras/correo/email_comentario.html', context)
-
-                    email = EmailMessage(
-                        subject,
-                        html_content,
-                        settings.DEFAULT_FROM_EMAIL,
-                        to=['ymorales@fepco.com.co', 'myito1612@gmail.com']
-                    )
-                    email.content_subtype = 'html'
-                    email.send()  
-
-                    comentario.save()  
-
-                messages.success(request, 'Comentario agregado correctamente.')
+                    messages.success(request, 'Comentario agregado correctamente.')
 
             except Exception as e:
-                print("Error al enviar el correo:", str(e))
-                messages.error(request, 'No se pudo enviar el comentario. Intenta de nuevo.')
-
+                print("Error al guardar el comentario:", str(e))
+                messages.error(request, 'No se pudo guardar el comentario. Intenta de nuevo.')
         else:
             messages.error(request, 'Formulario inválido. Revisa los campos.')
 
     return redirect('proveedor:solicitud_id', identificador=solicitud_obj.identificador)
+
 
 #Funcion para mostrar el dashboard de proveedor
 def dashboard(request):

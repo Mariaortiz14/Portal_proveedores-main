@@ -479,36 +479,42 @@ def get_propuestas_chart(request, id):
 #Función para crear un comentario en una solicitud
 def agregar_comentario(request, id, parent_id=None):
     solicitud_obj = get_object_or_404(solicitud, id=id)
-    parent_comentario = None
-    if parent_id:
-        parent_comentario = get_object_or_404(comentarios, id=parent_id)
 
+    if request.method == 'POST':
         form = ComentarioForm(request.POST)
         if form.is_valid():
-            comentario = form.save(commit=False)
-            comentario.solicitud = solicitud_obj
-            comentario.usuario = request.user
-            if parent_comentario:
-                comentario.parent = parent_comentario
-                correos = comentario.parent.usuario.email
-                context = {
-                    'titulo': solicitud_obj.TSolicitud,
-                    'url': reverse('compras:solicitud_id', args=[solicitud_obj.id]),
-                    'solicitud_id': solicitud_obj.id,
-                }
-                send_email_task(f'Comentario en solicitud {id}', correos, 'compras/correo/email_comentario.html', context)
-            comentario.save()
-            return redirect('compras:solicitud_id', id=id)
+            try:
+                with transaction.atomic():
+                    comentario = form.save(commit=False)
+                    comentario.solicitud = solicitud_obj
+                    comentario.usuario = request.user
+
+                    if parent_id:
+                        comentario.parent_id = parent_id
+
+                    comentario.save()  # Guardar siempre antes de cualquier otra acción
+                    messages.success(request, 'Comentario agregado correctamente.')
+
+            except Exception as e:
+                print("Error al guardar el comentario:", str(e))
+                messages.error(request, 'Hubo un error al guardar el comentario.')
+
         else:
-            messages.error(request, 'Formulario inválido')
-            return redirect('compras:solicitud_id', id=id)
-    else:
-        return redirect('compras:solicitud_id', id=id)
+            messages.error(request, 'Formulario inválido. Revisa los campos.')
+
+    return redirect('proveedor:solicitud_id', identificador=solicitud_obj.identificador)
+
+
     
 #Función para crear tareas para los proveedores
 def tareas(request):
     tareas = Tarea.objects.all()
-    return render(request, 'compras/tareas/tareas.html', {'tareas': tareas})
+    grupo_proveedor = Group.objects.get(name='Proveedor')
+    users = User.objects.filter(groups=grupo_proveedor)
+    return render(request, 'compras/tareas/tareas.html', {
+        'tareas': tareas,
+        'users': users
+    })
 
 #Funcion para asignar tareas desde compras a un proveedor
 def asignar_tarea_doc(request, id_registro):
