@@ -216,7 +216,7 @@ def solicitud_id(request, identificador):
         'form': form,
         'form_comentario': form_comentario,
         'Comentarios_usuario': comentarios_usuario,
-        'propuestas': propuestas_asociadas  # ✅ propuestas visibles
+        'propuestas': propuestas_asociadas 
     })
 
 

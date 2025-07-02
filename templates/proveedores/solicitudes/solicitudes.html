@@ -48,6 +48,7 @@
     <h2 class="mb-4 fw-bold text-fepco">
         <i class="fa-solid fa-list-check me-2"></i>Solicitudes FEPCO
     </h2>
+    <p class="text-muted">Total solicitudes recibidas: {{ solicitudes|length }}</p>
 
     {% if solicitudes %}
         <div class="row">
@@ -84,7 +85,7 @@
                                     Fecha de creación: {{ solicitud.fecha_creacion|date:"d M Y" }}
                                 </small>
                             </p>
-                            <a href="{% url 'proveedor:solicitud_id' solicitud.identificador %}" class="btn btn-danger" mt-2">Ver más</a>
+                            <a href="{% url 'proveedor:solicitud_id' solicitud.identificador %}" class="btn btn-danger mt-2">Ver más</a>
                         </div>
                     </div>
                 </div>

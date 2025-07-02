@@ -316,11 +316,15 @@ def homologacion_proveedor(request, id_registro):
 #Funcion para asignarle familia a los proveedores desde la vista de comprador
 def asigancion_familia(request, id_registro):
     if request.method == 'POST':
-        homo= homologacion.objects.get(id_registro=id_registro)
+        homo = homologacion.objects.get(id_registro=id_registro)
         familia = familias.objects.get(id=request.POST['familia'])
         homo.familia = familia
+
+        if homo.id_registro and homo.id_registro.usuario:
+            homo.usuario_hologa = homo.id_registro.usuario  
+
         homo.save()
-    return redirect('compras:proveedor', id_registro= id_registro)
+    return redirect('compras:proveedor', id_registro=id_registro)
 
 #Funcion para ver las solicitudes de ccompras de un proveedor 
 def MisSolicitudes(request):
@@ -503,29 +507,56 @@ def agregar_comentario(request, id, parent_id=None):
             messages.error(request, 'Formulario inválido. Revisa los campos.')
 
     return redirect('proveedor:solicitud_id', identificador=solicitud_obj.identificador)
-
-
-    
+  
 #Función para crear tareas para los proveedores
 def tareas(request):
-    tareas = Tarea.objects.all()
+    tareas = Tarea.objects.all().order_by('-fecha_creacion')
     grupo_proveedor = Group.objects.get(name='Proveedor')
     users = User.objects.filter(groups=grupo_proveedor)
+    homologaciones = homologacion.objects.select_related('id_registro', 'id_registro__usuario').all()
+
     return render(request, 'compras/tareas/tareas.html', {
-        'tareas': tareas,
-        'users': users
-    })
+    'tareas': tareas,
+    'users': users,
+    'user_selected_id': request.GET.get('user'),
+    'status_selected': request.GET.get('status'),
+})
+
 
 #Funcion para asignar tareas desde compras a un proveedor
 def asignar_tarea_doc(request, id_registro):
     if request.method == 'POST':
-        id_doc = request.POST['id']
-        tipo = TipoTarea.objects.get(id=1)
-        homologacion_ = homologacion.objects.get(id_registro=id_registro)
-        crear_tarea = Tarea.objects.create(descripcion=request.POST['descripcion'], fecha_vencimiento=request.POST['fecha_ven'],
-                                           datos_adicionales=id_doc, tipo=tipo, usuario=homologacion_.usuario_hologa )
-        
-    return redirect('compras:tareas')
+        id_doc = request.POST.get('id')
+        descripcion = request.POST.get('descripcion')
+        fecha_ven = request.POST.get('fecha_ven')
+
+        tipo = TipoTarea.objects.get(id=1)  # Carga de documento
+
+        # Validar existencia de homologación
+        homologacion_ = get_object_or_404(homologacion, id_registro=id_registro)
+
+        # Asegurar que el usuario esté vinculado correctamente
+        if not homologacion_.usuario_hologa:
+            if homologacion_.id_registro and homologacion_.id_registro.usuario:
+                homologacion_.usuario_hologa = homologacion_.id_registro.usuario
+                homologacion_.save()
+            else:
+                messages.error(request, 'No se pudo asignar la tarea: el proveedor no tiene un usuario asociado.')
+                return redirect('compras:tareas')
+
+        # Crear la tarea asociada correctamente
+        Tarea.objects.create(
+            descripcion=descripcion,
+            fecha_vencimiento=fecha_ven,
+            datos_adicionales=id_doc,
+            tipo=tipo,
+            usuario=homologacion_.usuario_hologa
+        )
+
+        messages.success(request, f'Tarea asignada exitosamente a {homologacion_.usuario_hologa.username}.')
+        return redirect('compras:tareas')
+
+
 
 #Función para general un pdf con la información de un registro de compras
 def generar_pdf(request, id_registro):

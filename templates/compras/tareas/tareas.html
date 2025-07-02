@@ -3,9 +3,14 @@
 
 {% block content %}
 <div class="container mt-4">
-    <!-- Encabezado -->
     <div class="text-center mb-4">
-        <h2 class="p-3 ps-5 text-center text-gradient fw-bold display-7" style="background: -webkit-linear-gradient(45deg, #a70b0b, #080808); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;"><i class="bi bi-list-task me-1"></i>Lista de Tareas</h2>
+        <h2 class="p-3 ps-5 text-center text-gradient fw-bold display-7"
+            style="background: -webkit-linear-gradient(45deg, #a70b0b, #080808);
+                   -webkit-background-clip: text;
+                   background-clip: text;
+                   -webkit-text-fill-color: transparent;">
+            <i class="bi bi-list-task me-1"></i>Lista de Tareas
+        </h2>
         <p class="text-muted">Aquí puedes ver y filtrar las tareas asignadas a los usuarios.</p>
     </div>
 
@@ -20,7 +25,9 @@
                         <select class="form-select" id="filter_user" name="user">
                             <option value="">Todos</option>
                             {% for user in users %}
-                                <option value="{{ user.id }}" {% if request.GET.user == user.id|stringformat:"s" %}selected{% endif %}>{{ user.username }}</option>
+                                <option value="{{ user.id }}" {% if user_selected_id == user.id|stringformat:"s" %}selected{% endif %}>
+                                    {{ user.username }}
+                                </option>
                             {% endfor %}
                         </select>
                     </div>
@@ -28,12 +35,14 @@
                         <label for="filter_status" class="form-label">Estado</label>
                         <select class="form-select" id="filter_status" name="status">
                             <option value="">Todos</option>
-                            <option value="hecha" {% if request.GET.status == "hecha" %}selected{% endif %}>Hecha</option>
-                            <option value="no_hecha" {% if request.GET.status == "no_hecha" %}selected{% endif %}>No Hecha</option>
+                            <option value="hecha" {% if status_selected == "hecha" %}selected{% endif %}>Hecha</option>
+                            <option value="no_hecha" {% if status_selected == "no_hecha" %}selected{% endif %}>No Hecha</option>
                         </select>
                     </div>
                     <div class="col-md-4 d-flex align-items-end">
-                        <button type="submit" class="btn btn-danger w-100"><i class="bi bi-search me-1"></i> Filtrar</button>
+                        <button type="submit" class="btn btn-danger w-100">
+                            <i class="bi bi-search me-1"></i> Filtrar
+                        </button>
                     </div>
                 </div>
             </form>
@@ -60,7 +69,7 @@
                             <tr>
                                 <td class="fw-bold">{{ tarea.titulo }}</td>
                                 <td>{{ tarea.descripcion }}</td>
-                                <td>{{ tarea.fecha_vencimiento }}</td>
+                                <td>{{ tarea.fecha_vencimiento|date:"Y-m-d" }}</td>
                                 <td>{{ tarea.usuario.username }}</td>
                                 <td>
                                     {% if tarea.hecha %}
@@ -87,7 +96,7 @@
     </div>
 </div>
 
-<!-- Modal para asignar nueva tarea -->
+<!-- Modal para asignar tarea -->
 <div class="modal fade" id="asignarTareaModal" tabindex="-1" aria-labelledby="asignarTareaModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content shadow">
