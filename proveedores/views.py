@@ -18,8 +18,11 @@ from .forms import form_propuesta
 from django.db import transaction 
 from django.conf import settings
 from django.urls import reverse
+from datetime import datetime
 from .models import *
 import os
+
+
 
 def agregar_comentario(request, id, parent_id=None):
     solicitud_obj = get_object_or_404(solicitud, id=id)
@@ -56,6 +59,7 @@ def dashboard(request):
         'rechazadas': 0,
     }
     solicitudes = []
+    tareas = []
 
     try:
         homol = homologacion.objects.filter(usuario_hologa=request.user).first()
@@ -67,19 +71,23 @@ def dashboard(request):
             'rechazadas': propuestas.filter(estado='rechazada').count(),
         }
 
+        # Obtener tareas asignadas al usuario autenticado
+        tareas = Tarea.objects.filter(usuario=request.user).order_by('-fecha_vencimiento')
+
     except homologacion.DoesNotExist:
         pass
 
-    # Obtener solicitudes activas
     solicitudes = solicitud.objects.filter(estado__in=['Nueva', 'Abierta'])
 
     context = {
         'propuestas': propuestas,
         'grafico_data': grafico_data,
         'solicitudes': solicitudes,
+        'tareas': tareas,  
     }
 
     return render(request, 'proveedores/dashboard/index.html', context)
+
 
 #Función para mostrar los documentos
 def doc(request):
@@ -168,11 +176,7 @@ def solicitudes(request):
     return render(request, 'proveedores/solicitudes/solicitudes.html', {'solicitudes':solicitudes})
 
 #Función para listar las solicitudes por identificador
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from .models import solicitud, caracteristicas_solicitud, propuestas_sol, homologacion, comentarios
-from .forms import form_propuesta
-from datetime import datetime
+
 
 def solicitud_id(request, identificador):
     solicitud_ = solicitud.objects.get(identificador=identificador)

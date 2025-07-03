@@ -132,15 +132,15 @@
                     <div class="col-lg-6 mb-3">
                         <p class="card-text"><b>Numero de solicitud:</b> {{solicitud.identificador}}</p>
                         <p class="card-text"><b>Fecha de creación:</b> {{solicitud.fecha_creacion}}</p>
-                        <p class="card-text"><b>Fecha de finalización:</b> {{solicitud.fecha_fin}}</p>
+                        <p class="card-text"><b>Fecha de finalización:</b> {{solicitud.fecha_final}}</p>
                         <p class="card-text"><b>Estado:</b> {{solicitud.estado}}</p>
                         {% for c in caracteristicas %}
-                        <p class="card-text"><i class="fa-solid fa-circle fa-2xs pe-2"></i>{{c.caracteristica}}</p>
+                        <p class="card-text"><b>Características:</b> </i>{{c.caracteristica}}</p>
                         {% endfor %}
                     </div>
                     <div class="col-lg-6 mb-3">
                         <p class="card-text"><b>Descripción:</b> {{solicitud.descripcion|lower}}</p>
-                        <p class="card-text"><b>Observaciones:</b> {{solicitud.observaciones}}</p>
+                        <!--<p class="card-text"><b>Observaciones:</b> {{solicitud.observaciones}}</p>-->
                     </div>
                     <div class="col-12 d-flex justify-content-center">
                         {% if solicitud.estado == 'Nueva' %}
