@@ -358,7 +358,6 @@ class TipoTarea(models.Model):
     def __str__(self):
         return self.nombre
 
-#Clase de la clase de economia   
 class Tarea(models.Model):
     tipo = models.ForeignKey(TipoTarea, on_delete=models.CASCADE)
     titulo = models.CharField(max_length=100)
@@ -369,12 +368,6 @@ class Tarea(models.Model):
     fecha_actualizacion = models.DateTimeField(auto_now=True)
     fecha_vencimiento = models.DateTimeField()
     datos_adicionales = models.TextField(null=True, blank=True)
-    
+
     def __str__(self):
-        return f"{self.tipo.nombre} - {'Hecha' if self.hecha else 'No hecha'}"
-    
-    def save(self, *args, **kwargs):
-        if self.tipo.id == 1:
-            self.titulo = "Carga de documento"
-        elif self.tipo.id == 2:
-            self.titulo = "Presentar evaluacion"   
+        return f"{self.tipo.nombre} - {self.titulo} - {'Hecha' if self.hecha else 'No hecha'}"

@@ -7,9 +7,9 @@
 <div class="container mt-4">
     <div class="text-center mb-4">
         <h2 class="p-3 ps-5 text-center text-gradient fw-bold display-7" style="background: -webkit-linear-gradient(45deg, #a70b0b, #080808);
-                   -webkit-background-clip: text;
-                   background-clip: text;
-                   -webkit-text-fill-color: transparent;">
+               -webkit-background-clip: text;
+               background-clip: text;
+               -webkit-text-fill-color: transparent;">
             <i class="bi bi-list-task me-1"></i>Lista de Tareas
         </h2>
         <p class="text-muted">Aquí puedes ver y filtrar las tareas asignadas a los usuarios.</p>
@@ -26,8 +26,7 @@
                         <select class="form-select" id="filter_user" name="user">
                             <option value="">Todos</option>
                             {% for user in users %}
-                            <option value="{{ user.id }}" {% if user_selected_id==user.id|stringformat:"s" %}selected{%
-                                endif %}>
+                            <option value="{{ user.id }}" {% if user_selected_id|stringformat:"s" == user.id|stringformat:"s" %}selected{% endif %}>
                                 {{ user.username }}
                             </option>
                             {% endfor %}
@@ -37,9 +36,8 @@
                         <label for="filter_status" class="form-label">Estado</label>
                         <select class="form-select" id="filter_status" name="status">
                             <option value="">Todos</option>
-                            <option value="hecha" {% if status_selected=="hecha" %}selected{% endif %}>Hecha</option>
-                            <option value="no_hecha" {% if status_selected=="no_hecha" %}selected{% endif %}>No Hecha
-                            </option>
+                            <option value="hecha" {% if status_selected|add:"" == "hecha" %}selected{% endif %}>Hecha</option>
+                            <option value="no_hecha" {% if status_selected|add:"" == "no_hecha" %}selected{% endif %}>No Hecha</option>
                         </select>
                     </div>
                     <div class="col-md-4 d-flex align-items-end">
@@ -61,6 +59,7 @@
                     <thead class="table-light">
                         <tr>
                             <th>Título</th>
+                            <th>Tipo</th>
                             <th>Descripción</th>
                             <th>Fecha de Vencimiento</th>
                             <th>Asignado a</th>
@@ -71,6 +70,7 @@
                         {% for tarea in tareas %}
                         <tr>
                             <td class="fw-bold">{{ tarea.titulo }}</td>
+                            <td>{{ tarea.tipo.nombre }}</td>
                             <td>{{ tarea.descripcion }}</td>
                             <td>{{ tarea.fecha_vencimiento|date:"Y-m-d" }}</td>
                             <td>{{ tarea.usuario.username }}</td>
@@ -84,7 +84,7 @@
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="5" class="text-center text-muted">No hay tareas registradas.</td>
+                            <td colspan="6" class="text-center text-muted">No hay tareas registradas.</td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -101,62 +101,60 @@
 </div>
 
 <!-- Modal para asignar tarea -->
-<div class="modal fade" id="asignarTareaModal" tabindex="-1" aria-labelledby="asignarTareaModalLabel"
-    aria-hidden="true">
+<div class="modal fade" id="asignarTareaModal" tabindex="-1" aria-labelledby="asignarTareaModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content shadow">
             <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="asignarTareaModalLabel"><i class="bi bi-pencil-square me-1"></i>Asignar
-                    Nueva Tarea</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                    aria-label="Close"></button>
+                <h5 class="modal-title" id="asignarTareaModalLabel">
+                    <i class="bi bi-pencil-square me-1"></i>Asignar Nueva Tarea
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form method="post" action="{% url 'compras:asignar_tarea_doc' %}">
+
+            <form id="formTarea" method="post" action="{% url 'compras:asignar_tarea_doc' %}">
                 {% csrf_token %}
                 <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="tipo_id" class="form-label">Tipo de Tarea</label>
+                        <select class="form-select" id="tipo_id" name="tipo_id" required>
+                            {% for tipo in tipos_tarea %}
+                                <option value="{{ tipo.id }}">{{ tipo.nombre }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
                     <div class="mb-3">
                         <label for="title" class="form-label">Título de la Tarea</label>
                         <input type="text" class="form-control" id="title" name="title" required>
                     </div>
+
                     <div class="mb-3">
                         <label for="description" class="form-label">Descripción</label>
                         <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
                     </div>
+
                     <div class="mb-3">
                         <label for="due_date" class="form-label">Fecha de Vencimiento</label>
                         <input type="date" class="form-control" id="due_date" name="due_date" required>
                     </div>
+
                     <div class="mb-3">
                         <label for="assigned_to" class="form-label">Asignar a</label>
                         <select class="form-select" id="assigned_to" name="assigned_to" required>
                             {% for user in users %}
-                            <option value="{{ user.id }}">{{ user.username }}</option>
+                                <option value="{{ user.id }}">{{ user.username }}</option>
                             {% endfor %}
                         </select>
                     </div>
                 </div>
+
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-success">
                         <i class="bi bi-send-check me-1"></i>Asignar
                     </button>
                 </div>
             </form>
-
         </div>
     </div>
 </div>
-
-<script>
-    document.getElementById('assigned_to').addEventListener('change', function () {
-        const selected = this.options[this.selectedIndex];
-        const id_registro = selected.getAttribute('data-id_registro');
-        const form = document.getElementById('form-asignar-tarea');
-
-        if (id_registro) {
-            form.action = `/compras/tareas/asignar/${id_registro}/`;
-        } else {
-            form.action = ''; // evita errores si no hay id_registro
-        }
-    });
-</script>
 {% endblock %}

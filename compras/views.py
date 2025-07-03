@@ -6,10 +6,12 @@ from django.contrib.auth.decorators import login_required
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.http import HttpResponse, JsonResponse
-from django.db.models.functions import Coalesce
-from django.shortcuts import render, redirect
-from django.template.loader import get_template
 from django.contrib.auth.models import Group, User
+from django.db.models.functions import Coalesce
+from django.template.loader import get_template
+from django.shortcuts import render, redirect
+from django.contrib.auth.models import User
+from proveedores.models import homologacion
 from collections import defaultdict
 from sqlalchemy import False_, desc
 from django.contrib import messages
@@ -17,14 +19,22 @@ from django.template import loader
 from django.db import transaction
 from django.conf import settings
 from django.urls import reverse
+from proveedores.models import TipoTarea
 from proveedores.models import *
+from datetime import datetime
 from django.apps import apps
 from compras.models import *
 from .models import *
-from django.contrib.auth.models import User
-from proveedores.models import homologacion
 from .chart import *
 import logging
+from django.shortcuts import render, redirect
+from django.contrib.auth.models import User, Group
+from django.contrib import messages
+from django.db import transaction
+from datetime import datetime
+
+from proveedores.models import Tarea, TipoTarea, homologacion
+
 import re 
 import os
 #from weasyprint import HTML, CSS
@@ -514,40 +524,60 @@ def tareas(request):
     grupo_proveedor = Group.objects.get(name='Proveedor')
     users = User.objects.filter(groups=grupo_proveedor)
     homologaciones = homologacion.objects.select_related('id_registro').all()
+    tipos_tarea = TipoTarea.objects.all()
 
     return render(request, 'compras/tareas/tareas.html', {
         'tareas': tareas,
         'users': users,
-        'homologaciones': homologaciones
+        'homologaciones': homologaciones,
+        'tipos_tarea': tipos_tarea,
+        'user_selected_id': request.GET.get('user', ''),
+        'status_selected': request.GET.get('status', '')
     })
 
-#Funcion para asignar tareas desde compras a un proveedor
+
 def asignar_tarea_doc(request):
+    print("🚨 Entró a asignar_tarea_doc")
     if request.method == 'POST':
-        tipo = TipoTarea.objects.get(id=1)
+        try:
+            with transaction.atomic():
+                tipo_id = request.POST.get('tipo_id')
+                tipo = TipoTarea.objects.get(id=tipo_id)
 
-        # Obtener el usuario asignado desde el formulario
-        user_id = request.POST.get('assigned_to')
-        usuario = User.objects.get(id=user_id)
+                user_id = request.POST.get('assigned_to')
+                usuario = User.objects.get(id=user_id)
 
-        # Verificar que ese usuario tenga una homologación
-        homologacion_ = homologacion.objects.filter(usuario_hologa=usuario).first()
-        if not homologacion_:
-            messages.error(request, "El usuario seleccionado no tiene homologación válida.")
-            return redirect('compras:tareas')
+                homologacion_ = homologacion.objects.filter(usuario_hologa=usuario).first()
+                if not homologacion_:
+                    print("❌ No se encontró homologación")
+                    messages.error(request, "El usuario seleccionado no tiene homologación válida.")
+                    return redirect('compras:tareas')
 
-        descripcion = request.POST.get('description')
-        fecha_vencimiento = request.POST.get('due_date')
+                titulo = request.POST.get('title')
+                descripcion = request.POST.get('description')
+                fecha_vencimiento_raw = request.POST.get('due_date')
+                fecha_vencimiento = datetime.strptime(fecha_vencimiento_raw, "%Y-%m-%d")
 
-        Tarea.objects.create(
-            descripcion=descripcion,
-            fecha_vencimiento=fecha_vencimiento,
-            datos_adicionales="Asignada desde el panel de compras",
-            tipo=tipo,
-            usuario=usuario
-        )
-        messages.success(request, "Tarea asignada correctamente.")
-        return redirect('compras:tareas')
+                print(f"📋 Campos recibidos: {titulo} {descripcion} {fecha_vencimiento} {usuario}")
+
+                tarea = Tarea.objects.create(
+                    titulo=titulo,
+                    descripcion=descripcion,
+                    fecha_vencimiento=fecha_vencimiento,
+                    datos_adicionales="Asignada desde el panel de compras",
+                    tipo=tipo,
+                    usuario=usuario
+                )
+
+                print("✅ Tarea guardada con ID:", tarea.pk)
+                messages.success(request, "Tarea asignada correctamente.")
+
+        except Exception as e:
+            print("❌ ERROR al crear tarea:", e)
+            messages.error(request, "No se pudo asignar la tarea.")
+    return redirect('compras:tareas')
+
+
 
 
 
