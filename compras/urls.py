@@ -4,7 +4,7 @@ from . import views
 app_name = 'compras'
 urlpatterns = [
       path('mis_solicitudes/<str:id>/comentario/<int:parent_id>/', views.agregar_comentario, name='agregar_comentario'),   
-      path('mis_proveedores/proveedor/<str:id_registro>/tareas/',views.asignar_tarea_doc , name='tareas_proveedor'),
+      path('tareas/asignar/', views.asignar_tarea_doc, name='asignar_tarea_doc'),  # type: ignore
       path('mis_proveedores/proveedor/<str:id_registro>/homologa/',views.homologacion_proveedor , name='homologa'), 
       path('mis_proveedores/proveedor/<str:id_registro>/aprobacion/',views.aprobar_documento , name='aprobacion'),
       path('mis_proveedores/proveedor/<str:id_registro>/familia/',views.asigancion_familia , name='familia'),

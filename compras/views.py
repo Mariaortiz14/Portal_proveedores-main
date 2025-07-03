@@ -9,11 +9,9 @@ from django.http import HttpResponse, JsonResponse
 from django.db.models.functions import Coalesce
 from django.shortcuts import render, redirect
 from django.template.loader import get_template
-from django.contrib.auth.models import Group
-from django.shortcuts import render
+from django.contrib.auth.models import Group, User
 from collections import defaultdict
 from sqlalchemy import False_, desc
-from django.shortcuts import render
 from django.contrib import messages
 from django.template import loader
 from django.db import transaction
@@ -23,6 +21,8 @@ from proveedores.models import *
 from django.apps import apps
 from compras.models import *
 from .models import *
+from django.contrib.auth.models import User
+from proveedores.models import homologacion
 from .chart import *
 import logging
 import re 
@@ -510,50 +510,43 @@ def agregar_comentario(request, id, parent_id=None):
   
 #Función para crear tareas para los proveedores
 def tareas(request):
-    tareas = Tarea.objects.all().order_by('-fecha_creacion')
+    tareas = Tarea.objects.all()
     grupo_proveedor = Group.objects.get(name='Proveedor')
     users = User.objects.filter(groups=grupo_proveedor)
-    homologaciones = homologacion.objects.select_related('id_registro', 'id_registro__usuario').all()
+    homologaciones = homologacion.objects.select_related('id_registro').all()
 
     return render(request, 'compras/tareas/tareas.html', {
-    'tareas': tareas,
-    'users': users,
-    'user_selected_id': request.GET.get('user'),
-    'status_selected': request.GET.get('status'),
-})
-
+        'tareas': tareas,
+        'users': users,
+        'homologaciones': homologaciones
+    })
 
 #Funcion para asignar tareas desde compras a un proveedor
-def asignar_tarea_doc(request, id_registro):
+def asignar_tarea_doc(request):
     if request.method == 'POST':
-        id_doc = request.POST.get('id')
-        descripcion = request.POST.get('descripcion')
-        fecha_ven = request.POST.get('fecha_ven')
+        tipo = TipoTarea.objects.get(id=1)
 
-        tipo = TipoTarea.objects.get(id=1)  # Carga de documento
+        # Obtener el usuario asignado desde el formulario
+        user_id = request.POST.get('assigned_to')
+        usuario = User.objects.get(id=user_id)
 
-        # Validar existencia de homologación
-        homologacion_ = get_object_or_404(homologacion, id_registro=id_registro)
+        # Verificar que ese usuario tenga una homologación
+        homologacion_ = homologacion.objects.filter(usuario_hologa=usuario).first()
+        if not homologacion_:
+            messages.error(request, "El usuario seleccionado no tiene homologación válida.")
+            return redirect('compras:tareas')
 
-        # Asegurar que el usuario esté vinculado correctamente
-        if not homologacion_.usuario_hologa:
-            if homologacion_.id_registro and homologacion_.id_registro.usuario:
-                homologacion_.usuario_hologa = homologacion_.id_registro.usuario
-                homologacion_.save()
-            else:
-                messages.error(request, 'No se pudo asignar la tarea: el proveedor no tiene un usuario asociado.')
-                return redirect('compras:tareas')
+        descripcion = request.POST.get('description')
+        fecha_vencimiento = request.POST.get('due_date')
 
-        # Crear la tarea asociada correctamente
         Tarea.objects.create(
             descripcion=descripcion,
-            fecha_vencimiento=fecha_ven,
-            datos_adicionales=id_doc,
+            fecha_vencimiento=fecha_vencimiento,
+            datos_adicionales="Asignada desde el panel de compras",
             tipo=tipo,
-            usuario=homologacion_.usuario_hologa
+            usuario=usuario
         )
-
-        messages.success(request, f'Tarea asignada exitosamente a {homologacion_.usuario_hologa.username}.')
+        messages.success(request, "Tarea asignada correctamente.")
         return redirect('compras:tareas')
 
 
