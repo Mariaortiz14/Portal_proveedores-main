@@ -168,6 +168,12 @@ def solicitudes(request):
     return render(request, 'proveedores/solicitudes/solicitudes.html', {'solicitudes':solicitudes})
 
 #Función para listar las solicitudes por identificador
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .models import solicitud, caracteristicas_solicitud, propuestas_sol, homologacion, comentarios
+from .forms import form_propuesta
+from datetime import datetime
+
 def solicitud_id(request, identificador):
     solicitud_ = solicitud.objects.get(identificador=identificador)
     caracteristicas = caracteristicas_solicitud.objects.filter(solicitud=solicitud_)
@@ -175,12 +181,13 @@ def solicitud_id(request, identificador):
     form_comentario = ComentarioForm()
     comentarios_usuario = comentarios.objects.filter(solicitud=solicitud_, usuario=request.user).exclude(parent__isnull=False)
 
-    # Obtener todas las propuestas asociadas a esta solicitud y este usuario
+    # Buscar homologación válida para esta solicitud
     id_homolo = homologacion.objects.filter(
         usuario_hologa=request.user,
         familia=solicitud_.familia
     ).first()
 
+    # Mostrar propuestas ya asociadas si existen
     propuestas_asociadas = propuestas_sol.objects.filter(
         id_solicitud=solicitud_,
         id_homologacion=id_homolo
@@ -193,19 +200,28 @@ def solicitud_id(request, identificador):
             return redirect('proveedor:solicitud_id', identificador=identificador)
 
         if form.is_valid():
-            print("Homologación usada:", id_homolo)
-            print("Solicitud asociada:", solicitud_)
-            print("Datos del formulario:", form.cleaned_data)
+            try:
+                print("📝 Homologación usada:", id_homolo)
+                print("📄 Solicitud asociada:", solicitud_)
+                print("📦 Datos del formulario:", form.cleaned_data)
+                print("📎 Archivo recibido:", request.FILES.get('file'))
 
-            propuesta = propuestas_sol.objects.create(
-                id_homologacion=id_homolo,
-                id_solicitud=solicitud_,
-                estado='pendiente',  
-                **form.cleaned_data
-            )
-            propuesta.save() 
-            messages.success(request, 'Propuesta enviada con éxito.')
-            return redirect('proveedor:solicitud_id', identificador=solicitud_.identificador)
+                # Crear manualmente la instancia de propuesta
+                propuesta = propuestas_sol(
+                    id_homologacion=id_homolo,
+                    id_solicitud=solicitud_,
+                    estado='pendiente',
+                    **form.cleaned_data
+                )
+                if 'file' in request.FILES:
+                    propuesta.file = request.FILES['file']
+                propuesta.save()
+
+                messages.success(request, 'Propuesta enviada con éxito.')
+                return redirect('proveedor:solicitud_id', identificador=solicitud_.identificador)
+            except Exception as e:
+                print("❌ Error al guardar propuesta:", e)
+                messages.error(request, 'Error al guardar la propuesta.')
         else:
             messages.error(request, 'Ocurrió un error al enviar la propuesta. Verifica los campos.')
             print(form.errors)
@@ -216,8 +232,9 @@ def solicitud_id(request, identificador):
         'form': form,
         'form_comentario': form_comentario,
         'Comentarios_usuario': comentarios_usuario,
-        'propuestas': propuestas_asociadas 
+        'propuestas': propuestas_asociadas
     })
+
 
 
 #Funcion para listar las tareas que asignaron a proveedores

@@ -2,14 +2,15 @@ from django.db.models import Count, Max, F, ExpressionWrapper, fields, DurationF
 from .forms import Evaluacion_inicial, caracteristicas, crear_solicitud, ComentarioForm, SolicitudForm
 from django.shortcuts import render, redirect, get_object_or_404
 from portal_proveedores.settings import DEFAULT_FROM_EMAIL as s
+from proveedores.models import Tarea, TipoTarea, homologacion
 from django.contrib.auth.decorators import login_required
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.models import Group, User
+from django.contrib.auth.models import User, Group
 from django.db.models.functions import Coalesce
 from django.template.loader import get_template
-from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from proveedores.models import homologacion
 from collections import defaultdict
@@ -19,7 +20,6 @@ from django.template import loader
 from django.db import transaction
 from django.conf import settings
 from django.urls import reverse
-from proveedores.models import TipoTarea
 from proveedores.models import *
 from datetime import datetime
 from django.apps import apps
@@ -27,15 +27,7 @@ from compras.models import *
 from .models import *
 from .chart import *
 import logging
-from django.shortcuts import render, redirect
-from django.contrib.auth.models import User, Group
-from django.contrib import messages
-from django.db import transaction
-from datetime import datetime
-
-from proveedores.models import Tarea, TipoTarea, homologacion
-
-import re 
+import re
 import os
 #from weasyprint import HTML, CSS
 
@@ -535,7 +527,7 @@ def tareas(request):
         'status_selected': request.GET.get('status', '')
     })
 
-
+#Función para asignar una nueva tarea desde la interfaz de compras a proveedores
 def asignar_tarea_doc(request):
     print("🚨 Entró a asignar_tarea_doc")
     if request.method == 'POST':
@@ -576,10 +568,6 @@ def asignar_tarea_doc(request):
             print("❌ ERROR al crear tarea:", e)
             messages.error(request, "No se pudo asignar la tarea.")
     return redirect('compras:tareas')
-
-
-
-
 
 #Función para general un pdf con la información de un registro de compras
 def generar_pdf(request, id_registro):

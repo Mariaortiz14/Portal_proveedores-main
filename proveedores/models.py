@@ -344,11 +344,18 @@ class propuestas_sol(models.Model):
 
 
     def save(self, *args, **kwargs):
-        ultimo = propuestas_sol.objects.filter(id=self.id, id_homologacion=self.id_homologacion ).last()
-        if not ultimo:
-            self.conteo = 1
-        else:
-            self.conteo = ultimo.conteo + 1
+        if not self.pk:  # Solo calcular conteo si es una nueva propuesta
+            ultimo = propuestas_sol.objects.filter(
+                id_homologacion=self.id_homologacion,
+                id_solicitud=self.id_solicitud
+            ).order_by('-conteo').first()
+
+            if not ultimo:
+                self.conteo = 1
+            else:
+                self.conteo = ultimo.conteo + 1
+        super().save(*args, **kwargs)  # ¡IMPORTANTE!
+
             
 class TipoTarea(models.Model):
     id = models.AutoField(primary_key=True)
