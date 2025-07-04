@@ -17,11 +17,12 @@ from collections import defaultdict
 from sqlalchemy import False_, desc
 from django.contrib import messages
 from django.template import loader
+from django.utils import timezone
 from django.db import transaction
 from django.conf import settings
 from django.urls import reverse
 from proveedores.models import *
-from datetime import datetime
+from datetime import date, timedelta, datetime
 from django.apps import apps
 from compras.models import *
 from .models import *
@@ -45,9 +46,9 @@ def get_dashboard_data(request):
     proveedores_activos = homologacion.objects.filter(estado='activo').count()
     proveedores_inactivos = total_proveedores - proveedores_activos
 
-    solicitudes_abiertas = solicitud.objects.filter(estado='abierta').count()
-    solicitudes_revision = solicitud.objects.filter(estado='en revisión').count()
-    solicitudes_cerradas = solicitud.objects.filter(estado='cerrada').count()
+    solicitudes_abiertas = solicitud.objects.filter(estado__in=['Nueva', 'Abierta']).count()
+    solicitudes_revision = solicitud.objects.filter(estado='En revisión').count()
+    solicitudes_cerradas = solicitud.objects.filter(estado='Cerrada').count()
 
     propuestas_aceptadas = propuestas_sol.objects.filter(estado='aceptada').count()
     propuestas_rechazadas = propuestas_sol.objects.filter(estado='rechazada').count()
@@ -66,18 +67,30 @@ def t_basicas(request):
 # funcion de vista de tablas
 def tablas(request, t):
     app_config = apps.get_app_config('proveedores')
+    
+    tabla = None
+    objetos = []
+    nombre = ''
+    nombre_t = ''
+
     for model in app_config.get_models():
-        t_nombre= model.__name__
+        t_nombre = model.__name__
         if t == t_nombre:
             tabla = apps.get_model('proveedores', t)
             nombre = t_nombre.replace("_", " ")
             nombre_t = t_nombre
-            objetos= tabla.objects.all()
-        else:
-            tabla = None
-            objetos = None
+            objetos = tabla.objects.all()
+            break  # Ya encontramos el modelo, no necesitamos seguir el loop
 
-    return render(request, 'compras/tablas/tablas.html', {'t_nombre': nombre_t, 'objetos': objetos, 'nombre': nombre})
+    if not tabla:
+        messages.error(request, "No se encontró la tabla solicitada.")
+    
+    return render(request, 'compras/tablas/tablas.html', {
+        't_nombre': nombre_t,
+        'objetos': objetos,
+        'nombre': nombre
+    })
+
 
 # Funcion de Eliminar tablas
 def eliminar(request, tablas, id):
@@ -113,6 +126,7 @@ def matriz(request):
     doc_varios = matriz_doc.objects.filter(tipo='DV')
     doc_lic = matriz_doc.objects.filter(tipo='DL')
     doc_califi = matriz_doc.objects.filter(tipo='DCA')
+
     if request.method == 'POST':
         familia = familias.objects.get(id=request.POST['familia'])      
         print(request.POST)
@@ -137,9 +151,18 @@ def matriz(request):
 
 # Función de información de matriz
 def matriz_info(request, familia):
-    familia_doc = FamiliaDocumento.objects.filter(familia=familia)
-    if familia_doc:
-        return JsonResponse({'familia': familia, 'documentos': list(familia_doc.values())})
+    familia_doc = FamiliaDocumento.objects.filter(familia=familia).select_related('documento')
+    
+    if familia_doc.exists():
+        documentos = [
+            {
+                'documento_id': fd.documento.id,
+                'obligatoriedad': fd.obligatoriedad,
+                'id': fd.pk
+            }
+            for fd in familia_doc
+        ]
+        return JsonResponse({'familia': familia, 'documentos': documentos})
     else:
         return JsonResponse({'familia': familia, 'documentos': 'No hay documentos asociados a esta familia'})
 
@@ -329,9 +352,41 @@ def asigancion_familia(request, id_registro):
     return redirect('compras:proveedor', id_registro=id_registro)
 
 #Funcion para ver las solicitudes de ccompras de un proveedor 
-def MisSolicitudes(request):
-    solicitudes = solicitud.objects.all()
-    return render(request, 'compras/solicitudes/solicitudes.html', {'solicitudes':solicitudes})
+
+def mis_solicitudes(request):
+    hoy = date.today()
+    solicitudes_raw = solicitud.objects.all()
+    familias_ = familias.objects.all()
+
+    solicitudes = []
+
+    for s in solicitudes_raw:
+        s.ocultar_estado = False  # type: ignore # Atributo temporal para la plantilla
+
+        print(f"Solicitud ID: {s.id}")
+        print(f"Estado: {s.estado}")
+        print(f"Fecha de creación: {s.fecha_creacion}")
+
+        if s.estado and s.estado.lower() == 'nueva' and s.fecha_creacion:
+            dias_pasados = (hoy - s.fecha_creacion).days
+            print(f"Días desde creación: {dias_pasados}")
+            if s.fecha_creacion + timedelta(days=3) <= hoy:
+                s.ocultar_estado = True # type: ignore
+                print(f"✔ Estado será ocultado para la solicitud {s.id}")
+            else:
+                print(f"❌ Aún NO se oculta estado (menos de 3 días)")
+        else:
+            print(f"❌ No es 'nueva' o no tiene fecha de creación")
+
+        if s.id and s.identificador and s.familia:
+            solicitudes.append(s)
+
+    return render(request, 'compras/solicitudes/solicitudes.html', {
+        'solicitudes': solicitudes,
+        'familias': familias_
+    })
+
+
 
 # Función de enviar email cuando se crea una solicitud de compra
 def send_email_task(subject, recipient_list, template_name, context):
@@ -598,18 +653,39 @@ def generar_pdf(request, id_registro):
     response['Content-Disposition'] = f'inline; filename=registro_{id_registro}.pdf'
     return response'''
 
-#Función para editar una solicitud de compras
-def editar_solicitud(request, solicitud_id):
 
-    solicitud_ = get_object_or_404(solicitud, id=solicitud_id)
+
+def editar_solicitud_modal(request):
+    if request.method == 'POST':
+        id = request.POST.get('solicitud_id')
+        tipo = request.POST.get('tipo')
+        familia_id = request.POST.get('familia')
+        fecha_final = request.POST.get('fecha_final')
+
+        solicitud_ = get_object_or_404(solicitud, id=id)
+        solicitud_.TSolicitud = tipo
+        solicitud_.familia = familias.objects.get(id=familia_id)
+        solicitud_.fecha_final = fecha_final if fecha_final else None
+        solicitud_.save()
+        messages.success(request, "Solicitud actualizada correctamente.")
+        return redirect('compras:mis_solicitudes')
+
+
+
+#Función para editar una solicitud de compras
+def editar_solicitud(request, id):
+    solicitud_ = get_object_or_404(solicitud, id=id)
+
     if request.method == 'POST':
         form = SolicitudForm(request.POST, instance=solicitud_)
         if form.is_valid():
             form.save()
-            return redirect(reverse('detalle_solicitud', args=[solicitud.id]))
+            return redirect(reverse('detalle_solicitud', args=[solicitud_.id]))
     else:
         form = SolicitudForm(instance=solicitud_)
+
     return render(request, 'editar_solicitud.html', {'form': form, 'solicitud': solicitud_})
+
 
 
 #def perfil_comprador(request):

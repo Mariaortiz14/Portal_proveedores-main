@@ -1,0 +1,61 @@
+{% extends "_layout_compras.html" %}
+
+{% block Title %}Editar Solicitud{% endblock %}
+
+{% block css %}
+<style>
+    .form-container {
+        background-color: #fff;
+        border-radius: 1rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
+        margin-top: 2rem;
+    }
+
+    .form-title {
+        font-weight: bold;
+        color: #900;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #333;
+    }
+
+    .btn-save {
+        background-color: #900;
+        color: white;
+    }
+
+    .btn-save:hover {
+        background-color: #700;
+    }
+
+    .btn-cancel {
+        border-color: #ccc;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="form-container">
+        <h2 class="form-title"><i class="fa-solid fa-pen-to-square me-2"></i>Editar Solicitud</h2>
+
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+
+            <div class="mt-4 d-flex justify-content-between">
+                <a href="{% url 'compras:mis_solicitudes' %}" class="btn btn-outline-secondary btn-cancel">
+                    <i class="fa-solid fa-arrow-left me-1"></i> Cancelar
+                </a>
+                <button type="submit" class="btn btn-save">
+                    <i class="fa-solid fa-save me-1"></i> Guardar Cambios
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

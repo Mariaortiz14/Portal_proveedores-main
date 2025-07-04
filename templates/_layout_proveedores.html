@@ -19,8 +19,9 @@
     <link href="{% static 'fontawesomefree/css/solid.css' %}" rel="stylesheet" type="text/css">
     <link href="{% static 'css/layout.css' %}" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/style.css' %}"></head>
-{%block style%}
-{%endblock style%}
+{% block style %}{% endblock style %}
+{% block css %}{% endblock css %}
+
 
 </head>
 
@@ -85,9 +86,9 @@
   </div>
 
     <div class=" wrapper container-fluid m-0" style="background-color:  #f4f4f4">
-    {% block content%} 
+    {% block content %} 
  
-    {% endblock content%} 
+    {% endblock content %} 
 
     </div>
 
@@ -129,9 +130,9 @@
 
   {% endblock grafico %}
   
-  {% block modal%}
+  {% block modal %}
 
-  {% endblock modal%}
+  {% endblock modal %}
 
 
 

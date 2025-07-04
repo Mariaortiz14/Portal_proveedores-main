@@ -21,7 +21,7 @@
         <p><strong>Características:</strong></p>
         <ul>
           {% for c in caracteristicas %}
-            <li>{{ c.caracteristica }}</li>
+            <li>{{ c.caracteristica|default:" Sin Caracteristicas "}}</li>
           {% endfor %}
         </ul>
       </div>
@@ -30,9 +30,9 @@
         <p><strong>Observaciones:</strong> {{ solicitud.observaciones|default:"-" }}</p>
       </div>
       {% if solicitud.estado == 'Nueva' %}
-        <div class="text-center">
+      <!--  <div class="text-center">
           <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editarSolicitudModal">Editar</button>
-        </div>
+        </div>-->
       {% endif %}
     </div>
   </div>

@@ -18,7 +18,7 @@ from .forms import form_propuesta
 from django.db import transaction 
 from django.conf import settings
 from django.urls import reverse
-from datetime import datetime
+from datetime import datetime, date , timedelta
 from .models import *
 import os
 
@@ -169,11 +169,22 @@ def descargar_archivo(request, path):
 def solicitudes(request):
     homologacion_obj = homologacion.objects.filter(usuario_hologa=request.user.id).first()
     familia_ = homologacion_obj.familia if homologacion_obj else None
-    if familia_ is not None:
-        solicitudes = solicitud.objects.filter(familia=familia_.id )
-    else:
-        solicitudes = []
-    return render(request, 'proveedores/solicitudes/solicitudes.html', {'solicitudes':solicitudes})
+
+    solicitudes_raw = solicitud.objects.filter(familia=familia_.id) if familia_ else []
+    solicitudes = []
+    hoy = date.today()
+
+    for s in solicitudes_raw:
+        ocultar_estado = False
+        if s.estado.lower() == 'nueva' and s.fecha_creacion:
+            if s.fecha_creacion + timedelta(days=3) < hoy:
+                ocultar_estado = True
+        solicitudes.append({
+            'solicitud': s,
+            'ocultar_estado': ocultar_estado
+        })
+
+    return render(request, 'proveedores/solicitudes/solicitudes.html', {'solicitudes': solicitudes})
 
 #Función para listar las solicitudes por identificador
 

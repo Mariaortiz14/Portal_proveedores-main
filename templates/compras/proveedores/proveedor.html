@@ -1,7 +1,6 @@
 {% extends "_layout_compras.html" %}
-
 {% block Title %}
-    FEPCO
+    {{registro.razon_social}}
 {% endblock Title %}
 {% load static %}
 {% block css %}
@@ -161,7 +160,6 @@
                 <h5 class="modal-title" id="disapprovalModalLabel">Asignar Tarea</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form id="disapprovalForm" action="{%url 'compras:tareas_proveedor' id_registro=registro.id_registro %}" method="post">
                 {% csrf_token %}
                 <div class="modal-body">
                     <input type="hidden" id="documentoIdTask" name="id">

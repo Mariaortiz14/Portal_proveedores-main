@@ -127,14 +127,28 @@
                         No definida
                         {% endif %}
                     </p>
-                    <p class="mt-3"><span class="solicitud-tag">{{ s.estado }}</span></p>
 
+                    {# Solo mostrar el estado si no debe ocultarse #}
+                    {% if not s.ocultar_estado %}
+                    <p class="mt-3">
+                        <span class="solicitud-tag">{{ s.estado }}</span>
+                    </p>
+                    {% endif %}
+
+                    {# Asegura que el ID esté presente antes de generar el enlace #}
+                    {% if s.id %}
                     <a href="{% url 'compras:solicitud_id' id=s.id %}" class="btn btn-outline-dark mt-3 w-100">
                         Ver Detalles
                     </a>
+                    {% else %}
+                    <span class="text-muted">Sin ID</span>
+                    {% endif %}
                 </div>
+
                 <div class="card-footer d-flex justify-content-end gap-2 px-3">
-                    <a href="#" class="btn btn-outline-secondary btn-sm" title="Editar">
+                    <a href="#" class="btn btn-outline-secondary btn-sm" title="Editar" data-bs-toggle="modal"
+                        data-bs-target="#modalEditar" data-id="{{ s.id }}" data-tipo="{{ s.TSolicitud }}"
+                        data-familia="{{ s.familia }}" data-fechafinal="{{ s.fecha_final|date:'Y-m-d' }}">
                         <i class="fi fi-rs-file-edit"></i>
                     </a>
                     <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modal"
@@ -167,6 +181,43 @@
         </div>
     </div>
 </div>
+<!-- Modal para editar solicitud -->
+<div class="modal fade" id="modalEditar" tabindex="-1" aria-labelledby="modalEditarLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form method="post" action="{% url 'compras:editar_solicitud_modal' %}" class="modal-content">
+            {% csrf_token %}
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="modalEditarLabel">Editar Solicitud</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" name="solicitud_id" id="editarId">
+                <div class="mb-3">
+                    <label for="editarTipo" class="form-label">Tipo de Solicitud</label>
+                    <input type="text" class="form-control" id="editarTipo" name="tipo">
+                </div>
+                <div class="mb-3">
+                    <label for="editarFamilia" class="form-label">Familia</label>
+                    <select class="form-select" id="editarFamilia" name="familia" required>
+                        {% for f in familias %}
+                        <option value="{{ f.id }}">{{ f.nombre }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="editarFechaFinal" class="form-label">Fecha de Finalización</label>
+                    <input type="date" class="form-control" id="editarFechaFinal" name="fecha_final">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 {% endblock content %}
 
 {% block script %}
@@ -176,6 +227,24 @@
         const button = event.relatedTarget;
         const solicitudId = button.getAttribute('data-bs-id');
         modalElement.querySelector('.modal-footer a').setAttribute('href', `/compras/mis_solicitudes/${solicitudId}/eliminar/`);
+    });
+    const modalEditar = document.getElementById('modalEditar');
+    modalEditar.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+        const id = button.getAttribute('data-id');
+        const tipo = button.getAttribute('data-tipo');
+        const familia = button.getAttribute('data-familia');
+        const fechaFinal = button.getAttribute('data-fechafinal');
+
+        modalEditar.querySelector('#editarId').value = id;
+        modalEditar.querySelector('#editarTipo').value = tipo;
+        modalEditar.querySelector('#editarFechaFinal').value = fechaFinal || '';
+        const familiaSelect = modalEditar.querySelector('#editarFamilia');
+        [...familiaSelect.options].forEach(option => {
+            if (option.textContent.trim() === familia.trim()) {
+                option.selected = true;
+            }
+        });
     });
 </script>
 {% endblock script %}
