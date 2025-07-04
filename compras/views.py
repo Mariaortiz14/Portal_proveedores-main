@@ -386,8 +386,6 @@ def mis_solicitudes(request):
         'familias': familias_
     })
 
-
-
 # Función de enviar email cuando se crea una solicitud de compra
 def send_email_task(subject, recipient_list, template_name, context):
     try:        

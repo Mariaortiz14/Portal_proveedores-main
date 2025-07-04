@@ -58,7 +58,7 @@
                         <img src="{% if registro.foto %}{{ registro.foto.url }}{% else %}https://images.pexels.com/photos/1037995/pexels-photo-1037995.jpeg{% endif %}"
                             class="profile-image" width="120" height="120" alt="Foto de perfil">
                         <div class="ps-4">
-                            <h5 class="mb-1 fw-bold">{{ request.user.username }}</h5>
+                            <h5 class="mb-1 fw-bold">{{ registro.razon_social }}</h5>
                             <p class="text-muted mb-1">Foto de perfil</p>
                             {{ form.foto }}
                         </div>
