@@ -10,7 +10,7 @@
         </h4>
 
         <div class="text-center mb-4">
-            <img src="{% static 'img/logos_final/11.png' %}" class="rounded-circle" width="120" alt="Foto perfil">
+            <img src="{% static 'img/logos_final/logo.png' %}" class="rounded-circle" width="120" alt="Foto perfil">
             <h5 class="mt-2">{{ usuario.username }}</h5>
             <p class="text-muted small">Usuario</p>
         </div>
@@ -27,7 +27,6 @@
                 </div>
             </div>
 
-            <!-- Campos adicionales futuros -->
             <div class="d-flex justify-content-end mt-4">
                 <a href="{% url 'compras:dashboard_data' %}" class="btn btn-outline-secondary me-2">Cancelar</a>
                 <button type="button" class="btn btn-primary" disabled>

@@ -133,7 +133,6 @@ class registro_formulario(models.Model):
                 new_id = 'REG' + str(num + 1).zfill(6)
                 self.identificador = new_id
 
-        # Esta línea debe estar fuera del if para que funcione en actualizaciones
         super().save(*args, **kwargs)
 
 #Clase de la clase de economia

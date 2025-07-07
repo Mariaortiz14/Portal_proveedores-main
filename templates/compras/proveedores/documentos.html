@@ -1,99 +1,142 @@
+{% extends "_layout_compras.html" %}
+
+{% block Title %}
+    Asignar Familia
+{% endblock Title %}
+
+{% block css %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.189/pdf_viewer.min.css"
+    integrity="sha512-9uknW5oN7ouvfOCw5wxRC3O9LmGrH3jhuCjcHnAHNvkP4s7Z5X0rWXxHHM0LcyWT/aBIMan/lCJHJtQx8eEAyg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<style>
+    .document-card {
+        border-radius: 0.75rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        background: #fff;
+        padding: 1rem;
+    }
+
+    .document-card h5 {
+        font-weight: 600;
+    }
+
+    .list-group-item {
+        border: none;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .btn-icon {
+        margin-left: 0.25rem;
+        margin-right: 0.25rem;
+    }
+
+    .visor-pdf-container {
+        background: #ffffff;
+        border-radius: 0.75rem;
+        padding: 1rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        height: 600px;
+        overflow: hidden;
+    }
+
+    #visorPDF {
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        text-align: center;
+    }
+
+    canvas {
+        max-width: 100%;
+        height: auto;
+    }
+
+    #pdfLink {
+        font-size: 0.9rem;
+        display: block;
+        margin-bottom: 1rem;
+        text-align: right;
+    }
+
+    .alert {
+        font-size: 0.95rem;
+    }
+</style>
+{% endblock css %}
+
+{% block content %}
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12 p-0">
             <div class="alert alert-info alert-dismissible fade show" role="alert">
-                <strong class="pe-2">¡Información!</strong> Recuerde que al aprobar un documento, este no podrá ser desaprobado igualmente si rechaza un documento no podrá ser aprobado nuevamente.
+                <strong>¡Información!</strong> Recuerde que al aprobar un documento, este no podrá ser desaprobado, y si lo rechaza no podrá ser aprobado nuevamente.
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         </div>
-        <div class="col-12 col-md-12">
-            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.189/pdf_viewer.min.css"
-            integrity="sha512-9uknW5oN7ouvfOCw5wxRC3O9LmGrH3jhuCjcHnAHNvkP4s7Z5X0rWXxHHM0LcyWT/aBIMan/lCJHJtQx8eEAyg=="
-            crossorigin="anonymous" referrerpolicy="no-referrer" />
-                <div class="row ">    
-                    <div class="col-md-12">
-                        <div class="row d-flex  justify-content-center  ">
-                            <div class="p-2 col-4 justify-content-end card ">
-                                <div class="card-body">
-                                    <h5 class="fw-bold ">Documentos</h5>
-                                    <ul class="list-group">
-                                        {% load tags %}
-                                        {% for d in documentos_g %}
-                                            <li class="list-group-item d-flex align-items-center">
-                                                {% if d.id not in documentos_estado %}
-                                                <span class="badge text-bg-primary rounded-pill m-0">!</span>
-                                                {%endif%}
-                                                <button type="button" class="text-start btn border-0 text-wrap flex-grow-1" onclick="cargarPDF('{{d.file.url}}')">{{d.documento.nombre}}</button>
-                                                
-                                                {% if d.id in documentos_estado %}
-                                                    {% if documentos_estado|get_item:d.id %}
-                                                        <p class="text-success m-0">Aprobado</p>
-                                                    {% else %}
-                                                        <p class="text-danger m-0 me-2">Rechazado</p>
-                                                        <button type="button" class="btn btn-sm btn-success" onclick="asignarTarea('{{d.id}}')"><i class="fa-solid fa-list-check"></i></button>
-                                                    {% endif %}
-                                                {% else %}
-                                                
-                                                    <button type="button" class="btn btn-sm btn-success" onclick="aprobarDocumento('{{d.id}}')"><i class="fa-solid fa-check"></i></button>
-                                                    <button type="button" class="btn btn-sm btn-danger" onclick="rechazarDocumento('{{d.id}}')"><i class="fa-solid fa-x"></i></button>
-                                                {% endif %}
-                                            </li>
-                                        {% endfor %}
-                                        {% for d in documentos_c %}
-                                        
-                                            <li class="list-group-item d-flex align-items-center">
-                                                {% if d.id not in documentos_estado %}
-                                                <span class="badge text-bg-primary rounded-pill">!</span>
-                                                {%endif%}
-                                                <button type="button" class="text-start btn border-0 text-wrap flex-grow-1" onclick="cargarPDF('{{d.file.url}}')">{{d.certificacion.nombre}}</button>
 
-                                                {% if d.id in documentos_estado %}
-                                                    {% if documentos_estado|get_item:d.id %}
-                                                        <p class="text-success m-0">Aprobado</p>
-                                                    {% else %}
-                                                        <p class="text-danger m-0">Rechazado</p>
-                                                    {% endif %}
-                                                {% else %}
-                                                    <button type="button" class="btn btn-sm btn-success" onclick="aprobarDocumento('{{d.id}}')"><i class="fa-solid fa-check"></i></button>
-                                                    <button type="button" class="btn btn-sm btn-danger" onclick="rechazarDocumento('{{d.id}}')"><i class="fa-solid fa-x"></i></button>
-                                                {% endif %}
-                                            </li>
-                                        {% endfor %}
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="col-8 px-3">
-                                <div class="container shadow bg-white rounded">
-                                    <div class="controlador row d-flex  justify-content-end ">
-                                        <button id="zoomInButton" type="button"
-                                        class=" btn btn-dark col-1 m-2 p-2 btn c1 d-flex justify-content-center">
-                                        <i class="fa-solid fa-plus"></i>
-                                        </button>
-                                        <button id="zoomOutButton" type="button"
-                                        class=" btn btn-dark  col-1 m-2 p-2 btn c2 d-flex justify-content-center">
-                                        <i class="fa-solid fa-minus"></i>
-                                        </button>
-                                    </div>
-                                    <a id="pdfLink" href="" target="_blank">Abrir PDF en nueva pestaña</a>
-                                    <div id="visorPDF" class=" " style="width: 100%;  overflow: auto;">
-                                        <canvas id="pdfCanvas"></canvas>
-                                    </div>
-                                    <div class="controlador row d-flex left   justify-content-end ">
-                                        <button type="button" class="btn btn-dark col-2 m-2   p-2 btn c1 d-flex justify-content-center"
-                                        onclick="cambiarPagina(-1)">
-                                        <i class="fa-solid fa-chevron-left"></i>
-                                        </button>
-                                        <button type="button" class="right  btn btn-dark  me-3 -2 col-2 m-2 p-2 btn c2 d-flex justify-content-center"
-                                        onclick="cambiarPagina(1)">
-                                        <i class="fa-solid fa-chevron-right"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+        <div class="col-md-4">
+            <div class="document-card">
+                <h5>Documentos</h5>
+                <ul class="list-group">
+                    {% load tags %}
+                    {% for d in documentos_g %}
+                    <li class="list-group-item d-flex align-items-center">
+                        {% if d.id not in documentos_estado %}
+                            <span class="badge bg-primary me-2">!</span>
+                        {% endif %}
+                        <button type="button" class="btn btn-link text-start flex-grow-1 p-0" onclick="cargarPDF('{{d.file.url}}')">{{ d.documento.nombre }}</button>
+                        {% if d.id in documentos_estado %}
+                            {% if documentos_estado|get_item:d.id %}
+                                <span class="text-success fw-semibold">Aprobado</span>
+                            {% else %}
+                                <span class="text-danger fw-semibold me-2">Rechazado</span>
+                                <button class="btn btn-sm btn-success btn-icon" onclick="asignarTarea('{{d.id}}')"><i class="fa-solid fa-list-check"></i></button>
+                            {% endif %}
+                        {% else %}
+                            <button class="btn btn-sm btn-success btn-icon" onclick="aprobarDocumento('{{d.id}}')"><i class="fa-solid fa-check"></i></button>
+                            <button class="btn btn-sm btn-danger btn-icon" onclick="rechazarDocumento('{{d.id}}')"><i class="fa-solid fa-x"></i></button>
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+
+                    {% for d in documentos_c %}
+                    <li class="list-group-item d-flex align-items-center">
+                        {% if d.id not in documentos_estado %}
+                            <span class="badge bg-primary me-2">!</span>
+                        {% endif %}
+                        <button type="button" class="btn btn-link text-start flex-grow-1 p-0" onclick="cargarPDF('{{d.file.url}}')">{{ d.certificacion.nombre }}</button>
+                        {% if d.id in documentos_estado %}
+                            {% if documentos_estado|get_item:d.id %}
+                                <span class="text-success fw-semibold">Aprobado</span>
+                            {% else %}
+                                <span class="text-danger fw-semibold">Rechazado</span>
+                            {% endif %}
+                        {% else %}
+                            <button class="btn btn-sm btn-success btn-icon" onclick="aprobarDocumento('{{d.id}}')"><i class="fa-solid fa-check"></i></button>
+                            <button class="btn btn-sm btn-danger btn-icon" onclick="rechazarDocumento('{{d.id}}')"><i class="fa-solid fa-x"></i></button>
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="visor-pdf-container">
+                <div class="d-flex justify-content-end mb-2">
+                    <button id="zoomInButton" class="btn btn-dark me-2"><i class="fa-solid fa-plus"></i></button>
+                    <button id="zoomOutButton" class="btn btn-dark"><i class="fa-solid fa-minus"></i></button>
+                </div>
+                <a id="pdfLink" href="#" target="_blank">Abrir PDF en nueva pestaña</a>
+                <div id="visorPDF">
+                    <canvas id="pdfCanvas"></canvas>
+                </div>
+                <div class="d-flex justify-content-between mt-3">
+                    <button class="btn btn-dark" onclick="cambiarPagina(-1)"><i class="fa-solid fa-chevron-left"></i></button>
+                    <button class="btn btn-dark" onclick="cambiarPagina(1)"><i class="fa-solid fa-chevron-right"></i></button>
                 </div>
             </div>
         </div>
     </div>
 </div>
+{% endblock content %}
+

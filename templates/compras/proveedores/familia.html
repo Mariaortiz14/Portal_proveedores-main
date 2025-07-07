@@ -1,43 +1,92 @@
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-12 col-md-12">
-            <div class="card border-0   col-md-12 col-lg-12 col-sm-12 col-xs-12">
-                <div class="card-body">
-                    {% if homologa.familia == None %}
-                    <form method="post" action="{%url 'compras:familia' id_registro=registro.id_registro%}">
-                        {% csrf_token %}
-                        <div class="row">
-                            <div class="col-7">
-                                <div class="form-group">
-                                    <label for="tabla"  class="form-label">Asigne una familia a este proveedor</label>
-                                    <select class="form-select" name="familia" aria-label="Default select example">
-                                        <option value="">Seleccione una opcion</option>
-                                        {%for f in familias%}
-                                            <option value="{{f.id}}">{{f.nombre}}</option>
-                                        {%endfor%}
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-4 p-3 mt-1">
-                                <button type="submit" class="btn btn-primary">Guardar</button>
-                            </div>
-                        </div>
-                    </form>
-                    {% else %}
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="form-group">
-                                <label for="tabla"  class="form-label">Familia asignada</label>
-                                <input type="text" class="form-control" id="nombre" name="nombre" value="{{homologa.familia.nombre}}" disabled>
-                            
-                            </div>
-                        </div>
-                        <div class="col-12">
-                        </div>
-                    </div>
-                    {% endif %}
+{% extends "_layout_compras.html" %}
+
+{% block Title %}
+    Asignar Familia
+{% endblock Title %}
+
+{% block css %}
+<style>
+    .kubi-card {
+        width: 100%;
+        max-width: 600px;
+        margin: 2rem auto;
+        background: linear-gradient(135deg, #ffffff, #f8f8f8);
+        border-radius: 16px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
+        position: relative;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .kubi-card:hover {
+        transform: scale(1.02);
+        box-shadow: 0 12px 50px rgba(0, 0, 0, 0.15);
+    }
+
+    .kubi-card::before {
+        content: "";
+        position: absolute;
+        top: -50px;
+        right: -50px;
+        width: 200px;
+        height: 200px;
+        background: radial-gradient(circle, rgba(247, 16, 16, 0.15) 0%, transparent 70%);
+        z-index: 0;
+    }
+
+    .kubi-card .form-label {
+        font-weight: 600;
+        color: #444;
+    }
+
+    .kubi-card input,
+    .kubi-card select {
+        background-color: #f9f9f9;
+        border-radius: 8px;
+    }
+
+    .kubi-card .btn-primary {
+        background-color: #008cff;
+        border: none;
+        padding: 0.6rem 1.5rem;
+        font-weight: bold;
+        transition: background-color 0.3s ease;
+    }
+
+    .kubi-card .btn-primary:hover {
+        background-color: #0073cc;
+    }
+</style>
+{% endblock css %}
+
+{% block content %}
+<div class="container">
+    <div class="kubi-card">
+        <div class="card-body position-relative">
+            {% if homologa.familia == None %}
+            <form method="post" action="{% url 'compras:familia' id_registro=registro.id_registro %}">
+                {% csrf_token %}
+                <div class="mb-4">
+                    <label for="familia" class="form-label">Asigne una familia a este proveedor</label>
+                    <select class="form-select" name="familia" required>
+                        <option value="">Seleccione una opción</option>
+                        {% for f in familias %}
+                            <option value="{{ f.id }}">{{ f.nombre }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
+                <div class="text-end">
+                    <button type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
+            {% else %}
+            <div class="mb-3">
+                <label class="form-label">Familia asignada</label>
+                <input type="text" class="form-control" value="{{ homologa.familia.nombre }}" disabled>
             </div>
+            {% endif %}
         </div>
     </div>
 </div>
+{% endblock content %}

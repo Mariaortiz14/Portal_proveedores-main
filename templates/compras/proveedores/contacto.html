@@ -1,91 +1,178 @@
+{% extends "_layout_compras.html" %}
 
+{% block Title %}
+Información del Contacto
+{% endblock Title %}
 
+{% block css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+<style>
+    .glass-card {
+        background: rgba(255, 255, 255, 0.75);
+        border-radius: 16px;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .glass-card:hover {
+        transform: scale(1.01);
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .section-header {
+        background-color: #5e5e5e;
+        color: white;
+        text-align: center;
+        font-weight: bold;
+        padding: 8px 0;
+        border-radius: 0.5rem;
+        font-size: 1rem;
+    }
+
+    .table td.table-active {
+        background: #f1f3f4;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .table-bordered td,
+    .table-bordered th {
+        border: 1px solid #d0d0d0;
+    }
+
+    .table td {
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .table tr:hover td {
+        background-color: #f5faff;
+    }
+
+    td {
+        word-break: break-word;
+        max-width: 300px;
+    }
+</style>
+{% endblock css %}
+
+{% block content %}
 <div class="container-fluid">
     <div class="row">
         <div class="col-12 col-md-12 mb-3 p-0 m-0">
-            <div class="card border-0 shadow">
+            <div class="glass-card p-4">
                 <div class="card-body">
                     <table class="table table-sm border-dark-subtle border-1 table-bordered">
-
                         <tbody>
                             <tr>
-                                <td  class="table-active fw-bold " >Tipo de Persona</td>
-                                <td>{{registro.tipo_persona}}</td>
-                                <td  class="table-active fw-bold " >Tipo de Proveedor</td>
-                                <td>{{registro.tipo_proveedor}}</td>
+                                <td class="table-active">Tipo de Persona</td>
+                                <td>{{ registro.tipo_persona }}</td>
+                                <td class="table-active">Tipo de Proveedor</td>
+                                <td>{{ registro.tipo_proveedor }}</td>
                             </tr>
                             <tr>
-                                <td colspan="2" class="table-active fw-bold " >Se encuentra certificado como Operador Económico autorizado por parte de la DIAN:</td>
-                                <td>{{registro.dian}}</td>
+                                <td colspan="2" class="table-active">
+                                    ¿Certificado como Operador Económico autorizado por la DIAN?
+                                </td>
+                                <td colspan="2">{{ registro.dian }}</td>
                             </tr>
                             <tr>
-                                <td colspan="8" style="background-color: #7F7F7F;"><p class="text-light fw-bold text-center  p-0 m-0 ">Datos de Actividad económica</p></td>
+                                <td colspan="4">
+                                    <div class="section-header">Datos de Actividad Económica</div>
+                                </td>
                             </tr>
                             <tr>
-                                <td colspan="1" class="table-active fw-bold " >Nombre o Razón Social:</td>
-                                <td>{{registro.razon_social}}</td>
-                                <td colspan="1" class="table-active fw-bold " >Sigla o Nombre Comercial:</td>
-                                <td>{{registro.sigla}}</td>
-                                <td colspan="1" class="table-active fw-bold " >Tipo De documento:</td>
-                                <td>{{registro.tipo_documento}}</td>
-                                <td colspan="1" class="table-active fw-bold " >Numero:</td>
-                                <td>{{registro.documento}}</td>
+                                <td class="table-active">Nombre o Razón Social:</td>
+                                <td>{{ registro.razon_social }}</td>
+                                <td class="table-active">Sigla o Nombre Comercial:</td>
+                                <td>{{ registro.sigla }}</td>
                             </tr>
                             <tr>
-                                <td colspan="1" class="table-active fw-bold " >CIIU:</td>
-                                <td colspan="7">{{registro.ciiu}}</td>
+                                <td class="table-active">Tipo de Documento:</td>
+                                <td>{{ registro.tipo_documento }}</td>
+                                <td class="table-active">Número:</td>
+                                <td>{{ registro.documento }}</td>
                             </tr>
                             <tr>
-                                <td colspan="1" class="table-active fw-bold " >Dirección:</td>
-                                <td colspan="3">{{registro.direccion}}</td>
-                                <td colspan="1" class="table-active fw-bold " >Ciudad:</td>
-                                <td >{{registro.municipio}}</td>
-                                <td colspan="1" class="table-active fw-bold " >Departamento:</td>
-                                <td>{{registro.departamento}}</td>
+                                <td class="table-active">CIIU:</td>
+                                <td colspan="3">{{ registro.ciiu }}</td>
                             </tr>
                             <tr>
-                                <td colspan="1" class="table-active fw-bold " >Teléfono:</td>
-                                <td>{{registro.telefono}}</td>
-                                <td colspan="1" class="table-active fw-bold " >Correo:</td>
-                                <td colspan="5">{{registro.email}}</td>
+                                <td class="table-active">Dirección:</td>
+                                <td>{{ registro.direccion }}</td>
+                                <td class="table-active">Ciudad:</td>
+                                <td>{{ registro.municipio }}</td>
                             </tr>
                             <tr>
-                                <td colspan="1" class="table-active fw-bold " >Representante Legal:</td>
-                                <td colspan="4">{{registro.representante_legal}}</td>
-                                <td colspan="1" class="table-active fw-bold " >Identificación:</td>
-                                <td colspan="2">{{registro.identificacion_representante}}</td>
+                                <td class="table-active">Departamento:</td>
+                                <td>{{ registro.departamento }}</td>
+                                <td class="table-active">Teléfono:</td>
+                                <td>{{ registro.telefono }}</td>
                             </tr>
                             <tr>
-                                <td colspan="1" class="table-active fw-bold " >Grupo Empresarial :</td>
-                                <td colspan="7">{%if registro.pertenece_grupo == 'No'  %} N/A {%else%} {{registro.nombre_grupo}} {%endif%}</td>
+                                <td class="table-active">Correo:</td>
+                                <td colspan="3">{{ registro.email }}</td>
+                            </tr>
+                            <tr>
+                                <td class="table-active">Representante Legal:</td>
+                                <td colspan="2">{{ registro.representante_legal }}</td>
+                            </tr>
+                            <tr>
+                                <td class="table-active">Identificación:</td>
+                                <td>{{ registro.identificacion_representante }}</td>
+                            </tr>
+                            <tr>
+                                <td class="table-active">Grupo Empresarial:</td>
+                                <td colspan="3">
+                                    {% if registro.pertenece_grupo == 'No' %}
+                                    <span class="text-muted">N/A <i class="bi bi-x-circle-fill text-danger"></i></span>
+                                    {% else %}
+                                    {{ registro.nombre_grupo }}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="table-active">Persona con cargo público:</td>
+                                {% if registro.tiene_trabajo_figura_publica == 'No' %}
+                                <td colspan="3">N/A <i class="bi bi-x-circle-fill text-secondary"></i></td>
+                                {% else %}
+                                <td class="table-active">Nombre:</td>
+                                <td>{{ registro.nombre_trabajo_figura_publica }}</td>
+                            </tr>
+                                <td class="table-active">Cargo:</td>
+                                <td>{{ registro.cargo_trabajo_figura_publica }}</td>
+                                {% endif %}
+                            </tr>
+                            <tr>
+                                <td colspan="4">
+                                    <div class="section-header">Composición Accionaria</div>
+                                </td>
+                            </tr>
+                            {% for a in accionarios %}
+                            <tr>
+                                <td class="table-active">Nombre completo o razón social:</td>
+                                <td>{{ a.nombre_razon_social }}</td>
+                                <td class="table-active">Identificación:</td>
+                                <td>{{ a.tipo_identificacion }} {{ a.identificacion }}</td>
+                            </tr>
+                            <tr>
+                                <td class="table-active">Porcentaje de participación:</td>
+                                <td colspan="3">{{ a.porcentaje }}%</td>
+                            </tr>
+                            {% endfor %}
+                            <tr>
+                                <td colspan="4">
+                                    <div class="section-header">Información Financiera</div>
+                                </td>
+                            </tr>
                             
-                            </tr>
-                            <tr>
-                                <td colspan="1" class="table-active fw-bold " >Persona con cargo publico:</td>
-                                {%if registro.tiene_trabajo_figura_publica == 'No'  %}<td colspan="7">N/A </td> {%else%} <td colspan="1" class="table-active fw-bold " >Nombre:</td> <td colspan="3">{{registro.nombre_trabajo_figura_publica}}</td> <td colspan="1" class="table-active fw-bold " >Cargo</td> <td colspan="2">{{registro.cargo_trabajo_figura_publica}}</td> {%endif%}
-                            </tr>
-                            <tr>
-                                <td colspan="8" style="background-color: #7F7F7F;"><p class="text-light fw-bold text-center  p-0 m-0 ">Composición accionaria:</p></td>
-                            </tr>
-                            {%for a in accionarios%}
-                            <tr class="border-bottom border-dark-subtle  " >
-                                <td colspan="1" class="table-active fw-bold " >Nombre completo o razón social:</td>
-                                <td colspan="3"> {{a.nombre_razon_social}}</td>
-                                <td colspan="1" class="table-active fw-bold " >Identificación:</td>
-                                <td>{{a.tipo_identificacion}}  {{a.identificacion}}</td>
-                                <td colspan="1" class="table-active fw-bold " >Porcentaje de participación:</td>
-                                <td >{{a.porcentaje}}%</td>
-                            </tr>
-
-                            {%endfor%}
-                            <tr>
-                                <td colspan="8" style="background-color: #7F7F7F;"><p class="text-light fw-bold text-center  p-0 m-0 ">Información financiera:</p></td>
-                            </tr>
-
                         </tbody>
-                    </table>                    
+                    </table>
                 </div>
             </div>
         </div>
     </div>
 </div>
+{% endblock content %}

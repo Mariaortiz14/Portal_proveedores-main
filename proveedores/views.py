@@ -87,7 +87,6 @@ def dashboard(request):
 
     return render(request, 'proveedores/dashboard/index.html', context)
 
-
 #Función para mostrar los documentos
 def doc(request):
     if request.method == 'POST':
