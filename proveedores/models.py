@@ -60,7 +60,7 @@ class actividad_eco_grupo(models.Model):
         return (self.codigo + " - " + self.descripcion)   
 
 #Clase de la clase de economia
-class  actividad_eco_clase(models.Model):
+class actividad_eco_clase(models.Model):
     codigo = models.CharField(max_length=5, primary_key=True)
     descripcion = models.CharField(max_length=300)
     grupo = models.ForeignKey(actividad_eco_grupo, on_delete=models.CASCADE)

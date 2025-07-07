@@ -97,18 +97,18 @@ def doc(request):
             try:
                 documento = documentos_requeridos.objects.get(id=doc_id)
                 documento.file = file
-                documento.estado = 'pendiente'  
+                documento.estado = 'pendiente'  # se conserva si deseas mantenerlo
                 documento.save()
                 messages.success(request, 'Documento cargado correctamente.')
             except documentos_requeridos.DoesNotExist:
                 messages.error(request, 'El documento no existe.')
-        
+
         elif 'cert_id' in request.POST:
             cert_id = request.POST.get('cert_id')
             try:
                 cert = certificaciones_proveedores.objects.get(id=cert_id)
                 cert.file = file
-                cert.estado = 'pendiente'  
+                cert.estado = 'pendiente'
                 cert.save()
                 messages.success(request, 'Certificación cargada correctamente.')
             except certificaciones_proveedores.DoesNotExist:
@@ -116,21 +116,27 @@ def doc(request):
 
         return redirect('users:profile')
 
-   
     registro = registro_formulario.objects.filter(usuario=request.user).first()
     documentos = documentos_requeridos.objects.filter(id_registro=registro)
     certificaciones = certificaciones_proveedores.objects.filter(id_registro=registro)
 
-    estados = ['pendiente', 'aceptado', 'rechazado']
-    documentos_por_estado = {estado: documentos.filter(estado=estado) for estado in estados}
-    certificaciones_por_estado = {estado: certificaciones.filter(estado=estado) for estado in estados}
+    aprobaciones = aprobacion_doc.objects.filter(documento__id_registro=registro)
+
+    documentos_aprobados_ids = aprobaciones.filter(aprobado=True).values_list('documento__id', flat=True)
+    documentos_rechazados_ids = aprobaciones.filter(aprobado=False).values_list('documento__id', flat=True)
+
+    pendientes = documentos.exclude(id__in=documentos_aprobados_ids).exclude(id__in=documentos_rechazados_ids)
+    aceptados = documentos.filter(id__in=documentos_aprobados_ids)
+    rechazados = documentos.filter(id__in=documentos_rechazados_ids)
 
     context = {
-        'documentos_por_estado': documentos_por_estado,
-        'certificaciones_por_estado': certificaciones_por_estado,
+        'pendientes': pendientes,
+        'aceptados': aceptados,
+        'rechazados': rechazados,
     }
 
     return render(request, "proveedores/doc/documentos.html", context)
+
 
 #Función para listar todos los archivos
 def listar_archivos(request):
