@@ -49,7 +49,6 @@ def agregar_comentario(request, id, parent_id=None):
 
     return redirect('proveedor:solicitud_id', identificador=solicitud_obj.identificador)
 
-
 #Funcion para mostrar el dashboard de proveedor
 def dashboard(request):
     propuestas = []
@@ -187,8 +186,6 @@ def solicitudes(request):
     return render(request, 'proveedores/solicitudes/solicitudes.html', {'solicitudes': solicitudes})
 
 #Función para listar las solicitudes por identificador
-
-
 def solicitud_id(request, identificador):
     solicitud_ = solicitud.objects.get(identificador=identificador)
     caracteristicas = caracteristicas_solicitud.objects.filter(solicitud=solicitud_)
@@ -249,8 +246,6 @@ def solicitud_id(request, identificador):
         'Comentarios_usuario': comentarios_usuario,
         'propuestas': propuestas_asociadas
     })
-
-
 
 #Funcion para listar las tareas que asignaron a proveedores
 def tareas(request):

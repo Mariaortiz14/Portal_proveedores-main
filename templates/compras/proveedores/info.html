@@ -1,101 +1,168 @@
+{% extends "_layout_compras.html" %}
+
+{% block Title %}
+Información del Proveedor
+{% endblock Title %}
+
+{% block css %}
+{% load static %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+<style>
+    .card-info {
+        background: #fefefe;
+        border-radius: 1rem;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease-in-out;
+    }
+
+    .card-info:hover {
+        transform: scale(1.01);
+    }
+
+    .estado-box {
+        background: #fff;
+        border: 2px dashed #eee;
+        border-radius: 1rem;
+        transition: all 0.3s ease-in-out;
+    }
+
+    .estado-box:hover {
+        background-color: #fafafa;
+    }
+
+    .estado-icon {
+        font-size: 2.5rem;
+    }
+
+    .chart-container {
+        width: 100px;
+        height: 100px;
+        margin: 0 auto;
+    }
+</style>
+{% endblock css %}
+
+{% block content %}
 <div class="container-fluid">
-    <div class="row">
-        <div class="col-12 col-md-12 mb-3 p-0 ">
-            <div class="card  border-0 shadow ">
-                <div class="row p-3 justify-content-center ">
-                    <div class="col-lg-2 col-md-3 col-sm-12">
-                        {% if homologa.estado == 'Pendiente' %}
-                        <div class="d-flex flex-column justify-content-center align-items-center">
-                            <i class="info m-2 text-warning fa-solid fa-clock"></i>
-                            <p class="fw-bold mb-0 mt-2 ">Estado</p>
-                            <p class="fw-medium text-warning  ">{{homologa.estado}}</p>
-                        </div>
-                        {% elif homologa.estado == 'Aceptado' %}
-                        <div class="info d-flex flex-column justify-content-center align-items-center">
-                            <i class="fa-solid m-2 text-success  fa-thumbs-up"></i>
-                            <p class="fw-bold mb-0 mt-3 ">Estado</p>
-                            <p class="fw-medium text-success  ">{{homologa.estado}}</p>
-                        </div>
-                        {% else %}
-                        <div class=" d-flex flex-column justify-content-center align-items-center">
-                            <i class=" info m-2 fa-solid text-danger fa-thumbs-down"></i>
-                            <p class="fw-bold mb-0 mt-3 ">Estado</p>
-                            <p class="fw-medium text-danger  ">{{homologa.estado}}</p>
-                        </div>
-                        {% endif %}
-                    </div>
-                    <div class="col-lg-2 col-md-3 col-sm-12 flex-column justify-content-center align-items-center">
-                        <div class="d-flex ">
-                            <canvas id="gaugeChart" style="width:80px; height: 80px;"></canvas>  
-                        </div>
-                        <p class="fw-bold mb-0 mt-3 text-center">Evaluación</p>
-                        <p class="fw-light m-0 text-center">0%</p>
-                    </div>
-                    <div class="col-lg-2 col-md-3 col-sm-12">
-                        <div class="row m-0 p-0 justify-content-center align-items-center">
-                            <div class="col-6 p-0 d-flex flex-column justify-content-center align-items-center">
-                                <i class="info fa-solid  fa-file-lines"></i>
-                            </div>
-                            <div class="col-6  p-0 d-flex flex-column justify-content-center align-items-center">
-                                <p class="fw-light  mb-0 mt-2 "><span class="text-success fw-bold pe-2 ">{{doc_aceptados}}</span>Aceptados</p>
-                                <p class="fw-light mb-0 mt-2 "><span class="text-danger fw-bold pe-2">{{doc_rechazados}}</span>Rechazados</p>
-                                <p class="fw-light mb-0 mt-2 "><span class="text-warning fw-bold pe-2">{{doc_pendientes}}</span>Pendientes</p>
-                            </div>
-                        </div>
-                        <p class="fw-bold mb-0 mt-2 pt-1 text-center">Documentos</p>
-                        <p class="fw-light m-0 text-center">{{total}}</p>
-                    </div>
-                </div>
+    <div class="row g-4">
+
+        <!-- Estado -->
+        <div class="col-12 col-md-4">
+            <div class="estado-box p-4 text-center shadow-sm">
+                {% if homologa.estado == 'Activo' %}
+                <i class="bi bi-lightning-charge-fill text-success estado-icon"></i>
+                <h5 class="mt-2 fw-bold">Estado</h5>
+                <span class="badge bg-success fs-6 px-4 py-2">{{ homologa.estado }}</span>
+                {% elif homologa.estado == 'Pendiente' %}
+                <i class="bi bi-hourglass-split text-warning estado-icon"></i>
+                <h5 class="mt-2 fw-bold">Estado</h5>
+                <span class="badge bg-warning text-dark fs-6 px-4 py-2">{{ homologa.estado }}</span>
+                {% else %}
+                <i class="bi bi-slash-circle text-danger estado-icon"></i>
+                <h5 class="mt-2 fw-bold">Estado</h5>
+                <span class="badge bg-danger fs-6 px-4 py-2">{{ homologa.estado }}</span>
+                {% endif %}
             </div>
-        </div>                       
-        <div class="col-12 pe-2 col-md-6 p-0">
-            <div class="card border-0 shadow ">
-                <div class="card-header">
-                    <h3>Información General</h3>
+        </div>
+
+        <!-- Evaluación -->
+        <div class="col-12 col-md-4">
+            <div class="card-info p-4 text-center">
+                <div class="chart-container">
+                    <canvas id="gaugeChart"></canvas>
                 </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-12 col-md-6">
-                            <div class="form-group">
-                                <label for="nombre">Razón Social</label>
-                                <input type="text" class="form-control" id="nombre" name="nombre" value="{{registro.razon_social}}" disabled>
-                            </div>
-                        </div>
-                        <div class="col-12 col-md-6">
-                            <div class="form-group">
-                                <label for="nombre">{{registro.tipo_documento}}</label>
-                                <input type="text" class="form-control" id="nombre" name="nombre" value="{{registro.documento}}-{{registro.dv}}" disabled>
-                            </div>
-                        </div>
-                        <div class="col-12 col-md-6">
-                            <div class="form-group">
-                                <label for="nombre">Teléfono</label>
-                                <input type="text" class="form-control" id="nombre" name="nombre" value="{{registro.telefono}}" disabled>
-                            </div>
-                        </div>
-                        <div class="col-12 col-md-6">
-                            <div class="form-group">
-                                <label for="nombre">Correo</label>
-                                <input type="text" class="form-control" id="nombre" name="nombre" value="{{registro.email}}" disabled>
-                            </div>
-                        </div>
-                        <div class="col-12 col-md-12">
-                            <div class="form-group">
-                                <label for="nombre">Dirección</label>
-                                <input type="text" class="form-control" id="nombre" name="nombre" value="{{registro.direccion}}" disabled>
-                            </div>
-                        </div>
+                <h5 class="mt-3 fw-bold">Evaluación</h5>
+                <p class="text-muted">{{ evaluacion }}%</p>
+            </div>
+        </div>
+
+        <!-- Documentos -->
+        <div class="col-12 col-md-4">
+            <div class="card-info p-4 text-center">
+                <i class="bi bi-file-earmark-text fs-2 text-secondary"></i>
+                <h5 class="mt-3 fw-bold">Documentos</h5>
+                <p><span class="text-success fw-semibold">{{ doc_aceptados }}</span> Aceptados</p>
+                <p><span class="text-danger fw-semibold">{{ doc_rechazados }}</span> Rechazados</p>
+                <p><span class="text-warning fw-semibold">{{ doc_pendientes }}</span> Pendientes</p>
+                <p class="text-muted">Total: {{ total }}</p>
+            </div>
+        </div>
+
+        <!-- Información General -->
+        <div class="col-12 col-md-6">
+            <div class="card-info p-4">
+                <h4 class="fw-bold text-primary mb-4"><i class="bi bi-person-lines-fill me-2"></i>Información General
+                </h4>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Razón Social</label>
+                        <input type="text" class="form-control" value="{{ registro.razon_social }}" disabled>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">{{ registro.tipo_documento }}</label>
+                        <input type="text" class="form-control" value="{{ registro.documento }}-{{ registro.dv }}"
+                            disabled>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Teléfono</label>
+                        <input type="text" class="form-control" value="{{ registro.telefono }}" disabled>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Correo</label>
+                        <input type="text" class="form-control" value="{{ registro.email }}" disabled>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label">Dirección</label>
+                        <input type="text" class="form-control" value="{{ registro.direccion }}" disabled>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-12 ps-2 col-md-6 p-0">
-            <div class="card border-0 shadow">
-                <div class="card-body">
-                    <div class="row">
-                    </div>
-                </div>
-            </div>
-        </div>
+
     </div>
 </div>
+{% endblock content %}
+{% block script %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const ctx = document.getElementById("gaugeChart").getContext("2d");
+        const evaluacionValor = Number('{{ evaluacion|default:"0" }}');
+        const color = evaluacionValor >= 80 ? "#4CAF50" :
+
+            evaluacionValor >= 50 ? "#FFC107" : "#F44336";
+        const dataValue = evaluacionValor >= 100 ? [99.99, 0.01] : [evaluacionValor, 100 - evaluacionValor];
+
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            datasets: [{
+                data: dataValue,
+                backgroundColor: [color, "#eaeaea"],
+                borderWidth: 4,
+                borderColor: '#fff'
+            }]
+        },
+        options: {
+            rotation: -90,
+            circumference: 180,
+            cutout: '80%',
+            plugins: {
+                tooltip: { enabled: false },
+                legend: { display: false },
+                title: {
+                    display: true,
+                    text: evaluacionValor + '%',
+                    position: 'bottom',
+                    color: color,
+                    font: {
+                        size: 18,
+                        weight: 'bold'
+                    }
+                }
+            }
+        }
+    });
+    });
+</script>
+{% endblock script %}

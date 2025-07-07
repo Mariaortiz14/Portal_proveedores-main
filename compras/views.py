@@ -1,4 +1,4 @@
-from django.db.models import Count, Max, F, ExpressionWrapper, fields, DurationField, Value, OuterRef, Subquery
+from django.db.models import Count, Max, F, ExpressionWrapper, fields, DurationField, Value, OuterRef, Subquery, Q
 from .forms import Evaluacion_inicial, caracteristicas, crear_solicitud, ComentarioForm, SolicitudForm
 from django.shortcuts import render, redirect, get_object_or_404
 from portal_proveedores.settings import DEFAULT_FROM_EMAIL as s
@@ -182,96 +182,119 @@ def Misproveedores(request):
 
 #Funcion de crear proveedores
 def Proveedor(request, id_registro):
-
-    registro= registro_formulario.objects.get(id_registro=id_registro)
+    registro = registro_formulario.objects.get(id_registro=id_registro)
     homologa = homologacion.objects.get(id_registro=id_registro)
     accionarios = composicion_accionaria.objects.filter(id_registro=id_registro)
     contable = info_pago.objects.get(id_registro=id_registro)
 
-    familias_= familias.objects.all()
-    # Obtener todos los documentos y certificaciones
+    familias_ = familias.objects.all()
+
+    # Documentos requeridos y certificaciones
     documentos_g = documentos_requeridos.objects.filter(id_registro=id_registro)
     documentos_c = certificaciones_proveedores.objects.filter(id_registro=id_registro)
 
-    # Contar los documentos y certificaciones
     cant_doc = documentos_g.count()
     cant_cer = documentos_c.count()
     total_doc = cant_doc + cant_cer
 
-    # Obtener aprobaciones de documentos y certificaciones
+    # Aprobaciones
     documentos_aprobados = aprobacion_doc.objects.filter(documento__id_registro=id_registro).values('documento__id', 'aprobado')
     certifi_aprobados = aprobacion_doc.objects.filter(certificados__id_registro=id_registro).values('certificados__id', 'aprobado')
 
-    # Unir los resultados de aprobaciones
     todos_ids = documentos_aprobados.union(certifi_aprobados)
 
-    # Inicializar contadores
     doc_aceptados = 0
     doc_rechazados = 0
 
-    # Contar aprobados y rechazados
     for doc in todos_ids:
         if doc['aprobado']:
             doc_aceptados += 1
         else:
             doc_rechazados += 1
 
-    # Calcular documentos pendientes
     doc_pendientes = total_doc - (doc_aceptados + doc_rechazados)
 
-    # Ahora tienes las variables doc_pendientes, doc_aceptados y doc_rechazados
     documentos_estado = {doc['documento__id']: doc['aprobado'] for doc in todos_ids}
 
     if aprobacion_doc.objects.filter(certificados__id='24'):
-        oea_val= True
+        oea_val = True
     else:
-        oea_val= False
-        if certificaciones_proveedores.objects.filter(id_registro=id_registro,  certificacion_id='24'):
+        oea_val = False
+        if certificaciones_proveedores.objects.filter(id_registro=id_registro, certificacion_id='24'):
             mensaje_oea = "Documento no aprobado o rechazado"
         else:
             mensaje_oea = "Documento no subido"
-            
-    if registro.responsabilidad_social == True:
-        rse= 5
-    else:
-        rse=0
-    plazos = productos_servicios_condiciones.objects.get(id_registro=id_registro)  
-    
-    todos_documentos_aprobados = all(aprobacion_doc.objects.filter(documento__id=doc_id).exists() for doc_id in documentos_g.values_list('id', flat=True))
-    todos_certificados_aprobados = all(aprobacion_doc.objects.filter(certificados__id=cert_id).exists() for cert_id in documentos_c.values_list('id', flat=True))
-    # Si todos los documentos y certificados están aprobados, condition es True. Si no, es False.
+
+    rse = 5 if registro.responsabilidad_social else 0
+
+    plazos = productos_servicios_condiciones.objects.get(id_registro=id_registro)
+
+    todos_documentos_aprobados = all(
+        aprobacion_doc.objects.filter(documento__id=doc_id).exists()
+        for doc_id in documentos_g.values_list('id', flat=True)
+    )
+    todos_certificados_aprobados = all(
+        aprobacion_doc.objects.filter(certificados__id=cert_id).exists()
+        for cert_id in documentos_c.values_list('id', flat=True)
+    )
     condition = todos_documentos_aprobados and todos_certificados_aprobados == True
-    
-    if condition == True:
+
+    if condition:
         condicion, faltantes, _ = verificar_documentos_y_certificados_por_familia(homologa.familia, id_registro)
         if condicion:
-            todos_documentos_aprobados = all(aprobacion_doc.objects.filter(documento__id=doc_id,  aprobado=True).exists() for doc_id in documentos_g.values_list('id', flat=True))
-            todos_certificados_aprobados = all(aprobacion_doc.objects.filter(certificados__id=cert_id,  aprobado=True).exists() for cert_id in documentos_c.values_list('id', flat=True))
-            # Si todos los documentos y certificados están aprobados, condition es True. Si no, es False.
+            todos_documentos_aprobados = all(
+                aprobacion_doc.objects.filter(documento__id=doc_id, aprobado=True).exists()
+                for doc_id in documentos_g.values_list('id', flat=True)
+            )
+            todos_certificados_aprobados = all(
+                aprobacion_doc.objects.filter(certificados__id=cert_id, aprobado=True).exists()
+                for cert_id in documentos_c.values_list('id', flat=True)
+            )
             matriz = todos_documentos_aprobados and todos_certificados_aprobados == True
-            if matriz == True:
-                valor_matriz= 40
+            if matriz:
+                valor_matriz = 40
                 mensaje_matriz = "Todos los documentos y certificados requeridos han sido aprobados"
-                
             else:
-                valor_matriz= 20
+                valor_matriz = 20
                 mensaje_matriz = "No todos los documentos y certificados requeridos han sido aprobados"
-            
         else:
             valor_matriz = 20
             mensaje_matriz = "No todos los documentos y certificados requeridos han sido subidos"
     else:
         faltantes = []
         valor_matriz = 0
-        mensaje_matriz = "No todos los documentos y certificados han sido aprobados"     
-       
-    form = Evaluacion_inicial(initial={'oea':oea_val, 'extra': rse, 'forma_pago': plazos.plazo.id, 'matriz': valor_matriz})
-    return render(request, 'compras/proveedores/proveedor.html', {'registro': registro, 'homologa': homologa, 'contable': contable,
-                                                           'total':total_doc, 'familias': familias_, 'documentos_g': documentos_g, 
-                                                           'documentos_c': documentos_c, 'documentos_estado': documentos_estado,
-                                                          'form':form, 'accionarios': accionarios, 'mensaje_oea': mensaje_oea,
-                                                           'condition': condition, 'faltantes':faltantes, 'doc_pendientes': doc_pendientes,
-                                                           'doc_aceptados': doc_aceptados, 'doc_rechazados': doc_rechazados, 'mensaje_matriz': mensaje_matriz})
+        mensaje_matriz = "No todos los documentos y certificados han sido aprobados"
+
+    evaluacion = int(round((doc_aceptados / total_doc) * 100)) if total_doc > 0 else 0
+
+    form = Evaluacion_inicial(initial={
+        'oea': oea_val,
+        'extra': rse,
+        'forma_pago': plazos.plazo.id,
+        'matriz': valor_matriz
+    })
+
+    return render(request, 'compras/proveedores/proveedor.html', {
+        'registro': registro,
+        'homologa': homologa,
+        'contable': contable,
+        'total': total_doc,
+        'familias': familias_,
+        'documentos_g': documentos_g,
+        'documentos_c': documentos_c,
+        'documentos_estado': documentos_estado,
+        'form': form,
+        'accionarios': accionarios,
+        'mensaje_oea': mensaje_oea,
+        'condition': condition,
+        'faltantes': faltantes,
+        'doc_pendientes': doc_pendientes,
+        'doc_aceptados': doc_aceptados,
+        'doc_rechazados': doc_rechazados,
+        'mensaje_matriz': mensaje_matriz,
+        'evaluacion': evaluacion, 
+    })
+
 
 # Funcion de verificar documentos y certificados por familia
 def verificar_documentos_y_certificados_por_familia(familia_id, id_registro):
@@ -298,29 +321,34 @@ def verificar_documentos_y_certificados_por_familia(familia_id, id_registro):
 
 # Finción para aprobvar dovumentos
 def aprobar_documento(request, id_registro):
-    if request.method == 'POST' and 'aprobar' in request.POST:
+    if request.method == 'POST':
         try:
-            with transaction.atomic(): 
-                if documentos_requeridos.objects.filter(id=request.POST['id']).exists():
-                    doc = documentos_requeridos.objects.get(id=request.POST['id'])
-                    aprobacion_doc.objects.create(documento=doc, aprobado=True, descripcion=request.POST['des'], fecha_vencimiento=request.POST['fecha_ven'] or None)
-                elif certificaciones_proveedores.objects.filter(id=request.POST['id']).exists():
-                    doc = certificaciones_proveedores.objects.get(id=request.POST['id'])
-                    aprobacion_doc.objects.create(certificados=doc, aprobado=True, descripcion=request.POST['des'], fecha_vencimiento=request.POST['fecha_ven'] or None)      
+            with transaction.atomic():
+                doc_id = request.POST['id']
+                descripcion = request.POST['des']
+                fecha_vencimiento = request.POST.get('fecha_ven') or None
+
+                if 'aprobar' in request.POST:
+                    if documentos_requeridos.objects.filter(id=doc_id).exists():
+                        doc = documentos_requeridos.objects.get(id=doc_id)
+                        aprobacion_doc.objects.create(documento=doc, aprobado=True, descripcion=descripcion, fecha_vencimiento=fecha_vencimiento)
+                    elif certificaciones_proveedores.objects.filter(id=doc_id).exists():
+                        cert = certificaciones_proveedores.objects.get(id=doc_id)
+                        aprobacion_doc.objects.create(certificados=cert, aprobado=True, descripcion=descripcion, fecha_vencimiento=fecha_vencimiento)
+
+                elif 'desaprobar' in request.POST:
+                    if documentos_requeridos.objects.filter(id=doc_id).exists():
+                        doc = documentos_requeridos.objects.get(id=doc_id)
+                        aprobacion_doc.objects.create(documento=doc, aprobado=False, descripcion=descripcion)
+                    elif certificaciones_proveedores.objects.filter(id=doc_id).exists():
+                        cert = certificaciones_proveedores.objects.get(id=doc_id)
+                        aprobacion_doc.objects.create(certificados=cert, aprobado=False, descripcion=descripcion)
+
+                actualizar_estado_proveedor(id_registro)
+
         except Exception as e:
             print(e)
-    
-    elif request.method == 'POST' and 'desaprobar' in request.POST:
-        try:
-            with transaction.atomic(): 
-                if documentos_requeridos.objects.filter(id=request.POST['id']).exists():
-                    doc = documentos_requeridos.objects.get(id=request.POST['id'])
-                    aprobacion_doc.objects.create(documento=doc, aprobado=False, descripcion=request.POST['des'])
-                elif certificaciones_proveedores.objects.filter(id=request.POST['id']).exists():
-                    doc = certificaciones_proveedores.objects.get(id=request.POST['id'])
-                    aprobacion_doc.objects.create(certificados=doc, aprobado=False, descripcion=request.POST['des'])
-        except Exception as e:
-            print(e)
+
     return redirect('compras:proveedor', id_registro=id_registro)
 
 #Funcion para la homologación de los proveedores
@@ -706,3 +734,31 @@ def perfil_comprador(request):
     return render(request, 'users/profile/comprador.html', {
         'usuario': request.user
     })
+
+
+def actualizar_estado_proveedor(id_registro):
+    docs = documentos_requeridos.objects.filter(id_registro=id_registro)
+    certs = certificaciones_proveedores.objects.filter(id_registro=id_registro)
+
+    total = docs.count() + certs.count()
+    if total == 0:
+        return  # No hay documentos para evaluar
+
+    aprobaciones = aprobacion_doc.objects.filter(
+        Q(documento__id_registro=id_registro) | Q(certificados__id_registro=id_registro)
+    )
+
+    aprobados = aprobaciones.filter(aprobado=True).count()
+    rechazados = aprobaciones.filter(aprobado=False).count()
+
+    try:
+        hom = homologacion.objects.get(id_registro=id_registro)
+        if rechazados > 0:
+            hom.estado = "Rechazado"
+        elif aprobados == total:
+            hom.estado = "Activo"
+        else:
+            hom.estado = "Pendiente"
+        hom.save()
+    except homologacion.DoesNotExist:
+        pass
