@@ -91,7 +91,6 @@ def tablas(request, t):
         'nombre': nombre
     })
 
-
 # Funcion de Eliminar tablas
 def eliminar(request, tablas, id):
     tabla = apps.get_model('proveedores', tablas)
@@ -294,7 +293,6 @@ def Proveedor(request, id_registro):
         'mensaje_matriz': mensaje_matriz,
         'evaluacion': evaluacion, 
     })
-
 
 # Funcion de verificar documentos y certificados por familia
 def verificar_documentos_y_certificados_por_familia(familia_id, id_registro):
@@ -651,7 +649,7 @@ def asignar_tarea_doc(request):
     return redirect('compras:tareas')
 
 #Función para general un pdf con la información de un registro de compras
-def generar_pdf(request, id_registro):
+'''def generar_pdf(request, id_registro):
     registro = get_object_or_404(registro_formulario, id_registro=id_registro)
     homologa = get_object_or_404(homologacion, id_registro=id_registro)
     accionarios = composicion_accionaria.objects.filter(id_registro=id_registro)
@@ -670,7 +668,7 @@ def generar_pdf(request, id_registro):
     })
 
     # Crear el PDF
-'''  html = HTML(string=html_string)
+  html = HTML(string=html_string)
     bootstrap_css_path = os.path.join(settings.STATIC_ROOT, "bootstrap/css/bootstrap.min.css")
     pdf = html.write_pdf(stylesheets=[CSS(bootstrap_css_path)])
     
@@ -679,8 +677,7 @@ def generar_pdf(request, id_registro):
     response['Content-Disposition'] = f'inline; filename=registro_{id_registro}.pdf'
     return response'''
 
-
-
+#Función para editar una solicitud de compras
 def editar_solicitud_modal(request):
     if request.method == 'POST':
         id = request.POST.get('solicitud_id')
@@ -696,8 +693,6 @@ def editar_solicitud_modal(request):
         messages.success(request, "Solicitud actualizada correctamente.")
         return redirect('compras:mis_solicitudes')
 
-
-
 #Función para editar una solicitud de compras
 def editar_solicitud(request, id):
     solicitud_ = get_object_or_404(solicitud, id=id)
@@ -712,20 +707,6 @@ def editar_solicitud(request, id):
 
     return render(request, 'editar_solicitud.html', {'form': form, 'solicitud': solicitud_})
 
-
-
-#def perfil_comprador(request):
-    #user = request.user
-
-    # Verificamos si es del grupo Comprador
-    #if user.groups.filter(name='Comprador').exists():
-      #  return render(request, 'users/profile/comprador.html', {
-     #       'usuario': user
-    #    })
-
-    # Si no es comprador, denegamos acceso
-   # return render(request, 'compras/acceso_denegado.html')
-
 #Función para ver los datos del comprador en el apartado de mi cuenta
 def perfil_comprador(request):
     # if not request.user.groups.filter(name='Comprador').exists():
@@ -735,7 +716,7 @@ def perfil_comprador(request):
         'usuario': request.user
     })
 
-
+#Función para ver los datos del comprador en el apartado de mi cuenta
 def actualizar_estado_proveedor(id_registro):
     docs = documentos_requeridos.objects.filter(id_registro=id_registro)
     certs = certificaciones_proveedores.objects.filter(id_registro=id_registro)
