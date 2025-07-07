@@ -48,7 +48,7 @@ Información del Proveedor
         width: var(--size);
         height: var(--size);
         border-radius: 50%;
-        background:conic-gradient(var(--color) calc(var(--value) * 1%), #eee 0);
+        background: conic-gradient(var(--color) calc(var(--value) * 1%), #eee 0);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -71,16 +71,22 @@ Información del Proveedor
         position: relative;
         z-index: 1;
     }
+
+    .card-info,
+    .estado-box {
+        height: 100%;
+    }
 </style>
 {% endblock css %}
 
 {% block content %}
 <div class="container-fluid">
-    <div class="row g-4">
 
+    <!-- Primera fila: Estado y Evaluación -->
+    <div class="row g-4 mb-3">
         <!-- Estado -->
-        <div class="col-12 col-md-4">
-            <div class="estado-box p-4 text-center shadow-sm">
+        <div class="col-12 col-md-6">
+            <div class="estado-box p-4 text-center shadow-sm h-100">
                 {% if homologa.estado == 'Activo' %}
                 <i class="bi bi-lightning-charge-fill text-success estado-icon"></i>
                 <h5 class="mt-2 fw-bold">Estado</h5>
@@ -97,33 +103,36 @@ Información del Proveedor
             </div>
         </div>
 
-        <!-- Evaluación con barra animada -->
-        <div class="col-12 col-md-4">
-            <div class="card-info text-center p-4">
+        <!-- Evaluación -->
+        <div class="col-12 col-md-6">
+            <div class="card-info p-4 text-center h-100">
                 <div class="circular-progress" style="--value: {{ evaluacion|default:0 }}">
                     <span class="value-text">{{ evaluacion }}%</span>
                 </div>
                 <h5 class="mt-3 fw-bold">Evaluación</h5>
             </div>
         </div>
+    </div>
 
-
+    <!-- Segunda fila: Documentos e Información General -->
+    <div class="row g-4">
         <!-- Documentos -->
-        <div class="col-12 col-md-4">
-            <div class="card-info p-4 text-center">
+        <div class="col-12 col-md-6">
+            <div class="card-info p-4 text-center h-100">
                 <i class="bi bi-file-earmark-text fs-2 text-secondary"></i>
                 <h5 class="mt-3 fw-bold">Documentos</h5>
                 <p><span class="text-success fw-semibold">{{ doc_aceptados }}</span> Aceptados</p>
                 <p><span class="text-danger fw-semibold">{{ doc_rechazados }}</span> Rechazados</p>
                 <p><span class="text-warning fw-semibold">{{ doc_pendientes }}</span> Pendientes</p>
-                <p class="text-muted">Total: {{ total }}</p>
+                <p>Total: {{ doc_aceptados|add:doc_rechazados|add:doc_pendientes }}</p>
             </div>
         </div>
 
         <!-- Información General -->
         <div class="col-12 col-md-6">
-            <div class="card-info p-4">
-                <h4 class="fw-bold text-primary mb-4"><i class="bi bi-person-lines-fill me-2"></i>Información General
+            <div class="card-info p-4 h-100">
+                <h4 class="fw-bold text-primary mb-4">
+                    <i class="bi bi-person-lines-fill me-2"></i>Información General
                 </h4>
                 <div class="row g-3">
                     <div class="col-md-6">
@@ -150,9 +159,9 @@ Información del Proveedor
                 </div>
             </div>
         </div>
-
     </div>
 </div>
+
 {% endblock content %}
 {% block script %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
