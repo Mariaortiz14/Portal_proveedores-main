@@ -129,7 +129,7 @@ Información del Contacto
                                     {% if registro.pertenece_grupo == 'No' %}
                                     <span class="text-muted">N/A <i class="bi bi-x-circle-fill text-danger"></i></span>
                                     {% else %}
-                                    {{ registro.nombre_grupo }}
+                                    {{ registro.nombre_grupo|default:"Dato no suministrado" }}
                                     {% endif %}
                                 </td>
                             </tr>
@@ -139,11 +139,11 @@ Información del Contacto
                                 <td colspan="3">N/A <i class="bi bi-x-circle-fill text-secondary"></i></td>
                                 {% else %}
                                 <td class="table-active">Nombre:</td>
-                                <td>{{ registro.nombre_trabajo_figura_publica }}</td>
+                                <td>{{ registro.nombre_trabajo_figura_publica|default:"Dato no suministrado" }}</td>
                             </tr>
-                                <td class="table-active">Cargo:</td>
-                                <td>{{ registro.cargo_trabajo_figura_publica }}</td>
-                                {% endif %}
+                            <td class="table-active">Cargo:</td>
+                            <td>{{ registro.cargo_trabajo_figura_publica|default:"Dato no suministrado" }}</td>
+                            {% endif %}
                             </tr>
                             <tr>
                                 <td colspan="4">
@@ -167,7 +167,48 @@ Información del Contacto
                                     <div class="section-header">Información Financiera</div>
                                 </td>
                             </tr>
-                            
+                            {% if financiera %}
+                            <tr>
+                                <td class="table-active">Total Pasivos</td>
+                                <td>{{ financiera.total_pasivos|default:"Dato no suministrado" }}</td>
+                                <td class="table-active">Total Activos</td>
+                                <td>{{ financiera.total_activos|default:"Dato no suministrado" }}</td>
+                            </tr>
+                            <tr>
+                                <td class="table-active">Patrimonio</td>
+                                <td>{{ financiera.patrimonio|default:"Dato no suministrado" }}</td>
+                                <td class="table-active">Ingresos Mensuales</td>
+                                <td>{{ financiera.ingresos_mensuales|default:"Dato no suministrado" }}</td>
+                            </tr>
+                            <tr>
+                                <td class="table-active">Egresos Mensuales</td>
+                                <td>{{ financiera.egresos_mensuales|default:"Dato no suministrado" }}</td>
+                                <td class="table-active">Otros Ingresos</td>
+                                <td>{{ financiera.otros_ingresos|default:"Dato no suministrado" }}</td>
+                            </tr>
+                            <tr>
+                                <td class="table-active">Otros Egresos</td>
+                                <td>{{ financiera.otros_egresos|default:"Dato no suministrado" }}</td>
+                                <td class="table-active">Ventas Anuales</td>
+                                <td>{{ financiera.ventas_anuales|default:"Dato no suministrado" }}</td>
+                            </tr>
+                            <tr>
+                                <td class="table-active">Tipo de Empresa</td>
+                                <td>{{ financiera.tipo_empresa|default:"Dato no suministrado" }}</td>
+                                <td class="table-active">Otro Tipo</td>
+                                <td>{{ financiera.otro_tipo_empresa|default:"Dato no suministrado" }}</td>
+                            </tr>
+                            <tr>
+                                <td class="table-active">Número de Empleados</td>
+                                <td colspan="3">{{ financiera.num_empleados|default:"Dato no suministrado" }}</td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="4" class="text-muted text-center">
+                                    Información financiera no ha sido registrada por el proveedor.
+                                </td>
+                            </tr>
+                            {% endif %}
                         </tbody>
                     </table>
                 </div>

@@ -35,24 +35,17 @@
     box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
 }
-
 .table-hover tbody tr:hover {
     background-color: #f1f1f1;
     transition: background-color 0.2s ease;
 }
-
-  </style>
-    
+  </style> 
   {% endblock style %}
 </head>
 <body>
-
     <header>
       {% block nav %} 
-
-
       {% endblock nav %}
-
     </header>
     <main>
       {% block content%} 
@@ -66,23 +59,16 @@
           <a href="/" class="mb-3 me-2 mb-md-0 text-muted text-decoration-none lh-1">
             <img src="{% static 'img/logos_final/9_gris.png' %}" alt="" width="28" height="30">
           </a>
-
         </div>
-        
-    
         <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
           <li class="ms-4"><a class="text-muted text-secondary " href="#" style="font-size: 1.25rem " ><i class="fa-brands fa-x-twitter"></i></a></li>
           <li class="ms-3"><a class="text-muted" href="#" style="font-size: 1.25rem "><i class="fa-brands fa-instagram"></i></a></li>
           <li class="ms-3"><a class="text-muted text-secondary" href="#" style="font-size: 1.25rem "><i class="fa-brands fa-facebook"></i></a></li>
         </ul>
       </footer>
-
     </div>
     {%endblock footer%}
-
-  {% block script %} 
-    
+  {% block script %}   
   {% endblock script %} 
 </body>
-
 </html>

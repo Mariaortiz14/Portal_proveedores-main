@@ -2,7 +2,7 @@ from django.db.models import Count, Max, F, ExpressionWrapper, fields, DurationF
 from .forms import Evaluacion_inicial, caracteristicas, crear_solicitud, ComentarioForm, SolicitudForm
 from django.shortcuts import render, redirect, get_object_or_404
 from portal_proveedores.settings import DEFAULT_FROM_EMAIL as s
-from proveedores.models import Tarea, TipoTarea, homologacion
+from proveedores.models import Tarea, TipoTarea, homologacion, info_financiera
 from django.contrib.auth.decorators import login_required
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
@@ -186,9 +186,14 @@ def Proveedor(request, id_registro):
     accionarios = composicion_accionaria.objects.filter(id_registro=id_registro)
     contable = info_pago.objects.get(id_registro=id_registro)
 
+    # 🔹 NUEVO: Obtener información financiera
+    try:
+        financiera = info_financiera.objects.get(id_registro=id_registro)
+    except info_financiera.DoesNotExist:
+        financiera = None
+
     familias_ = familias.objects.all()
 
-    # Documentos requeridos y certificaciones
     documentos_g = documentos_requeridos.objects.filter(id_registro=id_registro)
     documentos_c = certificaciones_proveedores.objects.filter(id_registro=id_registro)
 
@@ -196,21 +201,12 @@ def Proveedor(request, id_registro):
     cant_cer = documentos_c.count()
     total_doc = cant_doc + cant_cer
 
-    # Aprobaciones
     documentos_aprobados = aprobacion_doc.objects.filter(documento__id_registro=id_registro).values('documento__id', 'aprobado')
     certifi_aprobados = aprobacion_doc.objects.filter(certificados__id_registro=id_registro).values('certificados__id', 'aprobado')
-
     todos_ids = documentos_aprobados.union(certifi_aprobados)
 
-    doc_aceptados = 0
-    doc_rechazados = 0
-
-    for doc in todos_ids:
-        if doc['aprobado']:
-            doc_aceptados += 1
-        else:
-            doc_rechazados += 1
-
+    doc_aceptados = sum(1 for doc in todos_ids if doc['aprobado'])
+    doc_rechazados = sum(1 for doc in todos_ids if not doc['aprobado'])
     doc_pendientes = total_doc - (doc_aceptados + doc_rechazados)
 
     documentos_estado = {doc['documento__id']: doc['aprobado'] for doc in todos_ids}
@@ -225,7 +221,6 @@ def Proveedor(request, id_registro):
             mensaje_oea = "Documento no subido"
 
     rse = 5 if registro.responsabilidad_social else 0
-
     plazos = productos_servicios_condiciones.objects.get(id_registro=id_registro)
 
     todos_documentos_aprobados = all(
@@ -236,20 +231,18 @@ def Proveedor(request, id_registro):
         aprobacion_doc.objects.filter(certificados__id=cert_id).exists()
         for cert_id in documentos_c.values_list('id', flat=True)
     )
-    condition = todos_documentos_aprobados and todos_certificados_aprobados == True
+    condition = todos_documentos_aprobados and todos_certificados_aprobados
 
     if condition:
         condicion, faltantes, _ = verificar_documentos_y_certificados_por_familia(homologa.familia, id_registro)
         if condicion:
-            todos_documentos_aprobados = all(
+            matriz = all(
                 aprobacion_doc.objects.filter(documento__id=doc_id, aprobado=True).exists()
                 for doc_id in documentos_g.values_list('id', flat=True)
-            )
-            todos_certificados_aprobados = all(
+            ) and all(
                 aprobacion_doc.objects.filter(certificados__id=cert_id, aprobado=True).exists()
                 for cert_id in documentos_c.values_list('id', flat=True)
             )
-            matriz = todos_documentos_aprobados and todos_certificados_aprobados == True
             if matriz:
                 valor_matriz = 40
                 mensaje_matriz = "Todos los documentos y certificados requeridos han sido aprobados"
@@ -291,7 +284,8 @@ def Proveedor(request, id_registro):
         'doc_aceptados': doc_aceptados,
         'doc_rechazados': doc_rechazados,
         'mensaje_matriz': mensaje_matriz,
-        'evaluacion': evaluacion, 
+        'evaluacion': evaluacion,
+        'financiera': financiera,  # ⬅️ aquí se pasa al template
     })
 
 # Funcion de verificar documentos y certificados por familia
