@@ -97,7 +97,7 @@ def doc(request):
             try:
                 documento = documentos_requeridos.objects.get(id=doc_id)
                 documento.file = file
-                documento.estado = 'pendiente'  # se conserva si deseas mantenerlo
+                documento.estado = 'pendiente'  
                 documento.save()
                 messages.success(request, 'Documento cargado correctamente.')
             except documentos_requeridos.DoesNotExist:
