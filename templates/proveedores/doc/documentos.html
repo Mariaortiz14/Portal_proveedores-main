@@ -9,22 +9,22 @@
         <p class="text-muted">Aquí puedes consultar el estado de tus documentos cargados.</p>
     </div>
 
-    <!-- Aceptados -->    
+    <!-- Aceptados -->
     <h4 class="text-success mt-5"><i class="bi bi-check-circle"></i> Aceptados</h4>
     <div class="row">
         {% for doc in aceptados %}
-            <div class="col-md-6 col-lg-4 mb-4">
-                <div class="card shadow-sm border-success border-start border-3 h-100">
-                    <div class="card-body">
-                        <h5 class="card-title text-success">{{ doc.documento.nombre }}</h5>
-                        <a href="{{ doc.file.url }}" target="_blank" class="btn btn-sm btn-outline-success mt-2 w-100">
-                            <i class="bi bi-file-earmark-text"></i> Ver archivo
-                        </a>
-                    </div>
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card shadow-sm border-success border-start border-3 h-100">
+                <div class="card-body">
+                    <h5 class="card-title text-success">{{ doc.documento.nombre }}</h5>
+                    <a href="{{ doc.file.url }}" target="_blank" class="btn btn-sm btn-outline-success mt-2 w-100">
+                        <i class="bi bi-file-earmark-text"></i> Ver archivo
+                    </a>
                 </div>
             </div>
+        </div>
         {% empty %}
-            <p class="text-muted">No hay documentos aceptados.</p>
+        <p class="text-muted">No hay documentos aceptados.</p>
         {% endfor %}
     </div>
 
@@ -32,22 +32,22 @@
     <h4 class="text-warning mt-5"><i class="bi bi-clock-history"></i> Pendientes</h4>
     <div class="row">
         {% for doc in pendientes %}
-            <div class="col-md-6 col-lg-4 mb-4">
-                <div class="card shadow-sm border-warning border-start border-3 h-100">
-                    <div class="card-body">
-                        <h5 class="card-title text-warning">{{ doc.documento.nombre }}</h5>
-                        {% if doc.file %}
-                            <a href="{{ doc.file.url }}" target="_blank" class="btn btn-sm btn-outline-secondary mt-2 w-100">
-                                <i class="bi bi-eye"></i> Ver archivo
-                            </a>
-                        {% else %}
-                            <span class="badge bg-secondary mt-2">No hay archivo cargado</span>
-                        {% endif %}
-                    </div>
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card shadow-sm border-warning border-start border-3 h-100">
+                <div class="card-body">
+                    <h5 class="card-title text-warning">{{ doc.documento.nombre }}</h5>
+                    {% if doc.file %}
+                    <a href="{{ doc.file.url }}" target="_blank" class="btn btn-sm btn-outline-secondary mt-2 w-100">
+                        <i class="bi bi-eye"></i> Ver archivo
+                    </a>
+                    {% else %}
+                    <span class="badge bg-secondary mt-2">No hay archivo cargado</span>
+                    {% endif %}
                 </div>
             </div>
+        </div>
         {% empty %}
-            <p class="text-muted">No hay documentos pendientes.</p>
+        <p class="text-muted">No hay documentos pendientes.</p>
         {% endfor %}
     </div>
 
@@ -55,21 +55,21 @@
     <h4 class="text-danger mt-5"><i class="bi bi-x-octagon"></i> Rechazados</h4>
     <div class="row">
         {% for doc in rechazados %}
-            <div class="col-md-6 col-lg-4 mb-4">
-                <div class="card shadow-sm border-danger border-start border-3 h-100">
-                    <div class="card-body">
-                        <h5 class="card-title text-danger">{{ doc.documento.nombre }}</h5>
-                        {% if doc.file %}
-                            <a href="{{ doc.file.url }}" target="_blank" class="btn btn-sm btn-outline-danger mt-2 w-100">
-                                <i class="bi bi-file-earmark-excel"></i> Ver archivo
-                            </a>
-                        {% endif %}
-                        <p class="text-muted mt-2"><i class="bi bi-exclamation-circle"></i> Motivo de rechazo: ...</p>
-                    </div>
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card shadow-sm border-danger border-start border-3 h-100">
+                <div class="card-body">
+                    <h5 class="card-title text-danger">{{ doc.documento.nombre }}</h5>
+                    {% if doc.file %}
+                    <a href="{{ doc.file.url }}" target="_blank" class="btn btn-sm btn-outline-danger mt-2 w-100">
+                        <i class="bi bi-file-earmark-excel"></i> Ver archivo
+                    </a>
+                    {% endif %}
+                    <p class="text-muted mt-2"><i class="bi bi-exclamation-circle"></i> Motivo de rechazo: ...</p>
                 </div>
             </div>
+        </div>
         {% empty %}
-            <p class="text-muted">No hay documentos rechazados.</p>
+        <p class="text-muted">No hay documentos rechazados.</p>
         {% endfor %}
     </div>
 </div>

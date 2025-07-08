@@ -129,11 +129,27 @@ def doc(request):
     aceptados = documentos.filter(id__in=documentos_aprobados_ids)
     rechazados = documentos.filter(id__in=documentos_rechazados_ids)
 
+    # === Validación por tabla de aprobaciones para CERTIFICACIONES ===
+    aprobaciones_cert = aprobacion_doc.objects.filter(certificados__id_registro=registro)
+
+    certificados_aprobados_ids = aprobaciones_cert.filter(aprobado=True).values_list('certificados__id', flat=True)
+    certificados_rechazados_ids = aprobaciones_cert.filter(aprobado=False).values_list('certificados__id', flat=True)
+
+    cert_pendientes = certificaciones.exclude(id__in=certificados_aprobados_ids).exclude(id__in=certificados_rechazados_ids)
+    cert_aceptados = certificaciones.filter(id__in=certificados_aprobados_ids)
+    cert_rechazados = certificaciones.filter(id__in=certificados_rechazados_ids)
+
+
+
     context = {
-        'pendientes': pendientes,
-        'aceptados': aceptados,
-        'rechazados': rechazados,
+    'pendientes': pendientes,
+    'aceptados': aceptados,
+    'rechazados': rechazados,
+    'cert_pendientes': cert_pendientes,
+    'cert_aceptados': cert_aceptados,
+    'cert_rechazados': cert_rechazados,
     }
+
 
     return render(request, "proveedores/doc/documentos.html", context)
 

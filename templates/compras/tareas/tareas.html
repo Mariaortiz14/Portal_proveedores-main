@@ -50,7 +50,7 @@
         </div>
     </div>
 
-    <!-- Tabla de tareas -->
+    <!-- Tablas tareas -->
     <div class="card shadow-sm border-0 mb-4 animate__animated animate__fadeInUp">
         <div class="card-body">
             <h4 class="mb-3 text-secondary"><i class="bi bi-check2-square me-2"></i>Tareas</h4>
@@ -76,9 +76,11 @@
                             <td>{{ tarea.usuario.username }}</td>
                             <td>
                                 {% if tarea.hecha %}
-                                <span class="badge bg-success">Hecha</span>
+                                    <span class="badge bg-success">Hecha</span>
+                                {% elif tarea.fecha_vencimiento < now %}
+                                    <span class="badge bg-danger">Vencida</span>
                                 {% else %}
-                                <span class="badge bg-warning text-dark">Pendiente</span>
+                                    <span class="badge bg-warning text-dark">Pendiente</span>
                                 {% endif %}
                             </td>
                         </tr>
@@ -100,7 +102,7 @@
     </div>
 </div>
 
-<!-- Modal para asignar tarea -->
+<!-- Modal para asignar tarea a un proveedor -->
 <div class="modal fade" id="asignarTareaModal" tabindex="-1" aria-labelledby="asignarTareaModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content shadow">
@@ -129,7 +131,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="description" class="form-label">Descripción</label>
+                        <label for="description" class="form-label">Descripcion</label>
                         <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
                     </div>
 
@@ -139,7 +141,7 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="assigned_to" class="form-label">Asignar a</label>
+                        <label for="assigned_to" class="form-label"> a</label>
                         <select class="form-select" id="assigned_to" name="assigned_to" required>
                             {% for user in users %}
                                 <option value="{{ user.id }}">{{ user.username }}</option>
@@ -150,8 +152,7 @@
 
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-success">
-                        <i class="bi bi-send-check me-1"></i>Asignar
-                    </button>
+                        <i class="bi bi-send-check me-1"></i>Asignar</button>
                 </div>
             </form>
         </div>

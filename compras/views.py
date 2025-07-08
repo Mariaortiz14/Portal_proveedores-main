@@ -17,7 +17,7 @@ from collections import defaultdict
 from sqlalchemy import False_, desc
 from django.contrib import messages
 from django.template import loader
-from django.utils import timezone
+from django.utils.timezone import now
 from django.db import transaction
 from django.conf import settings
 from django.urls import reverse
