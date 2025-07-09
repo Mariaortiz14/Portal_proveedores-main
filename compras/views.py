@@ -586,6 +586,19 @@ def agregar_comentario(request, id, parent_id=None):
 #Función para crear tareas para los proveedores
 def tareas(request):
     tareas = Tarea.objects.all()
+    user_id = request.GET.get('user', '')
+    status = request.GET.get('status', '')
+
+    # Filtrar por usuario
+    if user_id:
+        tareas = tareas.filter(usuario__id=user_id)
+
+    # Filtrar por estado
+    if status == 'hecha':
+        tareas = tareas.filter(hecha=True)
+    elif status == 'no_hecha':
+        tareas = tareas.filter(hecha=False)
+
     grupo_proveedor = Group.objects.get(name='Proveedor')
     users = User.objects.filter(groups=grupo_proveedor)
     homologaciones = homologacion.objects.select_related('id_registro').all()
@@ -596,9 +609,10 @@ def tareas(request):
         'users': users,
         'homologaciones': homologaciones,
         'tipos_tarea': tipos_tarea,
-        'user_selected_id': request.GET.get('user', ''),
-        'status_selected': request.GET.get('status', '')
+        'user_selected_id': user_id,
+        'status_selected': status
     })
+
 
 #Función para asignar una nueva tarea desde la interfaz de compras a proveedores
 def asignar_tarea_doc(request):
