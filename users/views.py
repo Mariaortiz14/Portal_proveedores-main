@@ -199,6 +199,9 @@ def login_(request):
 
 #Función para cerrar sesión
 def logout_(request):
+    storage = messages.get_messages(request)
+    for _ in storage:
+        pass  # con esto los marcas como "leídos"
     logout(request)
     return redirect('users:login')
 

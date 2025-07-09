@@ -270,18 +270,45 @@ def solicitud_id(request, identificador):
 
 #Funcion para listar las tareas que asignaron a proveedores
 def tareas(request):
-    tareas_qs = Tarea.objects.filter(usuario=request.user).order_by('-fecha_creacion')
-    
-    tareas = []
-    for t in tareas_qs:
-        tareas.append({
-            'title': t.titulo,
-            'description': t.descripcion,
-            'due_date': t.fecha_vencimiento.strftime('%Y-%m-%d'),
-            'status': 'Hecha' if t.hecha else 'Pendiente'
-        })
-
+    tareas = Tarea.objects.filter(usuario=request.user).order_by('-fecha_creacion')
     return render(request, 'proveedores/tareas/tareas.html', {'tareas': tareas})
+
+
+def marcar_tarea_hecha(request, tarea_id):
+    tarea = get_object_or_404(Tarea, id=tarea_id, usuario=request.user)
+
+    if not tarea.hecha:
+        tarea.hecha = True
+        tarea.save()
+        messages.success(request, "Tarea marcada como hecha.")
+    else:
+        messages.info(request, "Esta tarea ya está marcada como hecha.")
+
+    return redirect('proveedores:tareas')
+
+def eliminar_tarea(request, tarea_id):
+    tarea = get_object_or_404(Tarea, id=tarea_id, usuario=request.user)
+
+    if not tarea.hecha:
+        messages.error(request, "No puedes eliminar una tarea que aún está pendiente.")
+        return redirect('proveedores:tareas')
+
+    tarea.delete()
+    return redirect('proveedores:tareas')
+
+
+def editar_tarea(request, tarea_id):
+    tarea = get_object_or_404(Tarea, id=tarea_id, usuario=request.user)
+
+    if request.method == 'POST':
+        tarea.titulo = request.POST.get('titulo')
+        tarea.descripcion = request.POST.get('descripcion')
+        tarea.fecha_vencimiento = request.POST.get('fecha_vencimiento')
+        tarea.save()
+        messages.success(request, "Tarea actualizada correctamente.")
+        return redirect('proveedores:tareas')
+
+    return render(request, 'proveedores/tareas/editar_tarea.html', {'tarea': tarea})
 
 #Funcion para listar las propuestas hechas por el proveedor
 def propuestas(request):

@@ -1,0 +1,25 @@
+{% extends '_layout_proveedores.html' %}
+{% block Title %}Editar Tarea{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4 text-primary"><i class="fa-solid fa-pen-to-square me-2"></i>Editar Tarea</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="titulo" class="form-label">Título</label>
+            <input type="text" class="form-control" id="titulo" name="titulo" value="{{ tarea.titulo }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="descripcion" class="form-label">Descripción</label>
+            <textarea class="form-control" id="descripcion" name="descripcion" rows="4" required>{{ tarea.descripcion }}</textarea>
+        </div>
+        <div class="mb-3">
+            <label for="fecha_vencimiento" class="form-label">Fecha de vencimiento</label>
+            <input type="date" class="form-control" id="fecha_vencimiento" name="fecha_vencimiento" value="{{ tarea.fecha_vencimiento|date:'Y-m-d' }}" required>
+        </div>
+        <button type="submit" class="btn btn-success"><i class="fa-solid fa-floppy-disk me-1"></i>Guardar Cambios</button>
+        <a href="{% url 'proveedores:tareas' %}" class="btn btn-secondary ms-2">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

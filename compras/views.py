@@ -1,8 +1,8 @@
 from django.db.models import Count, Max, F, ExpressionWrapper, fields, DurationField, Value, OuterRef, Subquery, Q
 from .forms import Evaluacion_inicial, caracteristicas, crear_solicitud, ComentarioForm, SolicitudForm
+from proveedores.models import Tarea, TipoTarea, homologacion, info_financiera
 from django.shortcuts import render, redirect, get_object_or_404
 from portal_proveedores.settings import DEFAULT_FROM_EMAIL as s
-from proveedores.models import Tarea, TipoTarea, homologacion, info_financiera
 from django.contrib.auth.decorators import login_required
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
@@ -11,18 +11,18 @@ from django.contrib.auth.models import Group, User
 from django.contrib.auth.models import User, Group
 from django.db.models.functions import Coalesce
 from django.template.loader import get_template
+from datetime import date, timedelta, datetime
 from django.contrib.auth.models import User
 from proveedores.models import homologacion
+from django.utils.timezone import now
 from collections import defaultdict
 from sqlalchemy import False_, desc
 from django.contrib import messages
 from django.template import loader
-from django.utils.timezone import now
 from django.db import transaction
 from django.conf import settings
-from django.urls import reverse
 from proveedores.models import *
-from datetime import date, timedelta, datetime
+from django.urls import reverse
 from django.apps import apps
 from compras.models import *
 from .models import *
@@ -31,7 +31,6 @@ import logging
 import re
 import os
 #from weasyprint import HTML, CSS
-
 
 
 logger = logging.getLogger(__name__)

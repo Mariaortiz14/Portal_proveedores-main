@@ -24,11 +24,6 @@
         background-color: #28a745;
     }
 
-    .badge-en_progreso {
-        background-color: #0dcaf0;
-        color: #000;
-    }
-
     .btn-accion {
         margin-left: 0.4rem;
         border-radius: 0.5rem;
@@ -53,38 +48,85 @@
             <h4 class="mb-4"><i class="fa-solid fa-clipboard-list me-2 text-success"></i>Tareas Asignadas</h4>
             <ul class="list-group">
                 {% for task in tareas %}
-                    <li class="list-group-item tarea-card d-flex justify-content-between align-items-center flex-wrap mb-3">
-                        <div class="mb-2 mb-md-0" style="flex: 1 1 auto;">
-                            <h5 class="fw-semibold">{{ task.title }}</h5>
-                            <p class="mb-1">{{ task.description }}</p>
-                            <small class="text-muted"><i class="fa-regular fa-clock me-1"></i>Vence el: {{ task.due_date }}</small>
-                        </div>
-                        <div class="text-end" style="min-width: 180px;">
-                            <span class="badge 
-                                {% if task.status|lower == 'pendiente' %}badge-pendiente
-                                {% elif task.status|lower == 'completado' %}badge-completado
-                                {% elif task.status|lower == 'en progreso' %}badge-en_progreso
-                                {% else %}bg-secondary
-                                {% endif %}
-                                px-3 py-2 me-2">
-                                {{ task.status }}
-                            </span>
-                            <button class="btn btn-outline-warning btn-sm btn-accion">
-                                <i class="fa-solid fa-pen-to-square me-1"></i>Editar
-                            </button>
-                            <button class="btn btn-outline-danger btn-sm btn-accion">
-                                <i class="fa-solid fa-trash me-1"></i>Eliminar
-                            </button>
-                        </div>
-                    </li>
+                <li class="list-group-item tarea-card d-flex justify-content-between align-items-center flex-wrap mb-3">
+                    <div class="mb-2 mb-md-0" style="flex: 1 1 auto;">
+                        <h5 class="fw-semibold">{{ task.titulo }}</h5>
+                        <p class="mb-1">{{ task.descripcion }}</p>
+                        <small class="text-muted"><i class="fa-regular fa-clock me-1"></i>Vence el: {{
+                            task.fecha_vencimiento|date:"Y-m-d" }}</small>
+                    </div>
+                    <div class="text-end" style="min-width: 250px;">
+                        <span class="badge 
+                        {% if not task.hecha %}badge-pendiente
+                        {% else %}badge-completado
+                        {% endif %}
+                        px-3 py-2 me-2">
+                            {% if task.hecha %}Hecha{% else %}Pendiente{% endif %}
+                        </span>
+
+                        {% if not task.hecha %}
+                        <a href="{% url 'proveedores:marcar_tarea_hecha' task.id %}"
+                            class="btn btn-outline-success btn-sm btn-accion">
+                            <i class="fa-solid fa-check me-1"></i> Marcar como Hecha
+                        </a>
+                        <a href="{% url 'proveedores:editar_tarea' task.id %}"
+                            class="btn btn-outline-warning btn-sm btn-accion">
+                            <i class="fa-solid fa-pen-to-square me-1"></i>Editar
+                        </a>
+                        {% endif %}
+
+                        {% if task.hecha %}
+                        <!-- Solo mostrar si la tarea ya está hecha -->
+                        <button type="button" class="btn btn-outline-danger btn-sm btn-accion" data-bs-toggle="modal"
+                            data-bs-target="#modalEliminarTarea" data-tarea-id="{{ task.id }}">
+                            <i class="fa-solid fa-trash me-1"></i>Eliminar
+                        </button>
+                        {% endif %}
+                    </div>
+                </li>
                 {% empty %}
-                    <li class="list-group-item text-center text-muted py-4">
-                        <i class="fa-regular fa-face-smile-beam fa-lg me-2 text-primary"></i>
-                        No tienes tareas asignadas en este momento.
-                    </li>
+                <li class="list-group-item text-center text-muted py-4">
+                    <i class="fa-regular fa-face-smile-beam fa-lg me-2 text-primary"></i>
+                    No tienes tareas asignadas en este momento.
+                </li>
                 {% endfor %}
             </ul>
         </div>
+
     </div>
 </div>
+
+<!-- MODAL para confirmar eliminación -->
+<div class="modal fade" id="modalEliminarTarea" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="modalLabel">Eliminar Tarea</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                    aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body text-center">
+                ¿Estás segura de que deseas eliminar esta tarea?
+            </div>
+            <div class="modal-footer justify-content-center">
+                <form id="formEliminarTarea" method="post">
+                    {% csrf_token %}
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Script para cargar ID de tarea al modal -->
+<script>
+    const modalEliminar = document.getElementById('modalEliminarTarea');
+    modalEliminar.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+        const tareaId = button.getAttribute('data-tarea-id');
+        const form = document.getElementById('formEliminarTarea');
+        form.action = `/proveedores/tareas/eliminar/${tareaId}/`;  // Asegúrate que la ruta coincida
+    });
+</script>
 {% endblock %}

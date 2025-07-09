@@ -24,7 +24,8 @@ from re import U
 urlpatterns = [
     path('', RedirectView.as_view(url='users/login/', permanent=False), name='redirection_principal'),
     path('compras/', include(('compras.urls', 'compras'), namespace='compras')),
-    path('proveedores/', include('proveedores.urls')),
+    path('proveedores/', include(('proveedores.urls', 'proveedores'), namespace='proveedores')),
+
     path('users/', include('users.urls')),
     path('admin/', admin.site.urls),
 ]
