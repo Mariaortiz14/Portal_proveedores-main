@@ -20,14 +20,17 @@ from django.urls import include, path
 from django.contrib import admin
 from django.conf import settings
 from re import U
+from django.contrib.auth.views import LogoutView
 
 urlpatterns = [
     path('', RedirectView.as_view(url='users/login/', permanent=False), name='redirection_principal'),
     path('compras/', include(('compras.urls', 'compras'), namespace='compras')),
     path('proveedores/', include(('proveedores.urls', 'proveedores'), namespace='proveedores')),
-
+    path('logistica/', include('logistica.urls')),
     path('users/', include('users.urls')),
     path('admin/', admin.site.urls),
+    path('logout/', LogoutView.as_view(), name='logout'),
+    
 ]
 
 if settings.DEBUG:

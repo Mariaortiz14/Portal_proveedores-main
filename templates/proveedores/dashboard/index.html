@@ -57,7 +57,8 @@
                         {% for tarea in tareas %}
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             <span><i class="fa-regular fa-circle-check me-2 text-primary"></i> {{ tarea.titulo }}</span>
-                            <span class="badge bg-{{ tarea.hecha|yesno:'success,warning text-dark' }}">{{ tarea.hecha|yesno:'Hecha,Pendiente' }}</span>
+                            <span class="badge bg-{{ tarea.hecha|yesno:'success,warning text-dark' }}">{{
+                                tarea.hecha|yesno:'Hecha,Pendiente' }}</span>
                         </li>
                         {% endfor %}
                     </ul>
@@ -65,7 +66,12 @@
                         <a href="{% url 'proveedor:tareas' %}" class="btn btn-outline-success btn-sm">
                             Ver todas las tareas
                         </a>
+                        <a href="{% url 'logistica:crear_solicitud' %}" class="btn btn-outline-primary mt-3">
+                            <i class="fa-solid fa-door-open me-1"></i> Solicitar ingreso a FEPCO
+                        </a>
+
                     </div>
+
                     {% else %}
                     <p class="text-muted fst-italic">No tienes tareas asignadas aún.</p>
                     {% endif %}

@@ -1,0 +1,68 @@
+{% extends '_layout_logistica.html' %}
+{% block Title %}Panel de Logística{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-primary mb-4"><i class="fa-solid fa-clipboard-check me-2"></i>Solicitudes de Ingreso</h2>
+
+    <table class="table table-bordered table-hover">
+        <thead class="table-light">
+            <tr>
+                <th>Proveedor</th>
+                <th>Fecha</th>
+                <th>Motivo</th>
+                <th>Seguro</th>
+                <th>Productos</th>
+                <th>Estado</th>
+                <th>Código ingreso</th>
+                <th>Observación</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in solicitudes %}
+            <tr>
+                <td>{{ s.proveedor.username }}</td>
+                <td>{{ s.fecha_solicitud|date:"Y-m-d H:i" }}</td>
+                <td>{{ s.motivo|truncatechars:50 }}</td>
+                <td><a href="{{ s.documento_seguro.url }}" target="_blank">Ver</a></td>
+                <td><a href="{{ s.identificacion_productos.url }}" target="_blank">Ver</a></td>
+                <td>
+                    {% if s.estado == 'pendiente' %}
+                        <span class="badge bg-warning text-dark">Pendiente</span>
+                    {% elif s.estado == 'aprobada' %}
+                        <span class="badge bg-success">Aprobada</span>
+                    {% else %}
+                        <span class="badge bg-danger">Rechazada</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if s.codigo_ingreso %}
+                        <span class="text-success fw-bold">{{ s.codigo_ingreso }}</span>
+                    {% else %}
+                        <span class="text-muted">-</span>
+                    {% endif %}
+                </td>
+                <td>{{ s.observacion|default:"-" }}</td>
+                <td>
+                    {% if s.estado == 'pendiente' %}
+                    <form method="post" action="{% url 'logistica:gestionar' s.id %}" class="d-flex flex-column gap-1">
+                        {% csrf_token %}
+                        <textarea name="observacion" class="form-control mb-1" rows="2" placeholder="Observación"></textarea>
+                        <div class="d-flex gap-1">
+                            <button name="accion" value="aprobar" class="btn btn-success btn-sm">Aprobar</button>
+                            <button name="accion" value="rechazar" class="btn btn-danger btn-sm">Rechazar</button>
+                        </div>
+                    </form>
+                    {% else %}
+                        <em>No editable</em>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="9" class="text-center text-muted">No hay solicitudes por revisar.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

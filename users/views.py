@@ -164,7 +164,9 @@ def login_(request):
         return redirect('proveedor:dashboard')
     elif request.user.is_authenticated and request.user.groups.filter(name='compras').exists():
         return redirect('compras:dashboard')
-    
+    elif request.user.is_authenticated and request.user.groups.filter(name='Logística').exists():
+        return redirect('logistica:dashboard')
+
     form = LoginForm()
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -185,6 +187,8 @@ def login_(request):
                         return redirect('proveedor:dashboard')
                     elif user.groups.filter(name='compras').exists():
                         return redirect('compras:dashboard')
+                    elif user.groups.filter(name='Logística').exists():
+                        return redirect('logistica:dashboard')
                     elif user.is_superuser:
                         return redirect('/admin/')
                     else:
@@ -196,6 +200,7 @@ def login_(request):
                 messages.error(request, 'Usuario o contraseña incorrectos.')
 
     return render(request, 'users/register/login.html', {'form': form})
+
 
 #Función para cerrar sesión
 def logout_(request):

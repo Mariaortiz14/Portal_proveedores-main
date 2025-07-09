@@ -1,0 +1,25 @@
+{% extends '_layout_proveedores.html' %}
+{% block Title %}Solicitud de Ingreso{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-primary mb-4"><i class="fa-solid fa-door-open me-2"></i>Solicitud de Ingreso a FEPCO</h2>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label class="form-label">Motivo del ingreso</label>
+            <textarea name="motivo" class="form-control" required></textarea>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Documento de seguro</label>
+            <input type="file" name="documento_seguro" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Identificación de productos</label>
+            <input type="file" name="identificacion_productos" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-success"><i class="fa-solid fa-paper-plane me-1"></i> Enviar Solicitud</button>
+    </form>
+</div>
+{% endblock %}

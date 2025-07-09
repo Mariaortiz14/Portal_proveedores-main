@@ -1,0 +1,49 @@
+{% extends '_layout_proveedores.html' %}
+{% block Title %}Mis Solicitudes de Ingreso{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2 class="text-primary mb-4"><i class="fa-solid fa-door-open me-2"></i>Mis Solicitudes de Ingreso</h2>
+
+  <table class="table table-striped table-bordered">
+    <thead class="table-light">
+      <tr>
+        <th>Fecha</th>
+        <th>Motivo</th>
+        <th>Estado</th>
+        <th>Código de ingreso</th>
+        <th>Observación</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for s in solicitudes %}
+      <tr>
+        <td>{{ s.fecha_solicitud|date:"Y-m-d H:i" }}</td>
+        <td>{{ s.motivo }}</td>
+        <td>
+          {% if s.estado == 'pendiente' %}
+            <span class="badge bg-warning text-dark">Pendiente</span>
+          {% elif s.estado == 'aprobada' %}
+            <span class="badge bg-success">Aprobada</span>
+          {% else %}
+            <span class="badge bg-danger">Rechazada</span>
+          {% endif %}
+        </td>
+        <td>
+          {% if s.codigo_ingreso %}
+            <span class="text-success fw-bold">{{ s.codigo_ingreso }}</span>
+          {% else %}
+            <span class="text-muted">-</span>
+          {% endif %}
+        </td>
+        <td>{{ s.observacion|default:"-" }}</td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="5" class="text-center text-muted">Aún no has enviado ninguna solicitud de ingreso.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
