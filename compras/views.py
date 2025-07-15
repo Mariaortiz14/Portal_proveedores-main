@@ -1,5 +1,5 @@
 from django.db.models import Count, Max, F, ExpressionWrapper, fields, DurationField, Value, OuterRef, Subquery, Q
-from .forms import Evaluacion_inicial, caracteristicas, crear_solicitud, ComentarioForm, SolicitudForm
+from .forms import Evaluacion_inicial, caracteristicas, crear_solicitud, ComentarioForm, SolicitudForm, EvaluacionProveedorForm
 from proveedores.models import Tarea, TipoTarea, homologacion, info_financiera
 from django.shortcuts import render, redirect, get_object_or_404
 from portal_proveedores.settings import DEFAULT_FROM_EMAIL as s
@@ -22,6 +22,7 @@ from django.template import loader
 from django.db import transaction
 from django.conf import settings
 from proveedores.models import *
+from django.db.models import Avg, F
 from django.urls import reverse
 from django.apps import apps
 from compras.models import *
@@ -180,19 +181,17 @@ def Misproveedores(request):
 
 #Funcion de crear proveedores
 def Proveedor(request, id_registro):
-    registro = registro_formulario.objects.get(id_registro=id_registro)
-    homologa = homologacion.objects.get(id_registro=id_registro)
+    registro = get_object_or_404(registro_formulario, id_registro=id_registro)
+    homologa = get_object_or_404(homologacion, id_registro=id_registro)
     accionarios = composicion_accionaria.objects.filter(id_registro=id_registro)
     contable = info_pago.objects.get(id_registro=id_registro)
 
-    # 🔹 NUEVO: Obtener información financiera
     try:
         financiera = info_financiera.objects.get(id_registro=id_registro)
     except info_financiera.DoesNotExist:
         financiera = None
 
     familias_ = familias.objects.all()
-
     documentos_g = documentos_requeridos.objects.filter(id_registro=id_registro)
     documentos_c = certificaciones_proveedores.objects.filter(id_registro=id_registro)
 
@@ -256,14 +255,33 @@ def Proveedor(request, id_registro):
         valor_matriz = 0
         mensaje_matriz = "No todos los documentos y certificados han sido aprobados"
 
-    evaluacion = int(round((doc_aceptados / total_doc) * 100)) if total_doc > 0 else 0
+    # Evaluación de homologación (documental)
+    evaluacion_documentos = int(round((doc_aceptados / total_doc) * 100)) if total_doc > 0 else 0
 
-    form = Evaluacion_inicial(initial={
+    # Evaluación final (promedio de evaluaciones)
+    evaluacion_final = EvaluacionProveedor.objects.filter(proveedor=registro.usuario).aggregate(
+        promedio=Avg((F('puntualidad') + F('calidad') + F('comunicacion') + F('cumplimiento')) / 4.0)
+    )['promedio'] or 0
+    evaluacion_final = round(evaluacion_final, 1)
+
+    form_homologacion = Evaluacion_inicial(initial={
         'oea': oea_val,
         'extra': rse,
         'forma_pago': plazos.plazo.id,
         'matriz': valor_matriz
     })
+
+    evaluacion_form = EvaluacionProveedorForm()
+
+    if request.method == 'POST':
+        evaluacion_form = EvaluacionProveedorForm(request.POST)
+        if evaluacion_form.is_valid():
+            evaluacion_obj = evaluacion_form.save(commit=False)
+            evaluacion_obj.proveedor = registro.usuario
+            evaluacion_obj.evaluador = request.user
+            evaluacion_obj.save()
+            messages.success(request, "Evaluación registrada correctamente.")
+            return redirect('compras:proveedor', id_registro=id_registro)
 
     return render(request, 'compras/proveedores/proveedor.html', {
         'registro': registro,
@@ -274,7 +292,8 @@ def Proveedor(request, id_registro):
         'documentos_g': documentos_g,
         'documentos_c': documentos_c,
         'documentos_estado': documentos_estado,
-        'form': form,
+        'form': form_homologacion,
+        'evaluacion_form': evaluacion_form,
         'accionarios': accionarios,
         'mensaje_oea': mensaje_oea,
         'condition': condition,
@@ -283,8 +302,9 @@ def Proveedor(request, id_registro):
         'doc_aceptados': doc_aceptados,
         'doc_rechazados': doc_rechazados,
         'mensaje_matriz': mensaje_matriz,
-        'evaluacion': evaluacion,
-        'financiera': financiera,  # ⬅️ aquí se pasa al template
+        'evaluacion': evaluacion_documentos,
+        'evaluacion_final': evaluacion_final,
+        'financiera': financiera,
     })
 
 # Funcion de verificar documentos y certificados por familia
@@ -356,8 +376,7 @@ def homologacion_proveedor(request, id_registro):
                                                     descripcion_f=form.cleaned_data['descripcion_f'])
         homologa.save()
     return redirect('compras:proveedor', id_registro=id_registro)  
-        
-#Funcion para asignarle familia a los proveedores desde la vista de comprador
+        #Funcion para asignarle familia a los proveedores desde la vista de comprador 
 def asigancion_familia(request, id_registro):
     if request.method == 'POST':
         homo = homologacion.objects.get(id_registro=id_registro)
@@ -571,7 +590,6 @@ def agregar_comentario(request, id, parent_id=None):
                         comentario.parent_id = parent_id
 
                     comentario.save()  # Guardar siempre antes de cualquier otra acción
-                    messages.success(request, 'Comentario agregado correctamente.')
 
             except Exception as e:
                 print("Error al guardar el comentario:", str(e))

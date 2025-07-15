@@ -39,8 +39,6 @@ def agregar_comentario(request, id, parent_id=None):
                         comentario.parent_id = parent_id
                     comentario.save()
 
-                    messages.success(request, 'Comentario agregado correctamente.')
-
             except Exception as e:
                 print("Error al guardar el comentario:", str(e))
                 messages.error(request, 'No se pudo guardar el comentario. Intenta de nuevo.')

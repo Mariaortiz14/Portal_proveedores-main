@@ -61,3 +61,22 @@ class comentarios(models.Model):
     def is_reply(self):
         return self.parent is not None
     
+class EvaluacionProveedor(models.Model):
+    proveedor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='evaluaciones_recibidas')
+    evaluador = models.ForeignKey(User, on_delete=models.CASCADE, related_name='evaluaciones_realizadas')
+    fecha_evaluacion = models.DateField(auto_now_add=True)
+
+    PUNTAJE_CHOICES = [(i, str(i)) for i in range(1, 6)]
+    puntualidad = models.PositiveSmallIntegerField(choices=PUNTAJE_CHOICES, verbose_name="Puntualidad en entregas")
+    calidad = models.PositiveSmallIntegerField(choices=PUNTAJE_CHOICES, verbose_name="Calidad del producto/servicio")
+    comunicacion = models.PositiveSmallIntegerField(choices=PUNTAJE_CHOICES, verbose_name="Comunicación y respuesta")
+    cumplimiento = models.PositiveSmallIntegerField(choices=PUNTAJE_CHOICES, verbose_name="Cumplimiento de tareas")
+
+    observaciones = models.TextField(blank=True, null=True)
+
+    class Meta:
+        verbose_name = "Evaluación de proveedor"
+        verbose_name_plural = "Evaluaciones de proveedores"
+
+    def __str__(self):
+        return f"Evaluación a {self.proveedor.username} por {self.evaluador.username}"

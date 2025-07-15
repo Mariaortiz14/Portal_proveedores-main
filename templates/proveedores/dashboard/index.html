@@ -57,8 +57,7 @@
                         {% for tarea in tareas %}
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             <span><i class="fa-regular fa-circle-check me-2 text-primary"></i> {{ tarea.titulo }}</span>
-                            <span class="badge bg-{{ tarea.hecha|yesno:'success,warning text-dark' }}">{{
-                                tarea.hecha|yesno:'Hecha,Pendiente' }}</span>
+                            <span class="badge bg-{{ tarea.hecha|yesno:'success,warning text-dark' }}">{{tarea.hecha|yesno:'Hecha,Pendiente' }}</span>
                         </li>
                         {% endfor %}
                     </ul>

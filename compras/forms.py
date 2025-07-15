@@ -5,6 +5,7 @@ from django import contrib, forms
 from logging import PlaceHolder
 from .models import solicitud
 from mimetypes import init
+from .models import EvaluacionProveedor
 from datetime import date
 from django import forms
 from pydoc import doc
@@ -96,3 +97,13 @@ class ComentarioForm(forms.ModelForm):
         cleaned_data.pop('solicitud', None)
         cleaned_data.pop('usuario', None)
         return cleaned_data
+    
+
+
+class EvaluacionProveedorForm(forms.ModelForm):
+    class Meta:
+        model = EvaluacionProveedor
+        fields = ['puntualidad', 'calidad', 'comunicacion', 'cumplimiento', 'observaciones']
+        widgets = {
+            'observaciones': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
+        }
