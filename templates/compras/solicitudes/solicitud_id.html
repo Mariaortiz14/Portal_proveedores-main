@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 <style>
   .card-header {
-    background-color: #1f2937;
+    background: linear-gradient(135deg, #990000, #4d0000);
     color: white;
     font-weight: bold;
     text-transform: uppercase;
@@ -21,13 +21,13 @@
   }
 
   .btn-custom-dark {
-    background-color: #111827;
+    background-color: #ec2b2b;
     color: white;
     border: none;
   }
 
   .btn-custom-dark:hover {
-    background-color: #1f2937;
+    background-color: #ec2b2b;
   }
 
   .table thead th {
@@ -40,7 +40,8 @@
   }
 
   .text-section-title {
-    color: #2563eb;
+
+    color: #000000;
     font-weight: bold;
     text-transform: uppercase;
   }
@@ -83,7 +84,7 @@
         <p><strong>Características:</strong></p>
         <ul>
           {% for c in caracteristicas %}
-            <li>{{ c.caracteristica|default:" Sin Características " }}</li>
+          <li>{{ c.caracteristica|default:" Sin Características " }}</li>
           {% endfor %}
         </ul>
       </div>
@@ -95,51 +96,54 @@
   </div>
 
   <!-- Ranking -->
-  <div class="card mb-4">
-    <div class="card-header text-center">Ranking de Propuestas</div>
-    <div class="card-body">
-      <div class="table-responsive">
-        <table class="table table-bordered text-center">
-          <thead>
-            <tr>
-              <th>Proveedor</th>
-              <th>Oferta</th>
-              <th>Fecha</th>
-              <th>Ranking</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for r in propuestas_ranking %}
-            <tr>
-              <td>{{ r.id_homologacion.id_registro.razon_social }}</td>
-              <td>{{ r.valor_t }}</td>
-              <td>{{ r.fecha|date:"d/m/Y" }}</td>
-              <td><span class="badge bg-primary">{{ forloop.counter }}</span></td>
-              <td>
-                <button class="btn btn-sm btn-custom-dark" data-bs-toggle="modal" data-bs-target="#solicitudModal"
-                  data-razon-social="{{ r.id_homologacion.id_registro.razon_social }}"
-                  data-valor="{{ r.valor_t }}" data-fecha="{{ r.fecha|date:'d/m/Y' }}"
-                  data-id="{{ r.id }}" data-descripcion="{{ r.descripcion }}" data-file="{{ r.file.url }}"
-                  data-garantia="{{ r.garantia }}" data-moneda="{{ r.moneda }}" data-t_pago="{{ r.t_pago }}">
-                  <i class="bi bi-eye"></i> Ver
-                </button>
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+  <div class="row g-4 mb-4">
+    <!-- Columna izquierda -->
+    <div class="col-md-6">
+      <div class="card shadow-sm">
+        <div class="card-header text-center">Ranking de Propuestas</div>
+        <div class="card-body p-2">
+          <table class="table table-sm table-bordered text-center mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Proveedor</th>
+                <th>Oferta</th>
+                <th>Acción</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for p in propuestas_todas %}
+              <tr>
+                <td>{{ p.id_homologacion.id_registro.razon_social }}</td>
+                <td>${{ p.valor_t|floatformat:0 }}</td>
+                <td>
+                  <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#solicitudModal"
+                    data-id="{{ p.id }}" data-razon-social="{{ p.id_homologacion.id_registro.razon_social }}"
+                    data-valor="{{ p.valor_t }}" data-fecha="{{ p.fecha|date:'d/m/Y' }}">
+                    Ver
+                  </button>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
       </div>
+    </div>
 
-      <div class="chart-container">
-        <canvas id="myChart"></canvas>
+    <!-- Columna derecha -->
+    <div class="col-md-6">
+      <div class="card shadow-sm">
+        <div class="card-header text-center">Comparativa de Propuestas</div>
+        <div class="card-body">
+          <canvas id="myChart" style="height:300px;"></canvas>
+        </div>
       </div>
     </div>
   </div>
 
   <!-- Comentarios -->
   <div class="card">
-    <div class="card-header text-center" style="background-color: #dc2626;">Comentarios</div>
+    <div class="card-header text-center" style="background-color: #dc2626;"> Comentarios</div>
     <div class="card-body">
       {% for comentario in solicitud.comentarios_set.all %}
       {% if not comentario.parent %}
@@ -149,7 +153,8 @@
           <small>{{ comentario.fecha }}</small>
         </div>
         <p>{{ comentario.comentario }}</p>
-        <a href="#repuestas" class="btn btn-link p-0" onclick="document.getElementById('respuesta-form-{{ comentario.id }}').style.display='block'">Responder</a>
+        <a href="#repuestas" class="btn btn-link p-0"
+          onclick="document.getElementById('respuesta-form-{{ comentario.id }}').style.display='block'">Responder</a>
         <div id="respuesta-form-{{ comentario.id }}" style="display:none;">
           <form method="post" action="{% url 'compras:agregar_comentario' id=solicitud.id parent_id=comentario.id  %}">
             {% csrf_token %}
@@ -168,6 +173,40 @@
       {% endfor %}
     </div>
   </div>
+  <!-- Modal Detalle Propuesta -->
+  <div class="modal fade" id="solicitudModal" tabindex="-1" aria-labelledby="solicitudModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title" id="solicitudModalLabel">Detalle de Propuesta</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <p><strong>Proveedor:</strong> <span id="razon_social"></span></p>
+          <p><strong>Oferta:</strong> $<span id="valor"></span></p>
+          <p><strong>Fecha:</strong> <span id="fecha"></span></p>
+          <p><strong>Descripción:</strong> <span id="descripcion"></span></p>
+          <p><strong>Garantía:</strong> <span id="garantia"></span></p>
+          <p><strong>Moneda:</strong> <span id="moneda"></span></p>
+          <p><strong>Término de Pago:</strong> <span id="t_pago"></span></p>
+          <p><strong>Archivo Adjunto:</strong> <a id="file" href="#" target="_blank"
+              class="btn btn-sm btn-outline-dark">Ver Archivo</a></p>
+        </div>
+        <div class="modal-footer">
+          <form method="post" id="estado-form">
+            {% csrf_token %}
+            <input type="hidden" name="accion" id="accion">
+            <button type="submit" onclick="document.getElementById('accion').value='aceptar';"
+              class="btn btn-success">Aceptar</button>
+            <button type="submit" onclick="document.getElementById('accion').value='rechazar';"
+              class="btn btn-danger">Rechazar</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
 {% endblock %}
 
@@ -217,5 +256,34 @@
       new Chart(graph, config);
     })
     .catch(error => console.error('Error al cargar el gráfico:', error));
+
+  let propuestaId = null;
+
+  function enviarAccion(accion) {
+    if (propuestaId) {
+      const form = document.getElementById("estado-form");
+      document.getElementById("accion").value = accion;
+      form.action = `/compras/propuestas/${propuestaId}/cambiar_estado/`;
+      form.submit();
+    }
+  }
+
+  const solicitudModal = document.getElementById('solicitudModal');
+  solicitudModal.addEventListener('show.bs.modal', function (event) {
+    const button = event.relatedTarget;
+    propuestaId = button.getAttribute('data-id');
+
+    // Resto de atributos que ya tienes que traen información propuesta
+    this.querySelector('#razon_social').textContent = button.getAttribute('data-razon-social');
+    this.querySelector('#valor').textContent = button.getAttribute('data-valor');
+    this.querySelector('#fecha').textContent = button.getAttribute('data-fecha');
+    this.querySelector('#descripcion').textContent = button.getAttribute('data-descripcion');
+    this.querySelector('#file').href = button.getAttribute('data-file');
+    this.querySelector('#garantia').textContent = button.getAttribute('data-garantia');
+    this.querySelector('#moneda').textContent = button.getAttribute('data-moneda');
+    this.querySelector('#t_pago').textContent = button.getAttribute('data-t_pago');
+  });
+
+
 </script>
 {% endblock %}

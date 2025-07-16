@@ -38,7 +38,18 @@ logger = logging.getLogger(__name__)
 
 # Funcion de vista de dashboard
 def dashboard_compras(request):
-    return render(request, 'compras/dashboard/index.html')
+    propuestas_aceptadas = propuestas_sol.objects.filter(estado='aceptada').count()
+    propuestas_rechazadas = propuestas_sol.objects.filter(estado='rechazada').count()
+    propuestas_pendientes = propuestas_sol.objects.filter(estado='pendiente').count()
+
+    grafico_data = {
+        "aceptadas": propuestas_aceptadas,
+        "rechazadas": propuestas_rechazadas,
+        "pendientes": propuestas_pendientes,
+    }
+
+    return render(request, 'compras/dashboard/index.html', {'grafico_data': grafico_data})
+
 
 #Funcion de vista de dashboard
 def get_dashboard_data(request):
@@ -93,13 +104,14 @@ def tablas(request, t):
 
 # Funcion de Eliminar tablas
 def eliminar(request, tablas, id):
+    
     tabla = apps.get_model('proveedores', tablas)
     tabla.objects.filter(id=id).delete()
     
     return redirect('compras:tablas', t=tablas)
 # Funcion de crear tablas
-
 def Crear_editar(request, tablas):
+    
     tabla = apps.get_model('proveedores', tablas)
     id = request.POST['id']
     with transaction.atomic():
@@ -116,7 +128,6 @@ def Crear_editar(request, tablas):
 
     return redirect('compras:tablas', t=tablas)
 #Función de matriz de datos
-
 def matriz(request):
     familias_= familias.objects.all()
     doc_generales = matriz_doc.objects.filter(tipo='DG')
@@ -364,6 +375,8 @@ def aprobar_documento(request, id_registro):
 
 #Funcion para la homologación de los proveedores
 def homologacion_proveedor(request, id_registro):
+
+    # Verifica si el usuario tiene permisos para homologar
     form = Evaluacion_inicial(request.POST or None)
     if request.method == 'POST' and form.is_valid():
         homologa = evaluacion_inicial.objects.create(id_registro=id_registro, oea=form.cleaned_data['oea'],
@@ -524,23 +537,23 @@ def eliminar_solicitud(request, id):
 
 #Función para mostrar las solicitudes de un proveedor individualemnte 
 def solicitud_id(request, id):
+    solicitudes = solicitud.objects.get(id=id)
 
-    solicitudes = solicitud.objects.get(id=id)    
-    subquery = propuestas_sol.objects.filter(
-        id_homologacion=OuterRef('id_homologacion')
-    ).values('id_homologacion').annotate(max_id=Max('id')).values('max_id')
-    
-    propuestas_ultimas = propuestas_sol.objects.filter(
-        id__in=Subquery(subquery), id_solicitud_id=id
-    )
-    propuestas_ranking = propuestas_ultimas.annotate(
-        tiempo_entrega=ExpressionWrapper(
-            Coalesce(F('tiempo_entrega_max'), Value(0)) - F('tiempo_entrega_min'),
-            output_field=DurationField()
-        )
-    ).order_by('valor_t', 'tiempo_entrega')
-    form = ComentarioForm()                                                                                                                                                                                                                                                                                                                                                                         
-    return render(request, 'compras/solicitudes/solicitud_id.html', {'solicitud': solicitudes, 'form_comentarios': form, 'propuestas_ultimas': propuestas_ultimas, 'propuestas_ranking': propuestas_ranking})
+    # ✅ Propuestas: todas las asociadas a la solicitud
+    propuestas_todas = propuestas_sol.objects.filter(id_solicitud_id=id).order_by('-fecha')
+
+    # ✅ Ranking usando el mismo criterio que tenías para ordenarlas (ejemplo por valor)
+    propuestas_ranking = propuestas_todas.order_by('valor_t')
+
+    form = ComentarioForm()
+
+    return render(request, 'compras/solicitudes/solicitud_id.html', {
+        'solicitud': solicitudes,
+        'form_comentarios': form,
+        'propuestas_todas': propuestas_todas,
+        'propuestas_ranking': propuestas_ranking,
+    })
+
 
 #Función para obtener las propuestas que tienen los mismos proveedores
 def get_propuestas_chart(request, id):
@@ -553,7 +566,7 @@ def get_propuestas_chart(request, id):
     if propuestas:
         mx_conteo = max(p.conteo for p in propuestas)
     else:
-        mx_conteo = 1  # o 0 según lo que tenga más sentido
+        mx_conteo = 1 # o 0 según lo que tenga más sentido
 
       
     return JsonResponse({
@@ -742,7 +755,7 @@ def perfil_comprador(request):
     })
 
 #Función para ver los datos del comprador en el apartado de mi cuenta
-def actualizar_estado_proveedor(id_registro):
+def actualizar_estado_proveedor(id_registro):    
     docs = documentos_requeridos.objects.filter(id_registro=id_registro)
     certs = certificaciones_proveedores.objects.filter(id_registro=id_registro)
 
@@ -768,3 +781,20 @@ def actualizar_estado_proveedor(id_registro):
         hom.save()
     except homologacion.DoesNotExist:
         pass
+
+#función para cambiar el estado de una propuesta
+
+def cambiar_estado_propuesta(request, id):
+    if request.method == 'POST':
+        accion = request.POST.get('accion')
+        propuesta = get_object_or_404(propuestas_sol, id=id)
+
+        if accion == 'aceptar':
+            propuesta.estado = 'aceptada'
+        elif accion == 'rechazar':
+            propuesta.estado = 'rechazada'
+
+        propuesta.save()
+        messages.success(request, f"Propuesta {accion} correctamente.")
+    
+    return redirect('compras:solicitud_id', id=propuesta.id_solicitud.id)

@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+from .views import cambiar_estado_propuesta
 # pyright: reportCallIssue=false
 
 app_name = 'compras'
@@ -14,7 +15,8 @@ urlpatterns = [
       path('mis_solicitudes/', views.mis_solicitudes, name='mis_solicitudes'),
       path('mis_solicitudes/editar/', views.editar_solicitud_modal, name='editar_solicitud_modal'), # type: ignore
       path('mis_solicitudes/', views.mis_solicitudes, name='missolicitudes'),
-      path('mis_solicitudes/<str:id>/eliminar/', views.eliminar_solicitud, name='eliminar_sol'),      
+      path('mis_solicitudes/<str:id>/eliminar/', views.eliminar_solicitud, name='eliminar_sol'),   
+      path('propuestas/<int:id>/cambiar_estado/<str:accion>/', cambiar_estado_propuesta, name='cambiar_estado_propuesta'),
       path('mis_proveedores/proveedor/<str:id_registro>/', views.Proveedor, name='proveedor'),
       path('tablas/<str:tablas>/crear_editar/', views.Crear_editar, name='crear_editar'),
       path('mis_solicitudes/crear/', views.crear_solicitudes, name='crear_solicitudes'),
