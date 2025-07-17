@@ -11,7 +11,7 @@
 
         <div class="text-center mb-4">
             <img src="{% static 'img/logos_final/logo.png' %}" class="rounded-circle" width="120" alt="Foto perfil">
-            <h5 class="mt-2">{{ usuario.username }}</h5>
+            <h5 class="mt-2">{{ usuario.get_full_name }}</h5>
             <p class="text-muted small">Usuario</p>
         </div>
 

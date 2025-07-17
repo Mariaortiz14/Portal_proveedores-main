@@ -5,37 +5,80 @@
 {% load static %}
 <div class="container mt-4">
     <div class="text-center mb-4">
-        <h2 class="fw-bold text-primary"><i class="bi bi-pie-chart"></i> Panel de Indicadores</h2>
-        <p class="text-muted">Visualiza un resumen general de proveedores, solicitudes y más.</p>
+        <h2 class="fw-bold text-primary"><i class="bi bi-graph-up"></i> Panel de Indicadores</h2>
+        <p class="text-muted">Visualiza la gestión de proveedores, solicitudes y propuestas en tiempo real.</p>
     </div>
 
-    <div class="row g-4 justify-content-center">
-        <!-- TARJETA 1 -->
-        <div class="col-lg-4 col-md-6 col-sm-12">
-            <div class="card shadow-sm border-0 h-100 animate__animated animate__fadeIn">
-                <div class="card-body text-center">
-                    <h5 class="card-title text-primary fw-bold"><i class="bi bi-people-fill me-2"></i>Proveedores</h5>
-                    <canvas id="graficoProveedores" style="max-height: 220px;"></canvas>
+    <!-- MÉTRICAS PRINCIPALES -->
+    <div class="row text-center mb-4 g-4">
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h6 class="text-muted">Proveedores Activos</h6>
+                    <h3 class="fw-bold text-primary" id="valorProveedores">-</h3>
                 </div>
             </div>
         </div>
 
-        <!-- TARJETA 2 -->
-        <div class="col-lg-4 col-md-6 col-sm-12">
-            <div class="card shadow-sm border-0 h-100 animate__animated animate__fadeIn">
-                <div class="card-body text-center">
-                    <h5 class="card-title text-success fw-bold"><i class="bi bi-clipboard-data me-2"></i>Solicitudes</h5>
-                    <canvas id="graficoSolicitudes" style="max-height: 220px;"></canvas>
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h6 class="text-muted">Solicitudes Abiertas</h6>
+                    <h3 class="fw-bold text-success" id="valorSolicitudes">-</h3>
                 </div>
             </div>
         </div>
 
-        <!-- TARJETA 3 -->
-        <div class="col-lg-4 col-md-6 col-sm-12">
-            <div class="card shadow-sm border-0 h-100 animate__animated animate__fadeIn">
-                <div class="card-body text-center">
-                    <h5 class="card-title text-danger fw-bold"><i class="bi bi-bar-chart me-2"></i>Propuestas</h5>
-                    <canvas id="graficoPropuestas" style="max-height: 220px;"></canvas>
+        <div class="col-md-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h6 class="text-muted">Propuestas Pendientes</h6>
+                    <h3 class="fw-bold text-danger" id="valorPropuestas">-</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- GRÁFICOS -->
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <h6 class="text-muted fw-bold">Distribución de Proveedores</h6>
+                    <canvas id="graficoProveedores" style="height: 200px;"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <h6 class="text-muted fw-bold">Distribución de Solicitudes</h6>
+                    <canvas id="graficoSolicitudes" style="height: 200px;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4 g-4">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <h6 class="text-muted fw-bold">Distribución de Propuestas</h6>
+                    <canvas id="graficoPropuestas" style="height: 200px;"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <h6 class="text-muted fw-bold">Solicitudes que requieren atención</h6>
+                    <p class="fw-bold fs-4">0.43</p>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">🔔 Acciones requeridas</li>
+                        <li class="list-group-item">📄 Acciones en curso</li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -46,59 +89,76 @@
 {% block grafico %}
 <script src="{% static 'js/chart.min.js' %}"></script>
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function () {
     fetch('/compras/dashboard/data/')
-      .then(res => res.json())
-      .then(data => {
-        const ctx1 = document.getElementById('graficoProveedores');
-        const ctx2 = document.getElementById('graficoSolicitudes');
-        const ctx3 = document.getElementById('graficoPropuestas');
+    .then(res => res.json())
+    .then(data => {
+        // ===== MÉTRICAS PRINCIPALES =====
+        const totalProveedores = data.proveedores.reduce((a,b) => a + b, 0);
+        const totalSolicitudes = data.solicitudes.reduce((a,b) => a + b, 0);
+        const totalPropuestas = data.propuestas.reduce((a,b) => a + b, 0);
 
-        if (ctx1 && data.proveedores.reduce((a,b)=>a+b,0) > 0) {
-          new Chart(ctx1, {
-            type: 'doughnut',
-            data: {
-              labels: ['Activos', 'Inactivos'],
-              datasets: [{
-                data: data.proveedores,
-                backgroundColor: ['#4caf50', '#f44336'],
-              }]
-            }
-          });
+        document.getElementById('valorProveedores').innerText = totalProveedores.toLocaleString();
+        document.getElementById('valorSolicitudes').innerText = totalSolicitudes.toLocaleString();
+        document.getElementById('valorPropuestas').innerText = totalPropuestas.toLocaleString();
+
+        // ===== GRÁFICO DE PROVEEDORES =====
+        if (totalProveedores > 0) {
+            new Chart(document.getElementById('graficoProveedores'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Activos', 'Inactivos'],
+                    datasets: [{
+                        data: data.proveedores,
+                        backgroundColor: ['#2196f3', '#009688']
+                    }]
+                },
+                options: {
+                    cutout: '70%',
+                    responsive: true
+                }
+            });
         }
 
-        if (ctx2 && data.solicitudes.reduce((a,b)=>a+b,0) > 0) {
-          new Chart(ctx2, {
-            type: 'doughnut',
-            data: {
-              labels: ['Abiertas', 'En revisión', 'Cerradas'],
-              datasets: [{
-                data: data.solicitudes,
-                backgroundColor: ['#2196f3', '#ff9800', '#9c27b0'],
-              }]
-            }
-          });
-        } else if (ctx2) {
-          ctx2.parentNode.innerHTML = '<p class="text-muted">No hay solicitudes para mostrar.</p>';
+        // ===== GRÁFICO DE SOLICITUDES =====
+        if (totalSolicitudes > 0) {
+            new Chart(document.getElementById('graficoSolicitudes'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Abiertas', 'En revisión', 'Cerradas'],
+                    datasets: [{
+                        data: data.solicitudes,
+                        backgroundColor: ['#ffc107', '#03a9f4', '#8e24aa']
+                    }]
+                },
+                options: {
+                    cutout: '70%',
+                    responsive: true
+                }
+            });
         }
 
-        if (ctx3 && data.propuestas.reduce((a,b)=>a+b,0) > 0) {
-          new Chart(ctx3, {
-            type: 'doughnut',
-            data: {
-              labels: ['Aceptadas', 'Rechazadas', 'Enviadas'],
-              datasets: [{
-                data: data.propuestas,
-                backgroundColor: ['#00bcd4', '#e91e63', '#cddc39'],
-              }]
-            }
-          });
+        // ===== GRÁFICO DE PROPUESTAS =====
+        if (totalPropuestas > 0) {
+            new Chart(document.getElementById('graficoPropuestas'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['Aceptadas', 'Rechazadas', 'Enviadas'],
+                    datasets: [{
+                        data: data.propuestas,
+                        backgroundColor: ['#00bcd4', '#e91e63', '#cddc39']
+                    }]
+                },
+                options: {
+                    cutout: '70%',
+                    responsive: true
+                }
+            });
         }
-      })
-      .catch(err => {
+    })
+    .catch(err => {
         console.error("Error al cargar datos del dashboard:", err);
-      });
-  });
+    });
+});
 </script>
 {% endblock %}
-

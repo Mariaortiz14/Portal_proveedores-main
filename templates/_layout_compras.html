@@ -31,9 +31,9 @@
     <div class="header_toggle m-1"> <i class="fa-solid fa-bars" id="header-toggle"></i> </div>
     <div class="d-flex text-center dropdown">
       <a class="pt-2 pe-4 link-dark " role="button">
-        <span>{{ usuario.get_full_name }}</span>
-        <i class='bx bx-chevron-down py-2 pt-2'></i>
-      </a>
+            <b>{{ user.username }}</b>
+            <i class='bx bx-chevron-down py-2 pt-2'></i>
+        </a>
       <ul class="dropdown-menu menu_bar">
         <li>
           <a role="button" href="{% url 'compras:perfil' %}" type="button" class="dropdown-item">Mi Cuenta</a>
@@ -63,17 +63,14 @@
             <i class="fa-solid fa-file-pen nav_icon"></i>
             <span class="nav_name">Mis Solicitudes</span>
           </a>
-
           <a href="{%url 'compras:misproveedores'%}" class="nav_link">
             <i class="fa-solid fa-users nav_icon"></i>
             <span class="nav_name">Proveedores</span>
           </a>
-
           <a href="{%url 'compras:tareas'%}" class="nav_link">
             <i class="fa-solid fa-list-check nav_icon"></i>
             <span class="nav_name">Asignar tareas</span>
           </a>
-
           <a href="{%url 'compras:t_basicas'%}" class="nav_link" id="tablas basicas">
             <i class="fa-solid fa-table-list nav_icon"></i>
             <span class="nav_name">Tablas basicas</span>
@@ -109,5 +106,4 @@
   {% block grafico %}
   {% endblock grafico %}
 </body>
-
 </html>

@@ -1,6 +1,6 @@
 from django.db.models import Count, Max, F, ExpressionWrapper, fields, DurationField, Value, OuterRef, Subquery, Q
 from .forms import Evaluacion_inicial, caracteristicas, crear_solicitud, ComentarioForm, SolicitudForm, EvaluacionProveedorForm
-from proveedores.models import Tarea, TipoTarea, homologacion, info_financiera
+from proveedores.models import Tarea, TipoTarea, homologacion, info_financiera,propuestas_sol
 from django.shortcuts import render, redirect, get_object_or_404
 from portal_proveedores.settings import DEFAULT_FROM_EMAIL as s
 from django.contrib.auth.decorators import login_required
@@ -13,7 +13,6 @@ from django.db.models.functions import Coalesce
 from django.template.loader import get_template
 from datetime import date, timedelta, datetime
 from django.contrib.auth.models import User
-from proveedores.models import homologacion
 from django.utils.timezone import now
 from collections import defaultdict
 from sqlalchemy import False_, desc
@@ -38,18 +37,7 @@ logger = logging.getLogger(__name__)
 
 # Funcion de vista de dashboard
 def dashboard_compras(request):
-    propuestas_aceptadas = propuestas_sol.objects.filter(estado='aceptada').count()
-    propuestas_rechazadas = propuestas_sol.objects.filter(estado='rechazada').count()
-    propuestas_pendientes = propuestas_sol.objects.filter(estado='pendiente').count()
-
-    grafico_data = {
-        "aceptadas": propuestas_aceptadas,
-        "rechazadas": propuestas_rechazadas,
-        "pendientes": propuestas_pendientes,
-    }
-
-    return render(request, 'compras/dashboard/index.html', {'grafico_data': grafico_data})
-
+    return render(request, 'compras/dashboard/index.html')
 
 #Funcion de vista de dashboard
 def get_dashboard_data(request):
@@ -784,17 +772,15 @@ def actualizar_estado_proveedor(id_registro):
 
 #función para cambiar el estado de una propuesta
 
-def cambiar_estado_propuesta(request, id):
-    if request.method == 'POST':
-        accion = request.POST.get('accion')
-        propuesta = get_object_or_404(propuestas_sol, id=id)
+def cambiar_estado_propuesta(request, id, accion):
+    propuesta = get_object_or_404(propuestas_sol, id=id)
 
-        if accion == 'aceptar':
-            propuesta.estado = 'aceptada'
-        elif accion == 'rechazar':
-            propuesta.estado = 'rechazada'
+    if accion == 'aceptar':
+        propuesta.estado = 'aceptada'
+    elif accion == 'rechazar':
+        propuesta.estado = 'rechazada'
 
-        propuesta.save()
-        messages.success(request, f"Propuesta {accion} correctamente.")
-    
+    propuesta.save()
+    messages.success(request, f"Propuesta {accion} correctamente.")
     return redirect('compras:solicitud_id', id=propuesta.id_solicitud.id)
+

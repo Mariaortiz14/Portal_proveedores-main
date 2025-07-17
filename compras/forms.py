@@ -1,4 +1,4 @@
-from proveedores.models import plazos, familias
+from proveedores.models import plazos, familias, propuestas_sol
 from django.contrib.auth.models import User
 from django.forms import formset_factory
 from django import contrib, forms

@@ -1,5 +1,4 @@
-from proveedores.models import actividad_eco_clase, matriz_doc, tipo_contribuyente, plazos
-from proveedores.models import registro_formulario
+from proveedores.models import actividad_eco_clase, matriz_doc, tipo_contribuyente, plazos, propuestas_sol,registro_formulario
 from django.contrib.auth.models import User
 from .models import Departamento, Municipio
 from django.forms import formset_factory

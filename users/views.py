@@ -75,7 +75,7 @@ def signup(request):
                         user.groups.add(grupo)
                         login(request, user)
 
-                    # Crear registro principal
+                    #Crear registrodel formulario
                     registro = registro_formulario.objects.create(usuario=user, **formularios[0].cleaned_data)
 
                     # Guardar subsecciones
