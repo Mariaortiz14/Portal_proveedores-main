@@ -782,5 +782,6 @@ def cambiar_estado_propuesta(request, id, accion):
 
     propuesta.save()
     messages.success(request, f"Propuesta {accion} correctamente.")
-    return redirect('compras:solicitud_id', id=propuesta.id_solicitud.id)
+    return redirect('compras:dashboard_compras')
+
 
