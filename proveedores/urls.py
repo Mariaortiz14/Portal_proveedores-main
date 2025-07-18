@@ -4,7 +4,6 @@ from . import views
 app_name = 'proveedor'
 urlpatterns = [
     path('solicitud/<str:id>/cpmentario/<int:parent_id>/', views.agregar_comentario, name='agregar_comentario'),
-
     path('solicitud/<str:id>/comentario/', views.agregar_comentario, name='agregar_comentario'),
     path('descargar_archivo/<str:path>/', views.descargar_archivo, name='descargar_archivo'),
     path('solicitudes/<str:identificador>/', views.solicitud_id, name='solicitud_id'),

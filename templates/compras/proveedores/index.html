@@ -3,7 +3,8 @@
 {% block Title %} Proveedores {% endblock Title %}
 
 {% block css %}
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
 <style>
     .tabla-divertida {
         border-radius: 1rem;
@@ -33,7 +34,7 @@
         align-items: center;
         gap: 0.4rem;
     }
-    
+
 
     .estado-activo {
         background-color: #42f57e;
@@ -57,7 +58,7 @@
         border: none;
         border-radius: 1rem;
         padding: 6px 18px;
-        box-shadow: 0px 4px 12px rgba(0,0,0,0.2);
+        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
         transition: all 0.3s ease;
     }
 
@@ -67,15 +68,23 @@
     }
 
     @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(20px); }
-        to { opacity: 1; transform: translateY(0); }
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
 </style>
 {% endblock css %}
 
 {% block content %}
 <div class="row m-0 ps-lg-0 p-md-0 p-sm-0 p-xs-0 d-flex justify-content-center">
-    <h2 class="p-3 ps-5 text-center text-gradient fw-bold display-5" style="background: -webkit-linear-gradient(45deg, #a70b0b, #080808); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+    <h2 class="p-3 ps-5 text-center text-gradient fw-bold display-5"
+        style="background: -webkit-linear-gradient(45deg, #a70b0b, #080808); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
         👥 Lista de Proveedores
     </h2>
 
@@ -97,13 +106,17 @@
                         <td>
                             <div class="d-flex align-items-center">
                                 <div class="ms-3">
-                                    <p class="fw-bold mb-1 text-dark"><i class="fas fa-user-tag text-secondary me-1"></i>{{ value.0.razon_social }}</p>
-                                    <p class="text-muted mb-0"><i class="fas fa-envelope me-1"></i>{{ value.0.email }}</p>
+                                    <p class="fw-bold mb-1 text-dark"><i
+                                            class="fas fa-user-tag text-secondary me-1"></i>{{ value.0.razon_social }}
+                                    </p>
+                                    <p class="text-muted mb-0"><i class="fas fa-envelope me-1"></i>{{ value.0.email }}
+                                    </p>
                                 </div>
                             </div>
                         </td>
                         <td>
-                            <p class="fw-normal mb-1"><i class="fas fa-id-badge me-1"></i>{{ value.0.tipo_documento }}</p>
+                            <p class="fw-normal mb-1"><i class="fas fa-id-badge me-1"></i>{{ value.0.tipo_documento }}
+                            </p>
                             <p class="text-muted mb-0">{{ value.0.documento }} - {{ value.0.dv }}</p>
                         </td>
                         <td>
@@ -112,17 +125,24 @@
                         </td>
                         <td class="text-center">
                             {% if value.1.estado == "Activo" %}
-                                <span class="badge-estado estado-activo"><i class="fas fa-circle-check"></i> Activo</span>
+                            <span class="badge-estado estado-activo"><i class="fas fa-circle-check"></i> Activo</span>
                             {% elif value.1.estado == "Pendiente" %}
-                                <span class="badge-estado estado-pendiente"><i class="fas fa-clock"></i> Pendiente</span>
+                            <span class="badge-estado estado-pendiente"><i class="fas fa-clock"></i> Pendiente</span>
                             {% else %}
-                                <span class="badge-estado estado-inactivo"><i class="fas fa-ban"></i> Inactivo</span>
+                            <span class="badge-estado estado-inactivo"><i class="fas fa-ban"></i> Inactivo</span>
                             {% endif %}
                         </td>
                         <td class="text-center">
-                            <a href="{% url 'compras:proveedor' id_registro=value.0.id_registro %}" class="btn btn-divertido">
+                            {% if value.1.estado == "Inactivo" %}
+                            <a href="{% url 'compras:proveedor_error' %}" class="btn btn-divertido">
                                 <i class="fas fa-eye me-1"></i> Ver
                             </a>
+                            {% else %}
+                            <a href="{% url 'compras:proveedor' id_registro=value.0.id_registro %}"
+                                class="btn btn-divertido">
+                                <i class="fas fa-eye me-1"></i> Ver
+                            </a>
+                            {% endif %}
                         </td>
                     </tr>
                     {% endfor %}

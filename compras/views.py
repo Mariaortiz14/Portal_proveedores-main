@@ -786,3 +786,7 @@ def cambiar_estado_propuesta(request, id, accion):
     propuesta.save()
     messages.success(request, f"Propuesta {accion} correctamente.")
     return redirect('compras:dashboard')  
+
+
+def proveedor_error(request):
+    return render(request, 'error.html')

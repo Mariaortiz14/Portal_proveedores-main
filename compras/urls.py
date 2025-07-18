@@ -32,5 +32,7 @@ urlpatterns = [
       path('tablas/<str:t>/', views.tablas, name='tablas'),
       path('tablas/', views.t_basicas, name='t_basicas'),
       path('tareas/', views.tareas, name='tareas'),
+      path('proveedor/error/', views.proveedor_error, name='proveedor_error'),
+
   #   path('mis_proveedores/proveedor/<str:id_registro>/reporte/',views.generar_pdf , name='reporte'),     
 ]
