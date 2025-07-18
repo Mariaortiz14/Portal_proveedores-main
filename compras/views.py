@@ -37,7 +37,11 @@ logger = logging.getLogger(__name__)
 
 # Funcion de vista de dashboard
 def dashboard_compras(request):
-    return render(request, 'compras/dashboard/index.html')
+    solicitudes_recientes = solicitud.objects.order_by('-fecha_creacion')[:8]
+    return render(request, 'compras/dashboard/index.html', {
+    'solicitudes_recientes': solicitudes_recientes,
+    # otras variables que ya tienes
+})
 
 #Funcion de vista de dashboard
 def get_dashboard_data(request):
@@ -771,7 +775,6 @@ def actualizar_estado_proveedor(id_registro):
         pass
 
 #función para cambiar el estado de una propuesta
-
 def cambiar_estado_propuesta(request, id, accion):
     propuesta = get_object_or_404(propuestas_sol, id=id)
 
@@ -782,6 +785,4 @@ def cambiar_estado_propuesta(request, id, accion):
 
     propuesta.save()
     messages.success(request, f"Propuesta {accion} correctamente.")
-    return redirect('compras:dashboard_compras')
-
-
+    return redirect('compras:dashboard')  

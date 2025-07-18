@@ -65,6 +65,18 @@
     padding-left: 1rem;
     border-left: 3px solid #60a5fa;
   }
+
+  .estado-aceptada {
+    background-color: #00ff7b;
+  }
+
+  .estado-rechazada {
+    background-color: #ff0000;
+  }
+
+  .estado-pendiente {
+    background-color: #ffea00;
+  }
 </style>
 {% endblock css %}
 
@@ -95,8 +107,8 @@
     </div>
   </div>
 
-  <!-- Ranking -->
   <div class="row g-4 mb-4">
+    <!-- Columna izquierda -->
     <!-- Columna izquierda -->
     <div class="col-md-6">
       <div class="card shadow-sm">
@@ -113,12 +125,23 @@
             <tbody>
               {% for p in propuestas_todas %}
               <tr>
-                <td>{{ p.id_homologacion.id_registro.razon_social }}</td>
+                <td>
+                  {{ p.id_homologacion.id_registro.razon_social }}
+                  {% if p.estado == "aceptada" %}
+                  <span class="badge bg-success">Aceptada</span>
+                  {% elif p.estado == "rechazada" %}
+                  <span class="badge bg-danger">Rechazada</span>
+                  {% else %}
+                  <span class="badge bg-warning text-dark">Pendiente</span>
+                  {% endif %}
+                </td>
                 <td>${{ p.valor_t|floatformat:0 }}</td>
                 <td>
                   <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#solicitudModal"
                     data-id="{{ p.id }}" data-razon-social="{{ p.id_homologacion.id_registro.razon_social }}"
-                    data-valor="{{ p.valor_t }}" data-fecha="{{ p.fecha|date:'d/m/Y' }}">
+                    data-valor="{{ p.valor_t }}" data-fecha="{{ p.fecha|date:'d/m/Y' }}"
+                    data-descripcion="{{ p.descripcion }}" data-garantia="{{ p.garantia }}" data-moneda="{{ p.moneda }}"
+                    data-t_pago="{{ p.t_pago }}" data-file="{{ p.archivo.url }}">
                     Ver
                   </button>
                 </td>
@@ -129,6 +152,7 @@
         </div>
       </div>
     </div>
+
 
     <!-- Columna derecha -->
     <div class="col-md-6">
@@ -196,10 +220,8 @@
           <form method="post" id="estado-form">
             {% csrf_token %}
             <input type="hidden" name="accion" id="accion">
-            <button type="submit" onclick="document.getElementById('accion').value='aceptar';"
-              class="btn btn-success">Aceptar</button>
-            <button type="submit" onclick="document.getElementById('accion').value='rechazar';"
-              class="btn btn-danger">Rechazar</button>
+            <button type="button" onclick="enviarAccion('aceptar')" class="btn btn-success">Aceptar</button>
+            <button type="button" onclick="enviarAccion('rechazar')" class="btn btn-danger">Rechazar</button>
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
           </form>
         </div>
@@ -261,10 +283,7 @@
 
   function enviarAccion(accion) {
     if (propuestaId) {
-      const form = document.getElementById("estado-form");
-      document.getElementById("accion").value = accion;
-      form.action = `/compras/propuestas/${propuestaId}/cambiar_estado/`;
-      form.submit();
+      window.location.href = `/compras/propuestas/${propuestaId}/cambiar_estado/${accion}/`;
     }
   }
 
@@ -284,6 +303,6 @@
     this.querySelector('#t_pago').textContent = button.getAttribute('data-t_pago');
   });
 
-// saliendo de este script esta parte del modal de 
+  // saliendo de este script esta parte del modal de 
 </script>
 {% endblock %}

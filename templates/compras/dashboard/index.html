@@ -5,7 +5,7 @@
 {% load static %}
 <div class="container mt-4">
     <div class="text-center mb-4">
-        <h2 class="fw-bold text-primary"><i class="bi bi-graph-up"></i> Panel de Indicadores</h2>
+        <h2 class="fw-bold text-danger"><i class="bi bi-graph-up"></i> Panel de Indicadores</h2>
         <p class="text-muted">Visualiza la gestión de proveedores, solicitudes y propuestas en tiempo real.</p>
     </div>
 
@@ -14,8 +14,8 @@
         <div class="col-md-4">
             <div class="card shadow-sm border-0">
                 <div class="card-body">
-                    <h6 class="text-muted">Proveedores Activos</h6>
-                    <h3 class="fw-bold text-primary" id="valorProveedores">-</h3>
+                    <h6 class="text-muted">Total Proveedores</h6>
+                    <h3 class="fw-bold text-danger" id="valorProveedores">-</h3>
                 </div>
             </div>
         </div>
@@ -23,8 +23,8 @@
         <div class="col-md-4">
             <div class="card shadow-sm border-0">
                 <div class="card-body">
-                    <h6 class="text-muted">Solicitudes Abiertas</h6>
-                    <h3 class="fw-bold text-success" id="valorSolicitudes">-</h3>
+                    <h6 class="text-muted">Total Solicitudes </h6>
+                    <h3 class="fw-bold text-danger" id="valorSolicitudes">-</h3>
                 </div>
             </div>
         </div>
@@ -32,14 +32,14 @@
         <div class="col-md-4">
             <div class="card shadow-sm border-0">
                 <div class="card-body">
-                    <h6 class="text-muted">Propuestas Pendientes</h6>
+                    <h6 class="text-muted">Total De Propuestas</h6>
                     <h3 class="fw-bold text-danger" id="valorPropuestas">-</h3>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- GRÁFICOS -->
+    <!-- GRÁFICOS / LISTAS -->
     <div class="row g-4">
         <div class="col-md-6">
             <div class="card shadow-sm border-0 h-100">
@@ -50,16 +50,40 @@
             </div>
         </div>
 
+        <!-- Lista de Solicitudes -->
         <div class="col-md-6">
             <div class="card shadow-sm border-0 h-100">
                 <div class="card-body">
-                    <h6 class="text-muted fw-bold">Distribución de Solicitudes</h6>
-                    <canvas id="graficoSolicitudes" style="height: 200px;"></canvas>
+                    <h6 class="text-muted fw-bold">Solicitudes Recientes</h6>
+                    <ul class="list-group list-group-flush">
+                        {% for solicitud in solicitudes_recientes %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            {{ solicitud.identificador }}
+                            <span class="badge 
+                        {% if solicitud.estado == 'Nueva' or solicitud.estado == 'Abierta' %}
+                            bg-primary
+                        {% elif solicitud.estado == 'En revisión' %}
+                            bg-warning text-dark
+                        {% elif solicitud.estado == 'Cerrada' %}
+                            bg-success
+                        {% else %}
+                            bg-secondary
+                        {% endif %}
+                    ">
+                                {{ solicitud.estado }}
+                            </span>
+                        </li>
+                        {% empty %}
+                        <li class="list-group-item">No hay solicitudes recientes</li>
+                        {% endfor %}
+                    </ul>
+
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- Propuestas y Acciones -->
     <div class="row mt-4 g-4">
         <div class="col-md-6">
             <div class="card shadow-sm border-0 h-100">
@@ -77,7 +101,10 @@
                     <p class="fw-bold fs-4">0.43</p>
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item">🔔 Acciones requeridas</li>
+                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Delectus incidunt alias accusamus ratione laudantium expedita voluptate sequi porro dignissimos, ex quidem maxime, iusto odit doloremque laborum adipisci hic. Possimus quibusdam, repudiandae atque qui distinctio minus adipisci doloribus unde voluptas nam non fuga placeat nobis quas libero amet harum mollitia natus!</p>
                         <li class="list-group-item">📄 Acciones en curso</li>
+                        <a href="{% url 'compras:tareas' %}" class="btn btn-outline-success btn-sm">🌟 Asignar Tarea
+                            </a>
                     </ul>
                 </div>
             </div>
@@ -89,76 +116,58 @@
 {% block grafico %}
 <script src="{% static 'js/chart.min.js' %}"></script>
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-    fetch('/compras/dashboard/data/')
-    .then(res => res.json())
-    .then(data => {
-        // ===== MÉTRICAS PRINCIPALES =====
-        const totalProveedores = data.proveedores.reduce((a,b) => a + b, 0);
-        const totalSolicitudes = data.solicitudes.reduce((a,b) => a + b, 0);
-        const totalPropuestas = data.propuestas.reduce((a,b) => a + b, 0);
+    document.addEventListener("DOMContentLoaded", function () {
+        fetch('/compras/dashboard/data/')
+            .then(res => res.json())
+            .then(data => {
+                // ===== MÉTRICAS PRINCIPALES =====
+                const totalProveedores = data.proveedores.reduce((a, b) => a + b, 0);
+                const totalSolicitudes = data.solicitudes.reduce((a, b) => a + b, 0);
+                const totalPropuestas = data.propuestas.reduce((a, b) => a + b, 0);
 
-        document.getElementById('valorProveedores').innerText = totalProveedores.toLocaleString();
-        document.getElementById('valorSolicitudes').innerText = totalSolicitudes.toLocaleString();
-        document.getElementById('valorPropuestas').innerText = totalPropuestas.toLocaleString();
+                document.getElementById('valorProveedores').innerText = totalProveedores.toLocaleString();
+                document.getElementById('valorSolicitudes').innerText = totalSolicitudes.toLocaleString();
+                document.getElementById('valorPropuestas').innerText = totalPropuestas.toLocaleString();
 
-        // ===== GRÁFICO DE PROVEEDORES =====
-        if (totalProveedores > 0) {
-            new Chart(document.getElementById('graficoProveedores'), {
-                type: 'doughnut',
-                data: {
-                    labels: ['Activos', 'Inactivos'],
-                    datasets: [{
-                        data: data.proveedores,
-                        backgroundColor: ['#2196f3', '#009688']
-                    }]
-                },
-                options: {
-                    cutout: '70%',
-                    responsive: true
+                // ===== GRÁFICO DE PROVEEDORES =====
+                if (totalProveedores > 0) {
+                    new Chart(document.getElementById('graficoProveedores'), {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Activos', 'Inactivos'],
+                            datasets: [{
+                                data: data.proveedores,
+                                backgroundColor: ['#21F339', '#F32132']
+                            }]
+                        },
+                        options: {
+                            cutout: '70%',
+                            responsive: true
+                        }
+                    });
                 }
-            });
-        }
 
-        // ===== GRÁFICO DE SOLICITUDES =====
-        if (totalSolicitudes > 0) {
-            new Chart(document.getElementById('graficoSolicitudes'), {
-                type: 'doughnut',
-                data: {
-                    labels: ['Abiertas', 'En revisión', 'Cerradas'],
-                    datasets: [{
-                        data: data.solicitudes,
-                        backgroundColor: ['#ffc107', '#03a9f4', '#8e24aa']
-                    }]
-                },
-                options: {
-                    cutout: '70%',
-                    responsive: true
+                // ===== GRÁFICO DE PROPUESTAS =====
+                if (totalPropuestas > 0) {
+                    new Chart(document.getElementById('graficoPropuestas'), {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Aceptadas', 'Rechazadas', 'Enviadas'],
+                            datasets: [{
+                                data: data.propuestas,
+                                backgroundColor: ['#21F339', '#F32132', '#FFB700']
+                            }]
+                        },
+                        options: {
+                            cutout: '70%',
+                            responsive: true
+                        }
+                    });
                 }
+            })
+            .catch(err => {
+                console.error("Error al cargar datos del dashboard:", err);
             });
-        }
-
-        // ===== GRÁFICO DE PROPUESTAS =====
-        if (totalPropuestas > 0) {
-            new Chart(document.getElementById('graficoPropuestas'), {
-                type: 'doughnut',
-                data: {
-                    labels: ['Aceptadas', 'Rechazadas', 'Enviadas'],
-                    datasets: [{
-                        data: data.propuestas,
-                        backgroundColor: ['#00bcd4', '#e91e63', '#cddc39']
-                    }]
-                },
-                options: {
-                    cutout: '70%',
-                    responsive: true
-                }
-            });
-        }
-    })
-    .catch(err => {
-        console.error("Error al cargar datos del dashboard:", err);
     });
-});
 </script>
 {% endblock %}
