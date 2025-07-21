@@ -784,8 +784,7 @@ def cambiar_estado_propuesta(request, id, accion):
         propuesta.estado = 'rechazada'
 
     propuesta.save()
-    messages.success(request, f"Propuesta {accion} correctamente.")
-    return redirect('compras:dashboard')  
+    return redirect('compras:mis_solicitudes')  
 
 
 def proveedor_error(request):
