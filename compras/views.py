@@ -101,6 +101,7 @@ def eliminar(request, tablas, id):
     tabla.objects.filter(id=id).delete()
     
     return redirect('compras:tablas', t=tablas)
+
 # Funcion de crear tablas
 def Crear_editar(request, tablas):
     
@@ -119,6 +120,7 @@ def Crear_editar(request, tablas):
             tabla.objects.filter(id=id).update(nombre=nombre_modelo)    
 
     return redirect('compras:tablas', t=tablas)
+
 #Función de matriz de datos
 def matriz(request):
     familias_= familias.objects.all()
@@ -283,7 +285,6 @@ def Proveedor(request, id_registro):
             evaluacion_obj.proveedor = registro.usuario
             evaluacion_obj.evaluador = request.user
             evaluacion_obj.save()
-            messages.success(request, "Evaluación registrada correctamente.")
             return redirect('compras:proveedor', id_registro=id_registro)
 
     return render(request, 'compras/proveedores/proveedor.html', {
@@ -382,6 +383,8 @@ def homologacion_proveedor(request, id_registro):
         homologa.save()
     return redirect('compras:proveedor', id_registro=id_registro)  
         #Funcion para asignarle familia a los proveedores desde la vista de comprador 
+
+#Función para asignar familia a los proveedores desde la vista de comprador
 def asigancion_familia(request, id_registro):
     if request.method == 'POST':
         homo = homologacion.objects.get(id_registro=id_registro)
@@ -395,7 +398,6 @@ def asigancion_familia(request, id_registro):
     return redirect('compras:proveedor', id_registro=id_registro)
 
 #Funcion para ver las solicitudes de ccompras de un proveedor 
-
 def mis_solicitudes(request):
     hoy = date.today()
     solicitudes_raw = solicitud.objects.all()
@@ -546,7 +548,6 @@ def solicitud_id(request, id):
         'propuestas_ranking': propuestas_ranking,
     })
 
-
 #Función para obtener las propuestas que tienen los mismos proveedores
 def get_propuestas_chart(request, id):
     propuestas= propuestas_sol.objects.filter(id_solicitud_id=id)
@@ -634,7 +635,6 @@ def tareas(request):
         'user_selected_id': user_id,
         'status_selected': status
     })
-
 
 #Función para asignar una nueva tarea desde la interfaz de compras a proveedores
 def asignar_tarea_doc(request):
@@ -786,6 +786,6 @@ def cambiar_estado_propuesta(request, id, accion):
     propuesta.save()
     return redirect('compras:mis_solicitudes')  
 
-
+#Dunción para manejar los errores del proveedor
 def proveedor_error(request):
     return render(request, 'error.html')

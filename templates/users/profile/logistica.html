@@ -1,4 +1,4 @@
-{% extends "_layout_compras.html" %}
+{% extends "_layout_logistica.html" %}
 {% load static %}
 {% block Title %} Mi Cuenta {% endblock Title %}
 
@@ -6,11 +6,10 @@
 <div class="container mt-5">
     <div class="card shadow-sm rounded-4 p-4">
         <h4 class="mb-4 text-danger fw-bold">
-            <i class="fa-solid fa-user-gear me-2"></i> Configuración De Cuenta
-        </h4>
+            <i class="fa-solid fa-user-gear me-2"></i> Configuración De la Cuenta</h4>
 
         <div class="text-center mb-4">
-            <img src="{% static 'img/logos_final/logo.png' %}" class="rounded-circle" width="120" alt="Foto perfil">
+            <img src="{% static 'img/logos_final/9_gris.png' %}" class="rounded-circle" width="120" alt="Foto perfil">
             <h5 class="mt-2">{{ usuario.get_full_name }}</h5>
             <p class="text-muted small">Usuario</p>
         </div>

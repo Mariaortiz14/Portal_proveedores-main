@@ -167,24 +167,30 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_COOKIE_AGE = 86400 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # settings.py
-
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-#EMAIL_HOST = 'fepco-com-co.mail.protection.outlook.com' 
-#EMAIL_HOST = 'smtp.office365.com'
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'chipi9114@gmail.com'  # Tu correo de Gmail
+EMAIL_HOST_PASSWORD = 'gjvwwwypreluaepd'  # La contraseña sin espacios
+DEFAULT_FROM_EMAIL = 'motomami1612@gmail.com'
+
+#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+#EMAIL_HOST = 'fepco-com-co.mail.protection.outlook.com' 
+##EMAIL_HOST = 'smtp.office365.com'
+#EMAIL_PORT = 587
 #EMAIL_PORT = 25
-EMAIL_USE_TLS= True
-EMAIL_USE_SSL=False
+#EMAIL_USE_TLS = True
+#EMAIL_USE_SSL=False
 #EMAIL_HOST_USER= None
 #EMAIL_HOST_PASSWORD= None
-EMAIL_HOST_USER = 'ymorales@fepco.com.co'
-EMAIL_HOST_PASSWORD = 'Pr0gr42025!'
+#EMAIL_HOST_USER = 'ymorales@fepco.com.co'
+#EMAIL_HOST_PASSWORD = 'Pr0gr42025!'
 
 #DEFAULT_FROM_EMAIL= 'plataformas@fepco.com.co'
-DEFAULT_FROM_EMAIL='ymorales@fepco.com.co'
+#DEFAULT_FROM_EMAIL = 'ymorales@fepco.com.co'
 #DEFAULT_FROM_EMAIL = 'plataformas@fepco.com.co'
-DEFAULT_FROM_EMAIL = 'ymorales@fepco.com.co'
-EMAIL_SUBJECT_PREFIX = '[Portal_Proveedores] '
+#EMAIL_SUBJECT_PREFIX = '[Portal_Proveedores] '
 
 ADMINS = [('Yessica Morales', 'ymorales@fepco.com.co'),]
 #ADMINS = [('Jennyfer Sanchez', 'jcsanchez@fepco.com.co'), ]  # Lista de receptores de los errores
