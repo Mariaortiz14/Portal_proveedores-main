@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'proveedores',
     'compras',
     'logistica',
+    'administracion',
     'fontawesomefree',
 
 ]

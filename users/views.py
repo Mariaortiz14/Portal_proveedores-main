@@ -166,6 +166,8 @@ def login_(request):
         return redirect('compras:dashboard')
     elif request.user.is_authenticated and request.user.groups.filter(name='Logística').exists():
         return redirect('logistica:dashboard')
+    elif request.user.is_authenticated and request.user.groups.filter(name='Administrador').exists():
+        return redirect('administracion:dashboard')
 
     form = LoginForm()
     if request.method == 'POST':
@@ -189,6 +191,8 @@ def login_(request):
                         return redirect('compras:dashboard')
                     elif user.groups.filter(name='Logística').exists():
                         return redirect('logistica:dashboard')
+                    elif user.groups.filter(name='Administrador').exists():
+                        return redirect('administracion:dashboard')
                     elif user.is_superuser:
                         return redirect('/admin/')
                     else:

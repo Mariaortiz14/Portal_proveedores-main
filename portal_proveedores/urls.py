@@ -29,6 +29,7 @@ urlpatterns = [
     path('logistica/', include('logistica.urls')),
     path('users/', include('users.urls')),
     path('admin/', admin.site.urls),
+    path('administracion/', include('administracion.urls')),
     path('logout/', LogoutView.as_view(), name='logout'),
     
 ]
