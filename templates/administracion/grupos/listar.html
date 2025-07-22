@@ -1,0 +1,23 @@
+{% extends "_layout_administracion.html" %}
+{% block Title %}Gestionar Grupos{% endblock Title %}
+{% block content %}
+<div class="container mt-4">
+    <h2 class="fw-bold text-dark"> Grupos Registrados</h2>
+    <table class="table table-bordered table-hover">
+        <thead class="table-dark text-center">
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for grupo in grupos %}
+            <tr>
+                <td class="text-center">{{ grupo.id }}</td>
+                <td>{{ grupo.name }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
