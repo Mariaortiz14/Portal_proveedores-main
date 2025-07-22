@@ -1,47 +1,110 @@
 {% extends "_layout_administracion.html" %}
+
 {% block Title %} Dashboard Administrador {% endblock %}
+
+{% block css %}
+<style>
+    .info-card {
+        padding: 20px;
+        border-radius: 15px;
+        background: #ffffff;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: 0.4s ease;
+        text-align: center;
+        border: 2px solid #eee;
+    }
+
+    .info-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .info-card .title {
+        font-size: 1.1rem;
+        font-weight: bold;
+        display: block;
+        margin-bottom: 10px;
+    }
+
+    .info-card .value {
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+
+    /* COLORES PERSONALIZADOS */
+    .info-card.blue {
+        border-color: #007bff;
+        background: linear-gradient(135deg, #d0e7ff, #e8f1fc);
+    }
+
+    .info-card.green {
+        border-color: #28a745;
+        background: linear-gradient(135deg, #d4fcd6, #e7f9ec);
+    }
+
+    .info-card.red {
+        border-color: #dc3545;
+        background: linear-gradient(135deg, #fbdcdc, #fde9e9);
+    }
+
+    .custom-chart-container {
+        background: #fff;
+        border-radius: 20px;
+        padding: 20px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+        position: relative;
+        overflow: hidden;
+        height: 100%;
+    }
+
+    .custom-chart-container .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .custom-chart-container .title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #333;
+    }
+</style>
+{% endblock css %}
 
 {% block content %}
 <div class="container-fluid mt-4">
     <h3 class="fw-bold text-dark mb-4">Bienvenido Al Dashboard De Administración</h3>
 
     <!-- FILA 1 - TARJETAS DE ESTADÍSTICAS -->
-    <div class="row text-white mb-4">
+    <div class="row mb-4">
         <div class="col-md-3">
-            <div class="card bg-light shadow-sm text-dark">
-                <div class="p-3 text-danger-emphasis bg-danger-subtle border border-danger-subtle rounded-3">
-                    <h6 class="card-title">Compras</h6>
-                    <h3>$12,340</h3>
-                    <p>Lorem ipsum dolor sit amet.</p>
-                </div>
+            <div class="info-card red">
+                <strong class="title">Compras</strong>
+                <div class="value">$9,562</div>
+                <p>This Month</p>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card bg-ligh shadow-sm text-dark">
-                <div class="p-3 text-primary-emphasis bg-primary-subtle border border-primary-subtle rounded-3">
-                    <h6 class="card-title">logistica</h6>
-                    <h3>$42,562</h3>
-                    <p>Lorem ipsum dolor sit amet .</p>
-                </div>
-            </div>
-
-        </div>
-        <div class="col-md-3">
-            <div class="card bg-light shadow-sm text-dark">
-                <div class="p-3 text-success-emphasis bg-success-subtle border border-success-subtle rounded-3">
-                    <h6 class="card-title">proveedores</h6>
-                    <h3>$85,000</h3>
-                    <p>Lorem ipsum dolor sit amet.</p>
-                </div>
+            <div class="info-card blue">
+                <strong class="title">Logística</strong>
+                <div class="value">$42,562</div>
+                <p>Lorem ipsum dolor sit amet.</p>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card bg-ligh shadow-sm">
-                <div class="card-body">
-                    <h6 class="card-title">Total Profit</h6>
-                    <h3>$9,562</h3>
-                    <p class="mb-0">This Month</p>
-                </div>
+            <div class="info-card green">
+                <strong class="title">Proveedores</strong>
+                <div class="value">$85,000</div>
+                <p>Lorem ipsum dolor sit amet.</p>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="info-card red">
+                <strong class="title">Total Profit</strong>
+                <div class="value">$9,562</div>
+                <p>This Month</p>
             </div>
         </div>
     </div>
@@ -49,11 +112,8 @@
     <!-- FILA 2 - GRÁFICO Y CÍRCULO DE CLIENTES -->
     <div class="row mb-4">
         <div class="col-md-6">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h6 class="card-title">Unique Visitor</h6>
-                    <canvas id="visitorsChart" height="120"></canvas>
-                </div>
+            <div class="custom-chart-container">               
+                <canvas id="uiverseChart"></canvas>
             </div>
         </div>
         <div class="col-md-6">
@@ -93,25 +153,43 @@
 <!-- OPCIONAL: Cargar Chart.js para gráficos -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    const ctx = document.getElementById('visitorsChart').getContext('2d');
+    const ctx = document.getElementById("uiverseChart").getContext("2d");
+
     new Chart(ctx, {
-        type: 'line',
+        type: "line",
         data: {
-            labels: ['15 Jan', '15 Feb', '15 Mar', '15 Apr', '15 May', '15 Jun'],
-            datasets: [
-                {
-                    label: 'Arts',
-                    data: [25, 30, 45, 40, 35, 50],
-                    borderColor: 'blue',
-                    fill: false,
-                },
-                {
-                    label: 'Commerce',
-                    data: [35, 40, 30, 45, 50, 40],
-                    borderColor: 'green',
-                    fill: false,
+            labels: ["Ene", "Feb", "Mar", "Abr", "May", "Jun"],
+            datasets: [{
+                label: "Visitas",
+                data: [200, 400, 300, 500, 450, 600],
+                fill: true,
+                backgroundColor: "rgba(54, 162, 235, 0.1)",
+                borderColor: "#36A2EB",
+                tension: 0.4,
+                pointRadius: 5,
+                pointBackgroundColor: "#36A2EB",
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    display: false
                 }
-            ]
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        drawBorder: false
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
+                }
+            }
         }
     });
 </script>
