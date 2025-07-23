@@ -1,4 +1,5 @@
 {% extends "_layout_administracion.html" %}
+{% load static %}
 
 {% block Title %} Dashboard Administrador {% endblock %}
 
@@ -84,6 +85,7 @@
         transform: translateY(-3px);
         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
     }
+    
 </style>
 {% endblock css %}
 
@@ -96,24 +98,25 @@
         <div class="col-md-4">
             <div class="info-card red">
                 <strong class="title">Compras</strong>
-                <div class="value">$9,562</div>
-                <p>This Month</p>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="info-card blue">
-                <strong class="title">Logística</strong>
-                <div class="value">$42,562</div>
-                <p>Lorem ipsum dolor sit amet.</p>
+                <div class="value">{{ usuarios_compras }}</div>
+            <p>Usuarios en grupo Compras</p>
             </div>
         </div>
         <div class="col-md-4">
             <div class="info-card green">
                 <strong class="title">Proveedores</strong>
-                <div class="value">$85,000</div>
-                <p>Lorem ipsum dolor sit amet.</p>
+                <div class="value"> {{ usuarios_proveedores }} </div>
+                <p>Usuarios en grupo proveedores</p>
             </div>
         </div>
+        <div class="col-md-4">
+            <div class="info-card blue">
+                <strong class="title">Logística</strong>
+                <div class="value"> {{ usuarios_logistica }} </div>
+                <p>Usuarios en grupo logistica </p>
+            </div>
+        </div>
+        
     </div>
 
     <!-- FILA 2 - GRÁFICO Y TOTAL REGISTROS -->
@@ -124,16 +127,27 @@
                 <canvas id="uiverseChart"></canvas>
             </div>
         </div>
+    
         <div class="col-md-6">
-            <div class="card card-rounded text-center p-4">
-                <h6 class="text-secondary">Total Registros en la Plataforma</h6>
-                <h2 class="fw-bold mt-2">826</h2>
-                <p class="text-muted">674 Nuevos / 182 Retorno</p>
-            </div>
+    <div class="card card-rounded d-flex flex-row align-items-center p-4 shadow-sm" style="min-height: 220px; gap: 3rem;">
+        <div>
+            <img src="{% static 'img/logos_final/Globalization-pana.png' %}" alt="Usuarios" style="height: 320px;">
+        </div>
+
+        <!-- Contenido a la derecha -->
+        <div class="text-start">
+            <h6 class="text-secondary mb-2">Total Registros en la Plataforma</h6>
+            <h2 class="fw-bold text-dark mt-1">
+                {{ usuarios_compras|add:usuarios_logistica|add:usuarios_proveedores }}
+            </h2>
+            <p class="mb-0 small text-muted">Usuarios en todos los grupos</p>
         </div>
     </div>
+</div>
 
-    <!-- FILA 3 - SUSCRIPTORES Y FOLLOWERS -->
+
+
+    <!-- FILA 3 - SUSCRIPTORES Y FOLLOWERS 
     <div class="row mb-4">
         <div class="col-md-6">
             <div class="card card-rounded text-center p-4">
@@ -149,7 +163,7 @@
                 <button class="btn btn-info btn-sm btn-rounded">Ver seguidores</button>
             </div>
         </div>
-    </div>
+    </div>-->
 </div>
 
 <!-- Chart.js -->

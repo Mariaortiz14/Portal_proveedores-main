@@ -12,20 +12,32 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from .forms import CrearUsuarioForm
 
-def dashboard_administracion(request):
-    total_compras = solicitud.objects.count()
-    total_logistica = SolicitudIngreso.objects.count()
-    total_proveedores = propuestas_sol.objects.values('id_homologacion').distinct().count()
-    total_usuarios = User.objects.exclude(is_superuser=True).count()
+def dashboard_admin(request):
+    try:
+        grupo_compras = Group.objects.get(name="Compras")
+        usuarios_compras = grupo_compras.user_set.count()
+    except Group.DoesNotExist:
+        usuarios_compras = 0
 
-    grafico_data = {
-        "compras": total_compras,
-        "logistica": total_logistica,
-        "proveedores": total_proveedores,
-        "usuarios": total_usuarios,
+    try:
+        grupo_logistica = Group.objects.get(name="Logistica")
+        usuarios_logistica = grupo_logistica.user_set.count()
+    except Group.DoesNotExist:
+        usuarios_logistica = 0
+
+    try:
+        grupo_proveedores = Group.objects.get(name="Proveedor")
+        usuarios_proveedores = grupo_proveedores.user_set.count()
+    except Group.DoesNotExist:
+        usuarios_proveedores = 0
+
+    context = {
+        'usuarios_compras': usuarios_compras,
+        'usuarios_logistica': usuarios_logistica,
+        'usuarios_proveedores': usuarios_proveedores
     }
 
-    return render(request, 'administracion/dashboard/index.html', {"grafico_data": grafico_data})
+    return render(request, 'administracion/dashboard/index.html', context)
 
 # Verifica si pertenece al grupo Administrador
 def es_administrador(user):
