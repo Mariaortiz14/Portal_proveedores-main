@@ -303,7 +303,6 @@ def editar_tarea(request, tarea_id):
         tarea.descripcion = request.POST.get('descripcion')
         tarea.fecha_vencimiento = request.POST.get('fecha_vencimiento')
         tarea.save()
-        messages.success(request, "Tarea actualizada correctamente.")
         return redirect('proveedores:tareas')
 
     return render(request, 'proveedores/tareas/editar_tarea.html', {'tarea': tarea})

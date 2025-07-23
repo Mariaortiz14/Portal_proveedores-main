@@ -20,7 +20,7 @@
         border-radius: 50%;
         object-fit: cover;
         margin-right: 12px;
-        border: 2px solid rgba(231, 38, 31);
+        border: 2px solid rgb(31, 231, 31);
     }
 
     .card {
@@ -171,7 +171,7 @@
                     <div class="list-group-item flex-column align-items-start">
                         <div class="d-flex w-100 justify-content-between">
                             <div class="d-flex align-items-center">
-                                <img src="{% static 'img/perfil.png' %}" alt="{{ comentario.usuario.username }}"
+                                <img src="{{ foto_perfil }}" alt="{{ comentario.usuario.username }}"
                                     class="user-photo">
                                 <h5 class="mb-1">{{ comentario.usuario.username }}</h5>
                             </div>
