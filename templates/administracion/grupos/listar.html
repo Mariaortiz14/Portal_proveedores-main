@@ -1,23 +1,136 @@
 {% extends "_layout_administracion.html" %}
 {% block Title %}Gestionar Grupos{% endblock Title %}
 {% block content %}
-<div class="container mt-4">
-    <h2 class="fw-bold text-dark"> Grupos Registrados</h2>
-    <table class="table table-bordered table-hover">
-        <thead class="table-dark text-center">
-            <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for grupo in grupos %}
-            <tr>
-                <td class="text-center">{{ grupo.id }}</td>
-                <td>{{ grupo.name }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<style>
+    :root {
+        --ux-black: #000000;
+        --ux-border: rgba(0, 0, 0, 0.15);
+        --ux-border-strong: rgba(0, 0, 0, 0.35);
+        --ux-text: #1c1c1c;
+        --ux-text-muted: #6c757d;
+        --ux-bg-card: #ffffff;
+        --ux-bg-table-head: #f8f9fa;
+        --ux-radius-lg: 1.25rem;
+        --ux-radius-md: .75rem;
+        --ux-transition: .18s ease;
+    }
+
+    .group-wrapper {
+        max-width: 960px;
+        margin: 3rem auto;
+    }
+
+    .group-card {
+        background: var(--ux-bg-card);
+        padding: 2rem;
+        border-radius: var(--ux-radius-lg);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        border: 1px solid var(--ux-border);
+    }
+
+    .group-card h2 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--ux-black);
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: .75rem;
+    }
+
+    .group-card h2::before {
+        content: "";
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: var(--ux-black);
+        display: inline-block;
+        position: relative;
+    }
+
+    .group-card h2::after {
+        content: "";
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        margin-left: -16px;
+        border-radius: 50%;
+        background: var(--ux-black);
+        opacity: 0.25;
+        animation: uxPulse 1.4s ease-out infinite;
+    }
+
+    @keyframes uxPulse {
+        0% {
+            transform: scale(0.9);
+            opacity: 0.25;
+        }
+        70% {
+            transform: scale(2);
+            opacity: 0;
+        }
+        100% {
+            transform: scale(2);
+            opacity: 0;
+        }
+    }
+
+    .group-table {
+        width: 100%;
+        border-collapse: collapse;
+        border-radius: var(--ux-radius-md);
+        overflow: hidden;
+        margin-top: 1rem;
+    }
+
+    .group-table th,
+    .group-table td {
+        padding: 0.95rem 1rem;
+        text-align: center;
+        vertical-align: middle;
+        font-size: 0.95rem;
+        border-bottom: 1px solid var(--ux-border);
+    }
+
+    .group-table th {
+        background-color: var(--ux-black);
+        color: #fff;
+        font-weight: 600;
+        font-size: 0.95rem;
+    }
+
+    .group-table tr:hover {
+        background-color: #f5f5f5;
+    }
+
+    .group-table td:first-child {
+        font-weight: bold;
+    }
+</style>
+
+<div class="group-wrapper">
+    <div class="group-card">
+        <h2>Grupos Registrados</h2>
+        <table class="group-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for grupo in grupos %}
+                <tr>
+                    <td>{{ grupo.id }}</td>
+                    <td>{{ grupo.name }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="2" class="text-muted">No hay grupos registrados.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 {% endblock %}

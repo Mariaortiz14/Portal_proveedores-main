@@ -1,0 +1,253 @@
+{% extends "_layout_administracion.html" %}
+{% block Title %}Detalles del Usuario{% endblock %}
+
+{% block content %}
+<style>
+    :root {
+        --ux-black: #000000;
+        --ux-black-hover: #1a1a1a;
+        --ux-black-active: #000000;
+        --ux-border: rgba(0,0,0,.15);
+        --ux-border-strong: rgba(0,0,0,.35);
+        --ux-bg-card: #ffffff; /* Cambia a #111 para modo oscuro */
+        --ux-bg-body: transparent; /* deja al layout manejarlo */
+        --ux-text: #1c1c1c;        /* #f5f5f5 para modo oscuro */
+        --ux-text-muted: #6c757d;  /* gris */
+        --ux-radius-lg: 1.25rem;
+        --ux-radius-md: .75rem;
+        --ux-transition: .18s cubic-bezier(.4,0,.2,1);
+    }
+
+    .user-edit-wrapper {
+        max-width: 520px;
+        margin: 3rem auto;
+    }
+
+    .user-card {
+        background: var(--ux-bg-card);
+        color: var(--ux-text);
+        border-radius: var(--ux-radius-lg);
+        padding: 2.25rem 2rem 2.5rem;
+        position: relative;
+        box-shadow: 0 10px 35px rgba(0,0,0,.08);
+        border: 1px solid var(--ux-border);
+        overflow: hidden;
+    }
+
+    /* Decorative pulse dot in heading */
+    .user-card-title {
+        font-size: 1.45rem;
+        font-weight: 600;
+        margin-bottom: .25rem;
+        display: flex;
+        align-items: center;
+        gap: .75rem;
+        line-height: 1.2;
+    }
+    .user-card-title::before {
+        content: "";
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: var(--ux-black);
+        display: inline-block;
+        position: relative;
+    }
+    .user-card-title::after {
+        content: "";
+        position: absolute;
+        width: 16px;
+        height: 16px;
+        margin-left: -16px; /* overlaps dot */
+        border-radius: 50%;
+        background: var(--ux-black);
+        opacity: .25;
+        animation: uxPulse 1.4s ease-out infinite;
+    }
+
+    @keyframes uxPulse {
+        0%   { transform: scale(.9); opacity: .25; }
+        70%  { transform: scale(2);  opacity: 0; }
+        100% { transform: scale(2);  opacity: 0; }
+    }
+
+    .user-card-subtitle {
+        font-size: .95rem;
+        color: var(--ux-text-muted);
+        margin-bottom: 1.75rem;
+    }
+
+    /* ---------- Floating label pattern ---------- */
+    .ux-form-floating {
+        position: relative;
+        margin-bottom: 1.25rem;
+    }
+
+    .ux-form-floating input[type="text"],
+    .ux-form-floating input[type="password"] {
+        width: 100%;
+        padding: 1.125rem 1rem .625rem 1rem;
+        font-size: 1rem;
+        line-height: 1.2;
+        color: var(--ux-text);
+        background: #fff; /* #1e1e1e para oscuro */
+        border: 1px solid var(--ux-border);
+        border-radius: var(--ux-radius-md);
+        transition: border-color var(--ux-transition), box-shadow var(--ux-transition), background var(--ux-transition);
+    }
+
+    .ux-form-floating input[type="text"]:focus,
+    .ux-form-floating input[type="password"]:focus {
+        border-color: var(--ux-black);
+        box-shadow: 0 0 0 2px rgba(0,0,0,.25);
+        outline: none;
+    }
+
+    .ux-form-floating label {
+        position: absolute;
+        top: 50%;
+        left: 1rem;
+        transform: translateY(-50%);
+        font-size: .95rem;
+        color: var(--ux-text-muted);
+        pointer-events: none;
+        transition: all var(--ux-transition);
+        background: transparent;
+        padding: 0 .25em;
+    }
+
+    /* shrink label when focused or when input has value */
+    .ux-form-floating input:not(:placeholder-shown) + label,
+    .ux-form-floating input:focus + label {
+        top: .4rem;
+        font-size: .75rem;
+        color: var(--ux-black);
+        transform: none;
+    }
+
+    /* Error text */
+    .ux-field-error {
+        margin-top: .25rem;
+        font-size: .8rem;
+        color: #dc3545;
+    }
+
+    /* ---------- Buttons ---------- */
+    .btn-ux-dark {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: .35rem;
+        background: var(--ux-black);
+        color: #fff !important;
+        border: 1px solid var(--ux-black-active);
+        padding: .65rem 1.5rem;
+        font-size: 1rem;
+        font-weight: 600;
+        line-height: 1.2;
+        border-radius: var(--ux-radius-md);
+        transition: background var(--ux-transition), transform var(--ux-transition), box-shadow var(--ux-transition);
+        text-decoration: none;
+    }
+    .btn-ux-dark:hover {
+        background: var(--ux-black-hover);
+        transform: translateY(-1px) scale(1.01);
+        box-shadow: 0 4px 12px rgba(0,0,0,.25);
+    }
+    .btn-ux-dark:active {
+        background: var(--ux-black-active);
+        transform: translateY(0) scale(.99);
+        box-shadow: 0 1px 4px rgba(0,0,0,.4);
+    }
+    .btn-ux-dark:focus-visible {
+        outline: 2px solid var(--ux-black);
+        outline-offset: 2px;
+    }
+
+    /* Secondary style (outline) for destructive/estado toggle actions */
+    .btn-ux-dark-outline {
+        background: transparent;
+        color: var(--ux-black) !important;
+        border: 1px solid var(--ux-border-strong);
+    }
+    .btn-ux-dark-outline:hover {
+        background: var(--ux-black);
+        color: #fff !important;
+        border-color: var(--ux-black);
+    }
+
+    /* Section divider for secondary actions */
+    .user-actions-secondary {
+        margin-top: 2rem;
+        padding-top: 1.75rem;
+        border-top: 1px dashed var(--ux-border);
+        text-align: center;
+    }
+
+    .user-actions-secondary small {
+        display: block;
+        margin-bottom: .75rem;
+        color: var(--ux-text-muted);
+    }
+
+</style>
+
+<div class="user-edit-wrapper">
+    <div class="user-card">
+        <h4 class="user-card-title">Editar Usuario</h4>
+        <div class="user-card-subtitle">Gestiona los datos de acceso y el estado de <strong>{{ usuario.username }}</strong>.</div>
+
+        <!-- Form principal: actualizar username/password -->
+        <form method="post" class="user-edit-form">
+            {% csrf_token %}
+
+            <div class="ux-form-floating">
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    value="{{ usuario.username }}"
+                    placeholder=" "
+                    required>
+                <label for="username">Nombre de Usuario</label>
+                {% if form_errors.username %}
+                    <div class="ux-field-error">{{ form_errors.username }}</div>
+                {% endif %}
+            </div>
+
+            <div class="ux-form-floating">
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder=" ">
+                <label for="password">Nueva Contraseña (opcional)</label>
+                {% if form_errors.password %}
+                    <div class="ux-field-error">{{ form_errors.password }}</div>
+                {% endif %}
+            </div>
+
+            <button type="submit" name="actualizar" class="btn-ux-dark w-100 mt-3">
+                Actualizar
+            </button>
+        </form>
+
+        <!-- Acciones secundarias: activar/desactivar -->
+        <div class="user-actions-secondary">
+            <small>Estado actual: {% if usuario.is_active %}Activo{% else %}Inactivo{% endif %}</small>
+            <form method="post">
+                {% csrf_token %}
+                {% if usuario.is_active %}
+                    <button type="submit" name="desactivar" class="btn-ux-dark-outline">
+                        Desactivar Usuario
+                    </button>
+                {% else %}
+                    <button type="submit" name="activar" class="btn-ux-dark-outline">
+                        Activar Usuario
+                    </button>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

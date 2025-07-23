@@ -6,9 +6,9 @@
 <style>
     .info-card {
         padding: 20px;
-        border-radius: 15px;
+        border-radius: 20px;
         background: #ffffff;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         transition: 0.4s ease;
         text-align: center;
         border: 2px solid #eee;
@@ -22,13 +22,14 @@
     .info-card .title {
         font-size: 1.1rem;
         font-weight: bold;
-        display: block;
         margin-bottom: 10px;
+        color: #333;
     }
 
     .info-card .value {
-        font-size: 1.8rem;
+        font-size: 2rem;
         font-weight: 700;
+        color: #000;
         margin-bottom: 5px;
     }
 
@@ -51,78 +52,83 @@
     .custom-chart-container {
         background: #fff;
         border-radius: 20px;
-        padding: 20px;
+        padding: 25px;
         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-        position: relative;
-        overflow: hidden;
         height: 100%;
-    }
-
-    .custom-chart-container .header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1rem;
     }
 
     .custom-chart-container .title {
         font-size: 1.2rem;
         font-weight: 600;
         color: #333;
+        margin-bottom: 15px;
+    }
+
+    .card-rounded {
+        border-radius: 20px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+        height: 100%;
+    }
+
+    .btn-rounded {
+        border-radius: 30px;
+        padding: 8px 20px;
+        font-weight: 500;
+        text-transform: uppercase;
+        font-size: 12px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .btn-rounded:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
     }
 </style>
 {% endblock css %}
 
 {% block content %}
 <div class="container-fluid mt-4">
-    <h3 class="fw-bold text-dark mb-4">Bienvenido Al Dashboard De Administración</h3>
+    <h3 class="fw-bold text-dark mb-4">Bienvenido al Dashboard de Administración</h3>
 
     <!-- FILA 1 - TARJETAS DE ESTADÍSTICAS -->
     <div class="row mb-4">
-        <div class="col-md-3">
+        <div class="col-md-4">
             <div class="info-card red">
                 <strong class="title">Compras</strong>
                 <div class="value">$9,562</div>
                 <p>This Month</p>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
             <div class="info-card blue">
                 <strong class="title">Logística</strong>
                 <div class="value">$42,562</div>
                 <p>Lorem ipsum dolor sit amet.</p>
             </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-4">
             <div class="info-card green">
                 <strong class="title">Proveedores</strong>
                 <div class="value">$85,000</div>
                 <p>Lorem ipsum dolor sit amet.</p>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="info-card red">
-                <strong class="title">Total Profit</strong>
-                <div class="value">$9,562</div>
-                <p>This Month</p>
-            </div>
-        </div>
     </div>
 
-    <!-- FILA 2 - GRÁFICO Y CÍRCULO DE CLIENTES -->
+    <!-- FILA 2 - GRÁFICO Y TOTAL REGISTROS -->
     <div class="row mb-4">
         <div class="col-md-6">
-            <div class="custom-chart-container">               
+            <div class="custom-chart-container">
+                <div class="title">Estadísticas Mensuales</div>
                 <canvas id="uiverseChart"></canvas>
             </div>
         </div>
         <div class="col-md-6">
-            <div class="card shadow-sm">
-                <div class="card-body text-center">
-                    <h6 class="card-title">Total Registros En La Plataforma</h6>
-                    <h3>826</h3>
-                    <p>674 New / 182 Return</p>
-                </div>
+            <div class="card card-rounded text-center p-4">
+                <h6 class="text-secondary">Total Registros en la Plataforma</h6>
+                <h2 class="fw-bold mt-2">826</h2>
+                <p class="text-muted">674 Nuevos / 182 Retorno</p>
             </div>
         </div>
     </div>
@@ -130,27 +136,23 @@
     <!-- FILA 3 - SUSCRIPTORES Y FOLLOWERS -->
     <div class="row mb-4">
         <div class="col-md-6">
-            <div class="card shadow-sm text-center">
-                <div class="card-body">
-                    <h5 class="text-primary">8.62k Subscribers</h5>
-                    <p>Your main list is growing!</p>
-                    <button class="btn btn-primary btn-sm">Manage List</button>
-                </div>
+            <div class="card card-rounded text-center p-4">
+                <h5 class="text-primary mb-2">8.62k Suscriptores</h5>
+                <p>¡Tu lista principal está creciendo!</p>
+                <button class="btn btn-primary btn-sm btn-rounded">Administrar lista</button>
             </div>
         </div>
         <div class="col-md-6">
-            <div class="card shadow-sm text-center">
-                <div class="card-body">
-                    <h5 class="text-info">+40 Followers</h5>
-                    <p>Your main list is growing!</p>
-                    <button class="btn btn-info btn-sm">Check them out</button>
-                </div>
+            <div class="card card-rounded text-center p-4">
+                <h5 class="text-info mb-2">+40 Seguidores</h5>
+                <p>¡Tu comunidad está creciendo!</p>
+                <button class="btn btn-info btn-sm btn-rounded">Ver seguidores</button>
             </div>
         </div>
     </div>
 </div>
 
-<!-- OPCIONAL: Cargar Chart.js para gráficos -->
+<!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     const ctx = document.getElementById("uiverseChart").getContext("2d");

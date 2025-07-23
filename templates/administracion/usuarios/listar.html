@@ -3,15 +3,123 @@
 {% block Title %} Gestión de Usuarios {% endblock %}
 
 {% block content %}
-<div class="container mt-4">
-  <h2 class="fw-bold text-dark">Gestión De Usuarios</h2>
-  <table class="table table-striped">
+<style>
+  .user-wrapper {
+    max-width: 1024px;
+    margin: 3rem auto;
+  }
+
+  .user-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+  }
+
+  .user-header h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #000;
+    margin: 0;
+  }
+
+  .user-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 2rem;
+    background: #fff;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  }
+
+  .user-table th,
+  .user-table td {
+    padding: 0.85rem 1rem;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 0.95rem;
+  }
+
+  .user-table thead {
+    background-color: #000;
+    color: white;
+  }
+
+  .user-table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+
+  .user-table tbody tr:hover {
+    background-color: #efefef;
+  }
+
+  .btn-dark-small {
+    background: #000;
+    color: #fff;
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+    border-radius: 0.4rem;
+    text-decoration: none;
+    transition: background 0.2s ease;
+    border: none;
+  }
+
+  .btn-dark-small:hover {
+    background: #333;
+  }
+
+  /* Tu botón de crear usuario existente */
+  .btn-crear-usuario {
+    padding: 1.3em 3em;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 2.5px;
+    font-weight: 500;
+    color: #000;
+    background-color: #fff;
+    border: none;
+    border-radius: 45px;
+    box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease 0s;
+    cursor: pointer;
+    outline: none;
+  }
+
+  .btn-crear-usuario:hover {
+    background-color: #000000;
+    box-shadow: 0px 15px 20px rgba(27, 63, 48, 0.4);
+    color: #fff;
+    transform: translateY(-7px);
+  }
+
+  .btn-crear-usuario:active {
+    transform: translateY(-1px);
+  }
+
+  .crear-usuario-wrapper {
+    display: flex;
+    justify-content: flex-end;
+  }
+</style>
+
+<div class="user-wrapper">
+  <div class="user-header">
+    <h2>Gestión de Usuarios</h2>
+    <form action="{% url 'administracion:crear_usuario' %}" method="get" class="crear-usuario-wrapper">
+      <button class="btn-crear-usuario">Crear Usuario</button>
+    </form>
+  </div>
+
+  <table class="user-table">
     <thead>
       <tr>
         <th>Usuario</th>
         <th>Email</th>
         <th>Grupo</th>
         <th>Activo</th>
+        <th>Acciones</th>
       </tr>
     </thead>
     <tbody>
@@ -21,13 +129,20 @@
         <td>{{ user.email }}</td>
         <td>
           {% for g in user.groups.all %}
-            {{ g.name }}{% if not forloop.last %}, {% endif %}
+          {{ g.name }}{% if not forloop.last %}, {% endif %}
           {% endfor %}
         </td>
         <td>{{ user.is_active }}</td>
+        <td>
+          <a href="{% url 'administracion:detalle_usuario' user.id %}">
+            <button class="btn-dark-small">Ver</button>
+          </a>
+        </td>
       </tr>
       {% empty %}
-      <tr><td colspan="4">No hay usuarios registrados.</td></tr>
+      <tr>
+        <td colspan="5">No hay usuarios registrados.</td>
+      </tr>
       {% endfor %}
     </tbody>
   </table>

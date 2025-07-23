@@ -1,11 +1,16 @@
 from django.contrib.auth.models import User, Group
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.shortcuts import render
 from django.contrib.auth.models import User, Group
 from compras.models import solicitud
 from proveedores.models import propuestas_sol
 from logistica.models import SolicitudIngreso
+from django.contrib.auth.models import User
+from django.contrib.auth.hashers import make_password
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .forms import CrearUsuarioForm
 
 def dashboard_administracion(request):
     total_compras = solicitud.objects.count()
@@ -40,3 +45,41 @@ def dashboard(request):
 def gestionar_grupos(request):
     grupos = Group.objects.all()
     return render(request, 'administracion/grupos/listar.html', {'grupos': grupos})
+
+def crear_usuario(request):
+    if request.method == 'POST':
+        form = CrearUsuarioForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.password = make_password(form.cleaned_data['password'])  # encriptar
+            user.save()
+            grupo = form.cleaned_data['grupo']
+            user.groups.add(grupo)
+            return redirect('administracion:gestionar_usuarios')
+    else:
+        form = CrearUsuarioForm()
+
+    return render(request, 'administracion/usuarios/crear_usuario.html', {'form': form})
+
+def detalle_usuario(request, usuario_id):
+    usuario = get_object_or_404(User, id=usuario_id)
+    
+    if request.method == 'POST':
+        if 'activar' in request.POST:
+            usuario.is_active = True
+            usuario.save()
+        elif 'desactivar' in request.POST:
+            usuario.is_active = False
+            usuario.save()
+        elif 'actualizar' in request.POST:
+            nuevo_username = request.POST.get('username')
+            nueva_password = request.POST.get('password')
+            if nuevo_username:
+                usuario.username = nuevo_username
+            if nueva_password:
+                usuario.set_password(nueva_password)
+            usuario.save()
+            messages.success(request, "Usuario actualizado con éxito.")
+            return redirect('administracion:detalle_usuario', usuario_id=usuario.pk)
+
+    return render(request, 'administracion/usuarios/detalle.html', {'usuario': usuario})
