@@ -63,7 +63,7 @@
   .respuesta {
     margin-top: 1rem;
     padding-left: 1rem;
-    border-left: 3px solid #60a5fa;
+    border-left: 3px solid #fa6060;
   }
 
   .estado-aceptada {
@@ -96,7 +96,7 @@
         <p><strong>Características:</strong></p>
         <ul>
           {% for c in caracteristicas %}
-          <li>{{ c.caracteristica|default:" Sin Características " }}</li>
+          <li>{{ c.caracteristicas | default:"Sin Características" }}</li>
           {% endfor %}
         </ul>
       </div>

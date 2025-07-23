@@ -25,7 +25,6 @@
         <i class="fa-solid fa-bars" id="header-toggle"></i>
       </div>
       <div class="logo_empresa">
-        <img src="{% static 'img/logos_final/logo.png' %}" alt="Logo Empresa" height="35">
       </div>
      </div>
     <div class="d-flex text-center dropdown">
@@ -105,6 +104,26 @@
 <script src="{% static 'js/script.js'%}"></script>
 <script src="{% static 'js/liga.js'%}"></script>
   {% block script %}
+  <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const toggleBtn = document.getElementById("header-toggle");
+    const navBar = document.getElementById("nav-bar");
+
+    toggleBtn.addEventListener("click", function () {
+      navBar.classList.toggle("show");
+
+      // Cambiar entre barras y equis
+      if (toggleBtn.classList.contains("fa-bars")) {
+        toggleBtn.classList.remove("fa-bars");
+        toggleBtn.classList.add("fa-xmark");
+      } else {
+        toggleBtn.classList.remove("fa-xmark");
+        toggleBtn.classList.add("fa-bars");
+      }
+    });
+  });
+</script>
+
   {% endblock script %}
   {% block grafico %}
   {% endblock grafico %}

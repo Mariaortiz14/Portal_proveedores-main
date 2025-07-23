@@ -37,7 +37,7 @@
         </li>
       </ul>
       <div class="header_img">
-        <img src="{% static 'img/icon-fepcoLogo_Fepco' %}" alt="">
+        <img src="{% static 'img/logos_final/logistica.png' %}" alt="">
       </div>
     </div>
   </header>
@@ -84,7 +84,28 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="{% static 'js/script.js' %}"></script>
   <script src="{% static 'bootstrap/js/bootstrap.js' %}"></script>
-  {% block script %}{% endblock script %}
+  {% block script %}
+  <script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const toggleBtn = document.getElementById("header-toggle");
+    const navBar = document.getElementById("nav-bar");
+
+    toggleBtn.addEventListener("click", function () {
+      navBar.classList.toggle("show");
+
+      // Cambiar entre barras y equis
+      if (toggleBtn.classList.contains("fa-bars")) {
+        toggleBtn.classList.remove("fa-bars");
+        toggleBtn.classList.add("fa-xmark");
+      } else {
+        toggleBtn.classList.remove("fa-xmark");
+        toggleBtn.classList.add("fa-bars");
+      }
+    });
+  });
+</script>
+
+  {% endblock script %}
   {% block grafico %}{% endblock grafico %}
 </body>
 
