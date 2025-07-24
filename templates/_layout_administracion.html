@@ -31,7 +31,7 @@
                 <b>{{ user.username }}</b>
             </a>
             <ul class="dropdown-menu menu_bar">
-                <li><a href="#" class="dropdown-item">Mi cuenta</a></li>
+                <li><a href="{% url 'administracion:perfil' %}" class="dropdown-item">Mi cuenta</a></li>
                 <li><a href="{% url 'users:logout' %}" class="dropdown-item">Cerrar sesión</a></li>
             </ul>
             <div class="header_img">

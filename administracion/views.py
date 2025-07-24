@@ -95,3 +95,11 @@ def detalle_usuario(request, usuario_id):
             return redirect('administracion:detalle_usuario', usuario_id=usuario.pk)
 
     return render(request, 'administracion/usuarios/detalle.html', {'usuario': usuario})
+
+def perfil_admin(request):
+    # if not request.user.groups.filter(name='Comprador').exists():
+    #     return render(request, 'compras/acceso_denegado.html')
+
+    return render(request, 'users/profile/administracion.html', {
+        'usuario': request.user
+    })

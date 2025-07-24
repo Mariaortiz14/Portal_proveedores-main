@@ -34,12 +34,18 @@
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
   }
 
-  .user-table th,
+  .user-table th{
+    padding: 0.85rem 1rem;
+    text-align: center;
+    vertical-align: middle;
+    font-size: 0.95rem;
+  }
   .user-table td {
     padding: 0.85rem 1rem;
     text-align: center;
     vertical-align: middle;
     font-size: 0.95rem;
+    color:#000;
   }
 
   .user-table thead {
@@ -132,7 +138,7 @@
           {{ g.name }}{% if not forloop.last %}, {% endif %}
           {% endfor %}
         </td>
-        <td>{{ user.is_active }}</td>
+        <td>{{ user.is_active|yesno:"Activo,Inactivo" }}</td>
         <td>
           <a href="{% url 'administracion:detalle_usuario' user.id %}">
             <button class="btn-dark-small">Ver</button>

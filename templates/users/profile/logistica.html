@@ -5,11 +5,11 @@
 {% block content %}
 <div class="container mt-5">
     <div class="card shadow-sm rounded-4 p-4">
-        <h4 class="mb-4 text-danger fw-bold">
+        <h4 class="mb-4 text-primary fw-bold">
             <i class="fa-solid fa-user-gear me-2"></i> Configuración De la Cuenta</h4>
 
         <div class="text-center mb-4">
-            <img src="{% static 'img/logos_final/9_gris.png' %}" class="rounded-circle" width="120" alt="Foto perfil">
+            <img src="{% static 'img/logos_final/logistica.png' %}" class="rounded-circle" width="120" alt="Foto perfil">
             <h5 class="mt-2">{{ usuario.get_full_name }}</h5>
             <p class="text-muted small">Usuario</p>
         </div>
@@ -28,7 +28,7 @@
 
             <div class="d-flex justify-content-end mt-4">
                 <a href="{% url 'compras:dashboard_data' %}" class="btn btn-outline-secondary me-2">Cancelar</a>
-                <button type="button" class="btn btn-danger" disabled>
+                <button type="button" class="btn btn-primary" disabled>
                     <i class="fa-solid fa-lock"></i> Guardar cambios
                 </button>
             </div>
