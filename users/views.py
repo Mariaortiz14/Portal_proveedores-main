@@ -69,7 +69,8 @@ def signup(request):
                     else:
                         email = formularios[0].cleaned_data['email']
                         documento = formularios[0].cleaned_data['documento']
-                        user = User.objects.create_user(username=documento, password='12345678', email=email)
+                        password = formularios[0].cleaned_data['matricula_mercantil']  # Toma la contraseña del campo matricula_mercantil
+                        user = User.objects.create_user(username=documento, password=password, email=email)
 
                         grupo, _ = Group.objects.get_or_create(name='Proveedor')
                         user.groups.add(grupo)
