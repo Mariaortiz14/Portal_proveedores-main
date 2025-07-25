@@ -12,7 +12,9 @@
         <img src="{% static 'img/logos_final/2.png' %}" alt="" width="170" height="35">
     </a>
     <h3 class="me-5 mt-1 text-white"> Registro </h3>
-    <button  id="eliminar" type="button" class="btn btn-secondary " > Eliminar progreso </button>
+    <div>
+    <button  id="eliminar" type="button" class="btn btn-secondary ">Eliminar progreso</button>
+    <button  id="eliminar" type="button" class="btn btn-primary ">Inicio</button></div>
 </nav>
 <div class="container-fluid p-3 m-0" style="background-color:#E7E7E7">
     <div class="row justify-content-center align-content-center ">
@@ -632,8 +634,6 @@
 
   </div>
 {% endblock footer %}
-
-
 {% block script %}
 <script>
     $(document).ready(function(){
@@ -1040,13 +1040,11 @@
             dv.value= (11-resultado)
         }
     }
-
     function invertirCadena(cad) {
         if (cad === "")
           return "";
         else
           return invertirCadena(cad.substr(1)) + cad.charAt(0);
       }
-
 </script>
 {% endblock script%}  

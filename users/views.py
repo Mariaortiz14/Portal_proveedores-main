@@ -206,7 +206,6 @@ def login_(request):
 
     return render(request, 'users/register/login.html', {'form': form})
 
-
 #Función para cerrar sesión
 def logout_(request):
     storage = messages.get_messages(request)
