@@ -43,7 +43,6 @@ class caracteristicas_solicitud(models.Model):
     def __str__(self):
         return self.caracteristica
     
-
 #Clase de los comentarios de la solicitud       
 class comentarios(models.Model):
     homologacion = models.ForeignKey('proveedores.homologacion', null=True, blank=True, on_delete=models.CASCADE)
@@ -61,6 +60,7 @@ class comentarios(models.Model):
     def is_reply(self):
         return self.parent is not None
     
+#clase para evaluar a un proveedor
 class EvaluacionProveedor(models.Model):
     proveedor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='evaluaciones_recibidas')
     evaluador = models.ForeignKey(User, on_delete=models.CASCADE, related_name='evaluaciones_realizadas')

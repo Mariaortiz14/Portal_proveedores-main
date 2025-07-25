@@ -98,8 +98,7 @@ class ComentarioForm(forms.ModelForm):
         cleaned_data.pop('usuario', None)
         return cleaned_data
     
-
-
+# clase para evaluar a un proveedor desde un usuario que esta en el grupo de compras
 class EvaluacionProveedorForm(forms.ModelForm):
     class Meta:
         model = EvaluacionProveedor
