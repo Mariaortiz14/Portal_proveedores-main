@@ -70,7 +70,7 @@ def mis_solicitudes_ingreso(request):
     solicitudes = SolicitudIngreso.objects.filter(proveedor=request.user).order_by('-fecha_solicitud')
     return render(request, 'logistica/proveedor/mis_solicitudes.html', {'solicitudes': solicitudes})
 
-
+@login_required
 def perfil_logistica(request):
    return render(request, 'users/profile/logistica.html', {
         'usuario': request.user

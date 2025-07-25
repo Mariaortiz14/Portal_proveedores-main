@@ -738,6 +738,7 @@ def editar_solicitud(request, id):
     return render(request, 'editar_solicitud.html', {'form': form, 'solicitud': solicitud_})
 
 #Función para ver los datos del comprador en el apartado de mi cuenta
+@login_required
 def perfil_comprador(request):
     # if not request.user.groups.filter(name='Comprador').exists():
     #     return render(request, 'compras/acceso_denegado.html')
