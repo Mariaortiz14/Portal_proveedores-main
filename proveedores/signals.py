@@ -3,6 +3,7 @@ from django.dispatch import receiver
 from .models import propuestas_sol
 from django.core.mail import EmailMessage
 
+# ejemplo de como se piede manejar las notificaciones de las propuestas a las que estan vinculados los usuarios 
 @receiver(post_save, sender=propuestas_sol)
 def notificar_propuesta_creada(sender, instance, created, **kwargs):
     if created:

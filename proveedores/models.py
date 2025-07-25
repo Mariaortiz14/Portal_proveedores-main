@@ -268,7 +268,6 @@ class productos_servicios_condiciones(models.Model):
     periodo_consignacion = models.CharField(max_length=100)
     describa_productos = models.CharField(max_length=300)
     
-
 #Clase de la clase de economia   
 class declaracion(models.Model):
     id = models.AutoField(primary_key=True)
@@ -355,7 +354,7 @@ class propuestas_sol(models.Model):
                 self.conteo = ultimo.conteo + 1
         super().save(*args, **kwargs)  # ¡IMPORTANTE!
 
-            
+#clase para clasificar los tipos de tareas(documentos, propuestas, etc)        
 class TipoTarea(models.Model):
     id = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=100)
@@ -364,6 +363,7 @@ class TipoTarea(models.Model):
     def __str__(self):
         return self.nombre
 
+#clase de tareas
 class Tarea(models.Model):
     tipo = models.ForeignKey(TipoTarea, on_delete=models.CASCADE)
     titulo = models.CharField(max_length=100)

@@ -23,7 +23,7 @@ from .models import *
 import os
 
 
-
+# funcion para agregar un nuevo comentario a una solicitud
 def agregar_comentario(request, id, parent_id=None):
     solicitud_obj = get_object_or_404(solicitud, id=id)
 
@@ -151,7 +151,6 @@ def doc(request):
 
     return render(request, "proveedores/doc/documentos.html", context)
 
-
 #Función para listar todos los archivos
 def listar_archivos(request):
     media_path = os.path.join(settings.BASE_DIR, 'media')
@@ -271,7 +270,7 @@ def tareas(request):
     tareas = Tarea.objects.filter(usuario=request.user).order_by('-fecha_creacion')
     return render(request, 'proveedores/tareas/tareas.html', {'tareas': tareas})
 
-
+#funcion para marcar una tarea como hecha si esta pendiente
 def marcar_tarea_hecha(request, tarea_id):
     tarea = get_object_or_404(Tarea, id=tarea_id, usuario=request.user)
 
@@ -284,6 +283,7 @@ def marcar_tarea_hecha(request, tarea_id):
 
     return redirect('proveedores:tareas')
 
+# funcion para eliminar una tarea solo si ya está hecha
 def eliminar_tarea(request, tarea_id):
     tarea = get_object_or_404(Tarea, id=tarea_id, usuario=request.user)
 
@@ -294,7 +294,7 @@ def eliminar_tarea(request, tarea_id):
     tarea.delete()
     return redirect('proveedores:tareas')
 
-
+#funcion para editar una tarea y poder seleccionarla como hecha si esta pendiente
 def editar_tarea(request, tarea_id):
     tarea = get_object_or_404(Tarea, id=tarea_id, usuario=request.user)
 
@@ -320,4 +320,3 @@ def propuestas(request):
     return render(request, 'proveedores/propuestas/propuestas.html', {
         'propuestas': propuestas
     })
-
