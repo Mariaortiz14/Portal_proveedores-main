@@ -11,6 +11,16 @@ from django.contrib.auth.hashers import make_password
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from .forms import CrearUsuarioForm
+import calendar
+from django.db.models import Count
+from django.db.models.functions import TruncMonth
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+import calendar
+
+from proveedores.models import Tarea, propuestas_sol
+from compras.models import solicitud
+
 
 def dashboard_admin(request):
     try:
@@ -38,6 +48,45 @@ def dashboard_admin(request):
     }
 
     return render(request, 'administracion/dashboard/index.html', context)
+
+@login_required
+def estadisticas_dashboard_admin(request):
+    from django.db.models.functions import TruncMonth
+    from django.db.models import Count
+    from django.http import JsonResponse
+    import calendar
+    from proveedores.models import Tarea, propuestas_sol
+    from compras.models import solicitud
+
+    tareas = Tarea.objects.annotate(mes=TruncMonth('fecha_creacion')).values('mes').annotate(count=Count('id'))
+    solicitudes = solicitud.objects.annotate(mes=TruncMonth('fecha_creacion')).values('mes').annotate(count=Count('id'))
+    propuestas = propuestas_sol.objects.annotate(mes=TruncMonth('fecha')).values('mes').annotate(count=Count('id'))
+
+    meses = []
+    tareas_data, solicitudes_data, propuestas_data = [], [], []
+
+    def get_count(qs, mes):
+        for item in qs:
+            if item['mes'].month == mes:
+                return item['count']
+        return 0
+
+    for mes in range(1, 13):
+        nombre_mes = calendar.month_abbr[mes]
+        meses.append(nombre_mes)
+        tareas_data.append(get_count(tareas, mes))
+        solicitudes_data.append(get_count(solicitudes, mes))
+        propuestas_data.append(get_count(propuestas, mes))
+
+    return JsonResponse({
+        'meses': meses,
+        'tareas': tareas_data,
+        'solicitudes': solicitudes_data,
+        'propuestas': propuestas_data,
+    })
+
+
+
 
 # Verifica si pertenece al grupo Administrador
 def es_administrador(user):
