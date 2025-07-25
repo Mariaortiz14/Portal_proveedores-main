@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from datetime import datetime
 
+# clase de modelo para generar el codigo de ingreso
 class SolicitudIngreso(models.Model):
     proveedor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='solicitudes_ingreso')
     fecha_solicitud = models.DateTimeField(auto_now_add=True)
@@ -19,6 +20,7 @@ class SolicitudIngreso(models.Model):
     def __str__(self):
         return f"Ingreso de {self.proveedor.username} - {self.estado}"
 
+# funcion para generar el codigo de ingreso tomando datos de la fecha y la hora actual
 def generar_codigo_ingreso():
     fecha = datetime.now().strftime("%Y%m%d%H%M%S")
     return f"ING-{fecha}"
