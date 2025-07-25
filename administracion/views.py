@@ -11,17 +11,15 @@ from django.contrib.auth.hashers import make_password
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from .forms import CrearUsuarioForm
-import calendar
 from django.db.models import Count
 from django.db.models.functions import TruncMonth
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 import calendar
-
 from proveedores.models import Tarea, propuestas_sol
 from compras.models import solicitud
 
-
+#funcion principal del dashboard de administracion
 def dashboard_admin(request):
     try:
         grupo_compras = Group.objects.get(name="Compras")
@@ -49,6 +47,7 @@ def dashboard_admin(request):
 
     return render(request, 'administracion/dashboard/index.html', context)
 
+# Funcion para obtener los datos de las solicitudes de compras por mes
 @login_required
 def estadisticas_dashboard_admin(request):
     from django.db.models.functions import TruncMonth
@@ -85,13 +84,11 @@ def estadisticas_dashboard_admin(request):
         'propuestas': propuestas_data,
     })
 
-
-
-
 # Verifica si pertenece al grupo Administrador
 def es_administrador(user):
     return user.groups.filter(name='Administrador').exists()
 
+#Vista para gestionar usuarios
 @login_required
 @user_passes_test(es_administrador)
 def gestionar_usuarios(request):
@@ -102,11 +99,13 @@ def gestionar_usuarios(request):
 def dashboard(request):
     return render(request, 'administracion/dashboard/index.html')
 
+#Funcion para gestionar los grupos y mostrarlos en la vista del administrador
 @user_passes_test(lambda u: hasattr(u, 'groups') and u.groups.filter(name='Administrador').exists()) # type: ignore
 def gestionar_grupos(request):
     grupos = Group.objects.all()
     return render(request, 'administracion/grupos/listar.html', {'grupos': grupos})
 
+#Funcion para crear un nuevo usuario en la plataforma con cualquier grupo
 def crear_usuario(request):
     if request.method == 'POST':
         form = CrearUsuarioForm(request.POST)
@@ -122,6 +121,7 @@ def crear_usuario(request):
 
     return render(request, 'administracion/usuarios/crear_usuario.html', {'form': form})
 
+#Funcion para mostrar los datos de los usuarios en la plataforma y activar o desactivarlos
 def detalle_usuario(request, usuario_id):
     usuario = get_object_or_404(User, id=usuario_id)
     
@@ -144,11 +144,10 @@ def detalle_usuario(request, usuario_id):
             return redirect('administracion:detalle_usuario', usuario_id=usuario.pk)
 
     return render(request, 'administracion/usuarios/detalle.html', {'usuario': usuario})
+
+#Funcion para gestionar los datos de los usuarios que son administradores
 @login_required
 def perfil_admin(request):
-    # if not request.user.groups.filter(name='Comprador').exists():
-    #     return render(request, 'compras/acceso_denegado.html')
-
     return render(request, 'users/profile/administracion.html', {
         'usuario': request.user
     })

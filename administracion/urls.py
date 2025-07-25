@@ -1,8 +1,8 @@
 from django.urls import path
 from . import views
 from .views import estadisticas_dashboard_admin
-app_name = 'administracion'
 
+app_name = 'administracion'
 urlpatterns = [
     path('', views.dashboard_admin, name='dashboard'),
     path('usuarios/', views.gestionar_usuarios, name='gestionar_usuarios'),
@@ -11,5 +11,4 @@ urlpatterns = [
     path('usuarios/crear/', views.crear_usuario, name='crear_usuario'),
     path('usuarios/<int:usuario_id>/', views.detalle_usuario, name='detalle_usuario'),
     path('administracion/', estadisticas_dashboard_admin, name='estadisticas_dashboard_admin'),
-
 ]
