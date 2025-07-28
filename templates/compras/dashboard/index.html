@@ -68,8 +68,7 @@
                             bg-success
                         {% else %}
                             bg-secondary
-                        {% endif %}
-                    ">
+                        {% endif %}">
                                 {{ solicitud.estado }}
                             </span>
                         </li>
@@ -120,7 +119,7 @@
         fetch('/compras/dashboard/data/')
             .then(res => res.json())
             .then(data => {
-                // ===== MÉTRICAS PRINCIPALES =====
+
                 const totalProveedores = data.proveedores.reduce((a, b) => a + b, 0);
                 const totalSolicitudes = data.solicitudes.reduce((a, b) => a + b, 0);
                 const totalPropuestas = data.propuestas.reduce((a, b) => a + b, 0);
