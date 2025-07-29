@@ -1,10 +1,8 @@
 {% extends '_layout_proveedores.html' %}
 {% block Title %}Solicitud de Ingreso{% endblock %}
-
 {% block content %}
 <div class="container mt-5">
     <h2 class="text-primary mb-4"><i class="fa-solid fa-door-open me-2"></i>Solicitud de Ingreso a FEPCO</h2>
-
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="mb-3">

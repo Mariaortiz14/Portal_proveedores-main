@@ -1,11 +1,9 @@
 {% extends '_layout_logistica.html' %}
 {% block Title %}Panel de Indicadores - Logística{% endblock %}
-
 {% block content %}
 <div class="container-fluid mt-4">
     <h2 class="fw-bold text-primary mb-4"><i class="fa-solid fa-warehouse me-2"></i>Panel De Indicadores</h2>
     <p class="text-muted">Visualiza un resumen general de solicitudes de ingreso.</p>
-
     <div class="row g-4">
         <!-- Tarjeta 1: Solicitudes pendientes -->
         <div class="col-lg-4 col-md-6">
@@ -16,7 +14,6 @@
                 </div>
             </div>
         </div>
-
         <!-- Tarjeta 2: Aprobadas -->
         <div class="col-lg-4 col-md-6">
             <div class="card shadow-sm border-start border-4 border-success h-100">
@@ -26,7 +23,6 @@
                 </div>
             </div>
         </div>
-
         <!-- Tarjeta 3: Rechazadas -->
         <div class="col-lg-4 col-md-6">
             <div class="card shadow-sm border-start border-4 border-danger h-100">
@@ -37,7 +33,6 @@
             </div>
         </div>
     </div>
-
     <div class="mt-5 text-center">
         <a href="{% url 'logistica:panel' %}" class="btn btn-outline-primary btn-lg">
             <i class="fa-solid fa-table-list me-2"></i>Ir a gestión de solicitudes

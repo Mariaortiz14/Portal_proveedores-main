@@ -81,14 +81,14 @@
             </div>
         </div>
         <div class="email-body">
-            <h1>Hola, </h1>
-            <p>Se ha realizado un nuevo comentario en la solicitud <strong>{{titulo}}</strong>.</p>
-            <p>Para ver el comentario, haz clic en el siguiente botón:</p>
-            <a href="{{url}}" class="button">Ver Comentario</a>
+            <h1>Hola, {{ usuario.nombre }}</h1>
+            <p>Se ha realizado un nuevo comentario en la(s) solicitud(es): <strong>{% for solicitud in solicitudes %} {{ solicitud.id }}{% if not forloop.last %}, {% endif %}{% endfor %} </strong>.</p>
+            <p>Para ver el comentario, haz click en el siguiente botón: </p>
+            <a href="{{ url }}" class="button">Ver Comentario</a>
             <p>Si no puedes hacer clic en el botón, copia y pega la siguiente URL en tu navegador:</p>
-            <p>{{url}}</p>
+            <p>{{ url }}</p>
             <p>Si no reconoces esta solicitud, por favor ignora este mensaje.</p>
-            <p>{{error}}</p>
+            <p>{{ error }}</p>
         </div>
         <div class="email-footer">
             <p>&copy; 2025 FEPCO. Todos los derechos reservados.</p>

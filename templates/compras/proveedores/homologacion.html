@@ -1,9 +1,7 @@
 {% extends "_layout_compras.html" %}
-
 {% block Title %}
 Evaluación Inicial
 {% endblock Title %}
-
 {% block css %}
 <style>
     .card-glass {
@@ -13,15 +11,12 @@ Evaluación Inicial
         box-shadow: 0 0 25px rgba(0, 0, 0, 0.1);
         border: none;
     }
-
     .form-section {
         margin-bottom: 1.5rem;
     }
-
     label {
         font-weight: 500;
     }
-
     .overlay-disabled {
         position: absolute;
         top: 0; left: 0;
@@ -32,7 +27,6 @@ Evaluación Inicial
     }
 </style>
 {% endblock css %}
-
 {% block content %}
 <div class="container-fluid">
     {% if not condition %}
@@ -41,17 +35,14 @@ Evaluación Inicial
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     {% endif %}
-
     <div class="card card-glass position-relative p-4">
         {% if not condition %}
             <div class="overlay-disabled"></div>
         {% endif %}
         <h4 class="fw-bold text-primary mb-3">Homologación de Documentos</h4>
         <hr class="mb-4">
-
         <form method="post">
             {% csrf_token %}
-
             <div class="row form-section">
                 <div class="col-md-6">
                     <label for="{{ form.s_calidad.id_for_label }}" class="form-label">Sistema de gestión de calidad *</label>
@@ -62,7 +53,6 @@ Evaluación Inicial
                     {{ form.descripcion_s }}
                 </div>
             </div>
-
             <div class="row form-section">
                 <div class="col-md-6">
                     <label for="{{ form.experiencia.id_for_label }}" class="form-label">Experiencia comercial *</label>
@@ -73,7 +63,6 @@ Evaluación Inicial
                     {{ form.descripcion_e }}
                 </div>
             </div>
-
             <div class="row form-section">
                 <div class="col-md-6">
                     <label for="{{ form.forma_pago.id_for_label }}" class="form-label">Forma de pago *</label>
@@ -84,7 +73,6 @@ Evaluación Inicial
                     {{ form.descripcion_f }}
                 </div>
             </div>
-
             <div class="row form-section">
                 <div class="col-md-6">
                     <label for="{{ form.matriz.id_for_label }}" class="form-label">Matriz SSTA *</label>
@@ -95,7 +83,6 @@ Evaluación Inicial
                     {{ form.descripcion_m }}
                 </div>
             </div>
-
             {% if faltantes %}
             <div class="alert alert-warning mt-3">
                 <strong>Documentos faltantes:</strong>
@@ -110,7 +97,6 @@ Evaluación Inicial
                 </ul>
             </div>
             {% endif %}
-
             <div class="row form-section">
                 <div class="col-md-6">
                     <label for="{{ form.oea.id_for_label }}" class="form-label">Operador Económico Autorizado (OEA) *</label>
@@ -124,7 +110,6 @@ Evaluación Inicial
                     {{ form.descripcion_o }}
                 </div>
             </div>
-
             <div class="row form-section">
                 <div class="col-md-6">
                     <label for="{{ form.validacion.id_for_label }}" class="form-label">Listas restrictivas *</label>
@@ -135,7 +120,6 @@ Evaluación Inicial
                     {{ form.descripcion_v }}
                 </div>
             </div>
-
             <div class="row form-section">
                 <div class="col-md-6">
                     <label for="{{ form.extra.id_for_label }}" class="form-label fw-bold">Calificación extra RSE *</label>
@@ -146,7 +130,6 @@ Evaluación Inicial
                     {{ form.descripcion_ex }}
                 </div>
             </div>
-
             <div class="text-center mt-4">
                 <button type="submit" class="btn btn-primary px-4 py-2">Guardar</button>
             </div>

@@ -1,6 +1,5 @@
 {% extends "_layout_compras.html" %}
 {% block Title %} Inicio Compras {% endblock %}
-
 {% block content %}
 {% load static %}
 <div class="container mt-4">
@@ -8,7 +7,6 @@
         <h2 class="fw-bold text-danger"><i class="bi bi-graph-up"></i> Panel de Indicadores</h2>
         <p class="text-muted">Visualiza la gestión de proveedores, solicitudes y propuestas en tiempo real.</p>
     </div>
-
     <!-- MÉTRICAS PRINCIPALES -->
     <div class="row text-center mb-4 g-4">
         <div class="col-md-4">
@@ -19,7 +17,6 @@
                 </div>
             </div>
         </div>
-
         <div class="col-md-4">
             <div class="card shadow-sm border-0">
                 <div class="card-body">
@@ -28,7 +25,6 @@
                 </div>
             </div>
         </div>
-
         <div class="col-md-4">
             <div class="card shadow-sm border-0">
                 <div class="card-body">
@@ -38,7 +34,6 @@
             </div>
         </div>
     </div>
-
     <!-- GRÁFICOS / LISTAS -->
     <div class="row g-4">
         <div class="col-md-6">
@@ -49,7 +44,6 @@
                 </div>
             </div>
         </div>
-
         <!-- Lista de Solicitudes -->
         <div class="col-md-6">
             <div class="card shadow-sm border-0 h-100">
@@ -76,12 +70,10 @@
                         <li class="list-group-item">No hay solicitudes recientes</li>
                         {% endfor %}
                     </ul>
-
                 </div>
             </div>
         </div>
     </div>
-
     <!-- Propuestas y Acciones -->
     <div class="row mt-4 g-4">
         <div class="col-md-6">
@@ -92,7 +84,6 @@
                 </div>
             </div>
         </div>
-
         <div class="col-md-6">
             <div class="card shadow-sm border-0 h-100">
                 <div class="card-body">
@@ -127,7 +118,6 @@
                 document.getElementById('valorProveedores').innerText = totalProveedores.toLocaleString();
                 document.getElementById('valorSolicitudes').innerText = totalSolicitudes.toLocaleString();
                 document.getElementById('valorPropuestas').innerText = totalPropuestas.toLocaleString();
-
                 // ===== GRÁFICO DE PROVEEDORES =====
                 if (totalProveedores > 0) {
                     new Chart(document.getElementById('graficoProveedores'), {
@@ -145,7 +135,6 @@
                         }
                     });
                 }
-
                 // ===== GRÁFICO DE PROPUESTAS =====
                 if (totalPropuestas > 0) {
                     new Chart(document.getElementById('graficoPropuestas'), {

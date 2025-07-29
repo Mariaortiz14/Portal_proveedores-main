@@ -1,9 +1,7 @@
 {% extends "_layout_compras.html" %}
-
 {% block Title %}
     Asignar Familia
 {% endblock Title %}
-
 {% block css %}
 <style>
     .kubi-card {
@@ -18,12 +16,10 @@
         overflow: hidden;
         transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
-
     .kubi-card:hover {
         transform: scale(1.02);
         box-shadow: 0 12px 50px rgba(0, 0, 0, 0.15);
     }
-
     .kubi-card::before {
         content: "";
         position: absolute;
@@ -34,18 +30,15 @@
         background: radial-gradient(circle, rgba(247, 16, 16, 0.15) 0%, transparent 70%);
         z-index: 0;
     }
-
     .kubi-card .form-label {
         font-weight: 600;
         color: #444;
     }
-
     .kubi-card input,
     .kubi-card select {
         background-color: #f9f9f9;
         border-radius: 8px;
     }
-
     .kubi-card .btn-primary {
         background-color: #008cff;
         border: none;
@@ -53,13 +46,12 @@
         font-weight: bold;
         transition: background-color 0.3s ease;
     }
-
     .kubi-card .btn-primary:hover {
         background-color: #0073cc;
     }
+
 </style>
 {% endblock css %}
-
 {% block content %}
 <div class="container">
     <div class="kubi-card">

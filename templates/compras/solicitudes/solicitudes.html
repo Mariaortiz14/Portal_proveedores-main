@@ -1,7 +1,5 @@
 {% extends "_layout_compras.html" %}
-
 {% block Title %} Mis Solicitudes {% endblock Title %}
-
 {% block css %}
 <style>
     .solicitud-card {
@@ -9,12 +7,10 @@
         box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
         transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
-
     .solicitud-card:hover {
         transform: translateY(-6px);
         box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
     }
-
     .solicitud-card .card-header {
         background: linear-gradient(135deg, #990000, #4d0000);
         color: white;
@@ -24,24 +20,20 @@
         border-top-left-radius: 1rem;
         border-top-right-radius: 1rem;
     }
-
     .solicitud-card .card-footer {
         background-color: transparent;
         border-top: none;
         padding-bottom: 1rem;
     }
-
     .solicitud-card .btn-outline-dark {
         border-color: #990000;
         color: #990000;
         font-weight: 500;
     }
-
     .solicitud-card .btn-outline-dark:hover {
         background-color: #990000;
         color: white;
     }
-
     .solicitud-tag {
         font-size: 0.85rem;
         font-weight: 600;
@@ -50,40 +42,33 @@
         border-radius: 8px;
         padding: 0.3rem 0.8rem;
     }
-
     .title-bar {
         display: flex;
         justify-content: space-between;
         align-items: center;
         margin-bottom: 1.5rem;
     }
-
     .title-bar h2 {
         color: #2b2b2b;
         font-weight: bold;
     }
-
     .modal-content {
         border-radius: 1rem;
     }
-
     .modal-header {
         border-top-left-radius: 1rem;
         border-top-right-radius: 1rem;
     }
-
     .btn-danger,
     .btn-outline-danger {
         transition: all 0.2s ease-in-out;
     }
-
     .btn-outline-danger:hover {
         background-color: #dc3545;
         color: white;
     }
 </style>
 {% endblock css %}
-
 {% block content %}
 <div class="container py-4">
     <div class="title-bar px-2 px-md-4">
@@ -92,7 +77,6 @@
             <i class="fa-solid fa-plus me-2"></i> Crear Solicitud
         </a>
     </div>
-
     {% if messages %}
     {% for message in messages %}
     <div class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -101,7 +85,6 @@
     </div>
     {% endfor %}
     {% endif %}
-
     <div class="row g-4">
         {% for s in solicitudes %}
         <div class="col-md-6 col-lg-4">
@@ -112,13 +95,10 @@
                 <div class="card-body">
                     <p class="mb-1 text-muted small">Identificador</p>
                     <p class="fw-semibold">{{ s.identificador }}</p>
-
                     <p class="mb-1 text-muted small">Familia</p>
                     <p class="fw-semibold">{{ s.familia }}</p>
-
                     <p class="mb-1 text-muted small">Fecha de creación</p>
                     <p class="fw-semibold">{{ s.fecha_creacion }}</p>
-
                     <p class="mb-1 text-muted small">Fecha de finalización</p>
                     <p class="fw-semibold">
                         {% if s.fecha_final %}
@@ -127,14 +107,12 @@
                         No definida
                         {% endif %}
                     </p>
-
                     {# Solo mostrar el estado si no debe ocultarse #}
                     {% if not s.ocultar_estado %}
                     <p class="mt-3">
                         <span class="solicitud-tag">{{ s.estado }}</span>
                     </p>
                     {% endif %}
-
                     {# Asegura que el ID esté presente antes de generar el enlace #}
                     {% if s.id %}
                     <a href="{% url 'compras:solicitud_id' id=s.id %}" class="btn btn-outline-dark mt-3 w-100">
@@ -144,7 +122,6 @@
                     <span class="text-muted">Sin ID</span>
                     {% endif %}
                 </div>
-
                 <div class="card-footer d-flex justify-content-end gap-2 px-3">
                     <a href="#" class="btn btn-outline-secondary btn-sm" title="Editar" data-bs-toggle="modal"
                         data-bs-target="#modalEditar" data-id="{{ s.id }}" data-tipo="{{ s.TSolicitud }}"
@@ -161,8 +138,6 @@
         {% endfor %}
     </div>
 </div>
-
-<!-- Modal -->
 <div class="modal fade" id="modal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content border-0 shadow">
@@ -181,7 +156,6 @@
         </div>
     </div>
 </div>
-<!-- Modal para editar solicitud -->
 <div class="modal fade" id="modalEditar" tabindex="-1" aria-labelledby="modalEditarLabel" aria-hidden="true">
     <div class="modal-dialog">
         <form method="post" action="{% url 'compras:editar_solicitud_modal' %}" class="modal-content">
@@ -217,9 +191,7 @@
         </form>
     </div>
 </div>
-
 {% endblock content %}
-
 {% block script %}
 <script>
     const modalElement = document.getElementById('modal');

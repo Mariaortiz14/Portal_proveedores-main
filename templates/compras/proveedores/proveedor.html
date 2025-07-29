@@ -11,7 +11,6 @@ Proveedor-{{registro.razon_social}}
         display: inline-block;
         cursor: pointer;
     }
-
     .tooltip .tooltiptext {
         visibility: hidden;
         width: 120px;
@@ -28,14 +27,12 @@ Proveedor-{{registro.razon_social}}
         opacity: 0;
         transition: opacity 0.3s;
     }
-
     .tooltip:hover .tooltiptext {
         visibility: visible;
         opacity: 1;
     }
 </style>
 {% endblock css %}
-
 {% block content %}
 <h2 class=" p-3">{{registro.razon_social}}</h2>
 <ul class="nav navtab px-3 " id="myTab" role="tablist">
@@ -59,7 +56,6 @@ Proveedor-{{registro.razon_social}}
             </span>
             {% endif %}
         </button>
-
     </li>
     <li class="nav-item" role="presentation">
         <button class="nav-link link-secondary" id="homolo-tab" data-bs-toggle="tab" data-bs-target="#homolo-tab-pane"
@@ -81,7 +77,6 @@ Proveedor-{{registro.razon_social}}
             Evaluador
         </button>
     </li>
-
 </ul>
 <div class="tab-content" id="myTabContent">
     <div class="tab-pane fade show active" id="empresa-tab-pane" role="tabpanel" aria-labelledby="empresa-tab"
@@ -119,7 +114,6 @@ Proveedor-{{registro.razon_social}}
         {% include 'compras/evaluaciones/evaluar.html' %}
     </div>
 </div>
-
 <!-- Modal -->
 <div class="modal fade" id="approvalModal" tabindex="-1" aria-labelledby="approvalModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -150,8 +144,6 @@ Proveedor-{{registro.razon_social}}
         </div>
     </div>
 </div>
-
-
 <!-- Modal -->
 <div class="modal fade" id="disapprovalModal" tabindex="-1" aria-labelledby="disapprovalModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -177,8 +169,6 @@ Proveedor-{{registro.razon_social}}
         </div>
     </div>
 </div>
-
-
 <!-- Modal -->
 <div class="modal fade" id="taskModal" tabindex="-1" aria-labelledby="taskModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -208,18 +198,12 @@ Proveedor-{{registro.razon_social}}
             </form>
         </div>
     </div>
-
 </div>
-
-
-
 {% endblock%}
-
 {% block script %}
 <script src="{% static 'js/compras.js' %}"></script>
 <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@2.10.377/build/pdf.js"></script>
 <script src="{% static 'js/pdf.js' %}"></script>
-
 <script>
     function aprobarDocumento(id) {
         document.getElementById('documentoId').value = id;
@@ -237,6 +221,5 @@ Proveedor-{{registro.razon_social}}
         var myModal = new bootstrap.Modal(document.getElementById('taskModal'), {});
         myModal.show();
     }
-
 </script>
 {% endblock script %}

@@ -3,17 +3,14 @@
 {% block Title %}
 {{solicitud.identificador}}
 {% endblock Title %}
-
 {% block content %}
 <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
 <style>
     h2,
     h5 {
         font-weight: 700;
     }
-
     .user-photo {
         width: 42px;
         height: 42px;
@@ -22,35 +19,29 @@
         margin-right: 12px;
         border: 2px solid rgb(31, 231, 31);
     }
-
     .card {
         border: none;
         border-radius: 1rem;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
         transition: 0.3s ease;
     }
-
     .card:hover {
         transform: translateY(-3px);
         box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
     }
-
     .card-title i {
         color: rgb(54, 231, 31);
         margin-right: 8px;
     }
-
     .card-header {
         background: linear-gradient(90deg, #e9ffe9, #f6fff4);
         border-top-left-radius: 1rem;
         border-top-right-radius: 1rem;
     }
-
     .card-body p b,
     .list-group-item b {
         color: rgb(17, 168, 29);
     }
-
     .btn-dark {
         background: rgb(28, 134, 24);
         border: none;
@@ -59,53 +50,44 @@
         font-weight: 600;
         transition: all 0.3s ease;
     }
-
     .btn-dark:hover {
         background: #26c911;
     }
-
     .btn-success {
         border-radius: 50px;
         font-weight: 600;
         transition: background 0.2s ease;
     }
-
     .list-group-item {
         border-left: 5px solid rgb(71, 231, 31);
         background-color: #f8faf8;
         border-radius: 0.5rem;
         margin-bottom: 1rem;
     }
-
     .comentario-box {
         border-left: 3px solidrgba(231, 38, 31);
         padding-left: 15px;
         margin-top: 10px;
         margin-bottom: 15px;
     }
-
     .comentario-box:hover {
         background-color: #f2f7ff;
         border-left-color: rgb(31, 231, 91);
     }
-
     .respuesta {
         margin-left: 40px;
         border-left: 2px dashed #6c757d;
         padding-left: 15px;
     }
-
     .modal-content {
         border-radius: 1.5rem;
     }
-
     textarea,
     input[type="text"],
     input[type="number"],
     select {
         border-radius: 0.75rem !important;
     }
-
     input[type="file"] {
         border: 2px dashed #0d6efd;
         background-color: #f8fbff;
@@ -113,7 +95,6 @@
         border-radius: 0.5rem;
         width: 100%;
     }
-
     input[type="file"]:hover {
         background-color: #e7f1ff;
     }
@@ -214,7 +195,6 @@
     </div>
 </div>
 {% endblock content %}
-
 {% block modal %}
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-fullscreen-sm-down modal-dialog-scrollable">

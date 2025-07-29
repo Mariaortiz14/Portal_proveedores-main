@@ -1,8 +1,6 @@
 {% extends "_layout_compras.html" %}
 {% load static %}
-
 {% block Title %}{{ solicitud.identificador }}{% endblock Title %}
-
 {% block css %}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 <style>
@@ -79,11 +77,8 @@
   }
 </style>
 {% endblock css %}
-
-{% block content %}
-<div class="container mt-4">
+lass="container mt-4">
   <h2 class="text-center mb-4 text-section-title">{{ solicitud.TSolicitud|title }}</h2>
-
   <!-- Información Solicitud -->
   <div class="card mb-4">
     <div class="card-header text-center">Información de la Solicitud</div>
@@ -106,9 +101,7 @@
       </div>
     </div>
   </div>
-
   <div class="row g-4 mb-4">
-    <!-- Columna izquierda -->
     <!-- Columna izquierda -->
     <div class="col-md-6">
       <div class="card shadow-sm">
@@ -152,8 +145,6 @@
         </div>
       </div>
     </div>
-
-
     <!-- Columna derecha -->
     <div class="col-md-6">
       <div class="card shadow-sm">
@@ -164,7 +155,6 @@
       </div>
     </div>
   </div>
-
   <!-- Comentarios -->
   <div class="card">
     <div class="card-header text-center" style="background-color: #dc2626;"> Comentarios</div>
@@ -228,10 +218,8 @@
       </div>
     </div>
   </div>
-
 </div>
 {% endblock %}
-
 {% block script %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
@@ -278,21 +266,17 @@
       new Chart(graph, config);
     })
     .catch(error => console.error('Error al cargar el gráfico:', error));
-
   let propuestaId = null;
-
   function enviarAccion(accion) {
     if (propuestaId) {
       window.location.href = `/compras/propuestas/${propuestaId}/cambiar_estado/${accion}/`;
     }
   }
-
   const solicitudModal = document.getElementById('solicitudModal');
   solicitudModal.addEventListener('show.bs.modal', function (event) {
     const button = event.relatedTarget;
     propuestaId = button.getAttribute('data-id');
 
-    // Resto de atributos que ya tienes que traen informacion de la propuesta
     this.querySelector('#razon_social').textContent = button.getAttribute('data-razon-social');
     this.querySelector('#valor').textContent = button.getAttribute('data-valor');
     this.querySelector('#fecha').textContent = button.getAttribute('data-fecha');
@@ -302,7 +286,5 @@
     this.querySelector('#moneda').textContent = button.getAttribute('data-moneda');
     this.querySelector('#t_pago').textContent = button.getAttribute('data-t_pago');
   });
-
-  // saliendo de este script esta parte del modal de 
 </script>
 {% endblock %}

@@ -1,7 +1,5 @@
 {% extends "_layout_compras.html" %}
-
 {% block Title %} Proveedores {% endblock Title %}
-
 {% block css %}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
     integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -11,20 +9,17 @@
         overflow: hidden;
         animation: fadeIn 0.6s ease-in-out;
     }
-
     .tabla-divertida thead {
         background: linear-gradient(to right, #ff758c, #ff7eb3);
         color: white;
         font-weight: bold;
         font-size: 1rem;
     }
-
     .tabla-divertida tbody tr:hover {
         background-color: #fff0f5;
         transform: scale(1.01);
         transition: 0.2s ease;
     }
-
     .badge-estado {
         padding: 0.5em 1em;
         border-radius: 1em;
@@ -34,23 +29,18 @@
         align-items: center;
         gap: 0.4rem;
     }
-
-
     .estado-activo {
         background-color: #42f57e;
         color: #0b3d1b;
     }
-
     .estado-pendiente {
         background-color: #ffe66d;
         color: #6e5200;
     }
-
     .estado-inactivo {
         background-color: #9c9291;
         color: white;
     }
-
     .btn-divertido {
         background: linear-gradient(135deg, #fa2929, #0c0c0c);
         color: white !important;
@@ -61,18 +51,15 @@
         box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
         transition: all 0.3s ease;
     }
-
     .btn-divertido:hover {
         transform: scale(1.05);
         background: linear-gradient(135deg, #0c0c0c, #fa2929);
     }
-
     @keyframes fadeIn {
         from {
             opacity: 0;
             transform: translateY(20px);
         }
-
         to {
             opacity: 1;
             transform: translateY(0);
@@ -80,14 +67,12 @@
     }
 </style>
 {% endblock css %}
-
 {% block content %}
 <div class="row m-0 ps-lg-0 p-md-0 p-sm-0 p-xs-0 d-flex justify-content-center">
     <h2 class="p-3 ps-5 text-center text-gradient fw-bold display-5"
         style="background: -webkit-linear-gradient(45deg, #a70b0b, #080808); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
         👥 Lista de Proveedores
     </h2>
-
     <div class="col-md-11 col-sm-12 shadow p-4 m-3 bg-light rounded-4 border border-light-subtle tabla-divertida">
         <div class="table-responsive rounded">
             <table class="table align-middle bg-white table-hover table-striped">

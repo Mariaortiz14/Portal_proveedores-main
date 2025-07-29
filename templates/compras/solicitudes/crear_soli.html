@@ -1,10 +1,7 @@
 {% extends "_layout_compras.html" %}
-
 {% block Title %}
 Crear solicitud
 {% endblock Title %}
-
-
 {% block content %}
 <div class="row m-0  ps-lg-0 p-md-0 p-sm-0 p-xs-0 d-flex justify-content-center  ">
     <div>
@@ -19,7 +16,6 @@ Crear solicitud
             </li>
         </ol>
     </div>
-
     <div class="col-md-11 col-sm-12 col-xs-12 c1 h-100 shadow p-3 m-2 bg-white rounded h-60"
         style="background-color: hsl(0, 0%, 0%)">
         <div class="card border-0 col-md-12 col-lg-12 col-sm-12 col-xs-12">
@@ -59,14 +55,12 @@ Crear solicitud
                                     </div>
                                 </div>
                                 {%endfor%}
-
                             </div>
                             <div class="mt-3 d-flex  justify-content-center ">
                                 <button type="button" class="btn btn-danger"
                                     onclick="agregar_caracteristica()">Agregar</button>
                             </div>
                         </div>
-
                         <div class="col-12">
                             <div class="d-flex justify-content-center mt-3">
                                 <button type="submit" class="btn btn-danger">Crear solicitud</button>
@@ -79,10 +73,8 @@ Crear solicitud
     </div>
 </div>
 {%endblock%}
-
 {% block script %}
 <script>
-
     function agregar_caracteristica() {
         var totalForms = parseInt(document.getElementById('id_form-TOTAL_FORMS').value);
         var caracteristicas = document.getElementById('caracteristicas');
@@ -103,7 +95,6 @@ Crear solicitud
         document.getElementById('id_form-TOTAL_FORMS').value = totalForms + 1;
 
     }
-
     function eliminar_Caracteristica(btn) {
         if (confirm('¿Está seguro de eliminar esta característica?') && parseInt(document.getElementById('id_form-TOTAL_FORMS').value) != 1) {
             var totalForms = parseInt(document.getElementById('id_form-TOTAL_FORMS').value);
@@ -112,6 +103,5 @@ Crear solicitud
             document.getElementById('id_form-TOTAL_FORMS').value = totalForms - 1;
         }
     }
-
 </script>
 {%endblock%}
