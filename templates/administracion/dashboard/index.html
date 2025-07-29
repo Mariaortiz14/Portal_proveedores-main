@@ -83,14 +83,23 @@
         transform: translateY(-3px);
         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
     }
+    .dashboard-title {
+    background: rgba(255, 255, 255, 0.7);
+    color: #000;
+    padding: 10px 20px;
+    border-radius: 10px;
+    display: inline-block;
+    font-weight: bold;
+    text-align: center;
+    }
     
 </style>
 {% endblock css %}
 {% block content %}
 <div class="container-fluid mt-4">
-    <h3 class="fw-bold text-dark mb-4">Bienvenido al Dashboard de Administración</h3>
-    <div class="row mb-4">
-        <div class="col-md-4">
+    <h1 class="dashboard-title fw-bold  mb-4">Bienvenido al Dashboard de Administración</h1>
+    <div class="row mb-3">
+        <div class="col-md-3">
             <div class="info-card red">
                 <strong class="title">Compras</strong>
                 <div class="value">{{ usuarios_compras }}</div>
@@ -113,8 +122,8 @@
         </div>
         
     </div>
-    <div class="row mb-4">
-        <div class="col-md-6">
+    <div class="row mb-3">
+        <div class="col-md-5">
             <div class="custom-chart-container">
                 <div class="title">Estadísticas Mensuales</div>
                 <canvas id="uiverseChart"></canvas>

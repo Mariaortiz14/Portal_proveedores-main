@@ -140,13 +140,20 @@
             opacity: 0;
         }
     }
+    .dashboard-title {
+    background: rgba(255, 255, 255, 0.8);
+    color: #000;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-weight: bold;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+
     
 </style>
-
-<div class="d-flex justify-content-center mt-5 w-100">
-    
+<div class="d-flex justify-content-center w-100" style="margin-top: 100px;">
     <form method="POST" class="form">
-        <h2 class="title">Crear nuevo usuario</h2>
+        <h2 class="dashboard-title title text-center text">Crear nuevo usuario</h2>
         {% csrf_token %}
 
         {% for field in form %}

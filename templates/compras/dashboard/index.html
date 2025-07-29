@@ -1,13 +1,23 @@
 {% extends "_layout_compras.html" %}
 {% block Title %} Inicio Compras {% endblock %}
+{% block css %}
+<style>
+    .text-muted {
+        color: #000000 !important;
+    }
+</style>
+{% endblock css %}
 {% block content %}
 {% load static %}
-<div class="container mt-4">
-    <div class="text-center mb-4">
-        <h2 class="fw-bold text-danger"><i class="bi bi-graph-up"></i> Panel de Indicadores</h2>
-        <p class="text-muted">Visualiza la gestión de proveedores, solicitudes y propuestas en tiempo real.</p>
+<div class="container py-4">
+    <div class="title-bar px-2 px-md-4">
+        <h2 class="fw-bold text-danger text-center"><i class="bi bi-graph-up"></i> Panel de Indicadores</h2>
+        <p class="text-muted text-center">Visualiza la gestión de proveedores, solicitudes y propuestas en tiempo real.</p>
     </div>
+</div>
+
     <!-- MÉTRICAS PRINCIPALES -->
+
     <div class="row text-center mb-4 g-4">
         <div class="col-md-4">
             <div class="card shadow-sm border-0">
@@ -85,21 +95,46 @@
             </div>
         </div>
         <div class="col-md-6">
-            <div class="card shadow-sm border-0 h-100">
+            <div class="card shadow border-0 h-100">
+                <div class="card-header bg-success text-white d-flex align-items-center">
+                    <i class="bi bi-exclamation-circle-fill me-2 fs-5"></i>
+                    <h6 class="mb-0">Solicitudes que requieren atención</h6>
+                </div>
                 <div class="card-body">
-                    <h6 class="text-muted fw-bold">Solicitudes que requieren atención</h6>
-                    <p class="fw-bold fs-4">0.43</p>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item">🔔 Acciones requeridas</li>
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Delectus incidunt alias accusamus ratione laudantium expedita voluptate sequi porro dignissimos, ex quidem maxime, iusto odit doloremque laborum adipisci hic. Possimus quibusdam, repudiandae atque qui distinctio minus adipisci doloribus unde voluptas nam non fuga placeat nobis quas libero amet harum mollitia natus!</p>
-                        <li class="list-group-item">📄 Acciones en curso</li>
-                        <a href="{% url 'compras:tareas' %}" class="btn btn-outline-success btn-sm">🌟 Asignar Tarea
+                    <p class="fw-bold fs-5 mb-4">¿Qué deseas hacer?</p>
+
+                    <div class="row g-2">
+                        <div class="col-md-6">
+                            <a href="{%url 'compras:missolicitudes'%}" class="btn btn-outline-success w-100">
+                                ✅ Aprobar propuesta
                             </a>
-                    </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <a href="{% url 'compras:tareas' %}" class="btn btn-outline-primary w-100">
+                                🌟 Asignar tarea
+                            </a>
+                        </div>
+                        <div class="col-md-6">
+                            <a href="{%url 'compras:misproveedores'%}" class="btn btn-outline-warning w-100">
+                                📊 Evaluar proveedor
+                            </a>
+                        </div>
+                        <div class="col-md-6">
+                            <a href="{% url 'compras:missolicitudes' %}" class="btn btn-outline-info w-100">
+                                📍 Nueva solicitud
+                            </a>
+                        </div>
+                        <div class="col-12">
+                            <a href="{% url 'compras:missolicitudes' %}" class="btn btn-outline-secondary w-100">
+                                ✉️ Responder comentarios
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 </div>
 {% endblock %}
 
