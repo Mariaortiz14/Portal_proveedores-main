@@ -33,7 +33,7 @@
     }
 </style>
 <div class="container mt-4">
-    <h2 class="mb-4 fw-bold text-success">
+    <h2 class="mb-4 fw-bold text-dark">
         <i class="fa-solid fa-file-signature me-2"></i> Mis Propuestas
     </h2>
     {% if propuestas %}
@@ -56,7 +56,7 @@
                         <small>Fecha: {{ propuesta.fecha|date:"d/m/Y" }}</small>
                     </p>
                     {% if propuesta.file %}
-                    <a href="{{ propuesta.file.url }}" target="_blank" class="btn btn-outline-primary btn-archivo mt-2">
+                    <a href="{{ propuesta.file.url }}" target="_blank" class="btn btn-outline-success btn-archivo mt-2">
                         <i class="fa-solid fa-paperclip me-1"></i> Ver archivo
                     </a>
                     {% endif %}
