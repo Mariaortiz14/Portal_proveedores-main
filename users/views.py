@@ -243,3 +243,36 @@ def profile(request):
         'documentos': docs,
         'certificaciones': certs,
     })
+    
+    
+    
+    
+def forgot_password(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        user = User.objects.filter(username=username).first()
+        if user and user.groups.filter(name='proveedor').exists():
+            return redirect('users:reset_password', username=user.username)
+        else:
+            messages.error(request, 'El usuario no existe o no pertenece al grupo de proveedores.')
+
+    return render(request, 'users/forgot_password.html')
+
+
+
+from django.contrib.auth.hashers import make_password
+
+def reset_password(request, username):
+    user = User.objects.filter(username=username).first()
+    if not user:
+        messages.error(request, 'Usuario no válido.')
+        return redirect('users:forgot_password')
+
+    if request.method == 'POST':
+        new_password = request.POST.get('password')
+        user.password = make_password(new_password)
+        user.save()
+        messages.success(request, 'Contraseña actualizada correctamente.')
+        return redirect('users:login')
+
+    return render(request, 'users/reset_password.html', {'username': username})
