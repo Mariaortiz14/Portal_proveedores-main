@@ -156,7 +156,7 @@ class composicion_accionaria(models.Model):
     id = models.AutoField(primary_key=True)
     id_registro = models.ForeignKey(registro_formulario, on_delete=models.CASCADE)
     nombre_razon_social = models.CharField(max_length=300)
-    tipo_identificacion = models.CharField(max_length=2)
+    tipo_identificacion = models.CharField(max_length=50)
     identificacion = models.CharField(max_length=11)
     porcentaje = models.CharField(max_length=3)
     

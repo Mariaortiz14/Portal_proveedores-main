@@ -2,6 +2,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.models import User, Group
 from django.shortcuts import render, redirect
+from django.contrib.auth.hashers import make_password
 from datetime import date, datetime, time
 from django.utils.html import escape
 from django.core import serializers
@@ -16,6 +17,10 @@ from logging import info
 from .models import *
 from .forms import *
 import re
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+
+
 
 #Función para llenar el formulario de registro
 def signup(request):
@@ -61,60 +66,79 @@ def signup(request):
                     return redirect('users:profile')
 
             if all(formulario.is_valid() for formulario in formularios):
-                with transaction.atomic():
-
-                    # Crear o asignar usuario
-                    if request.user.is_authenticated:
-                        user = request.user
-                    else:
-                        email = formularios[0].cleaned_data['email']
-                        documento = formularios[0].cleaned_data['documento']
-                        password = formularios[0].cleaned_data['matricula_mercantil']  # Toma la contraseña del campo matricula_mercantil
-                        user = User.objects.create_user(username=documento, password=password, email=email)
-
-                        grupo, _ = Group.objects.get_or_create(name='Proveedor')
-                        user.groups.add(grupo)
-                        login(request, user)
-
-                    #Crear registrodel formulario
-                    registro = registro_formulario.objects.create(usuario=user, **formularios[0].cleaned_data)
-
-                    # Guardar subsecciones
-                    for f in formularios[1]:
-                        if f.cleaned_data and f.cleaned_data['tipo_identificacion']:
-                            composicion_accionaria.objects.create(id_registro=registro, **f.cleaned_data)
-
-                    info_financiera.objects.create(id_registro=registro, **formularios[2].cleaned_data)
-
-                    cleaned_data = formularios[3].cleaned_data.copy()
-                    Tcontribuyente = cleaned_data.pop('tipo_contribuyente')
-                    tribu = info_tributaria.objects.create(id_registro=registro, **cleaned_data)
-
-                    for data in Tcontribuyente:
-                        if data.codigo != 'T03' and data.codigo != 'T04':
-                            resolucion.objects.create(id_trib=tribu, Tcontribuyente=data)
+                try:
+                    with transaction.atomic():
+                        # Crear o asignar usuario
+                        if request.user.is_authenticated:
+                            user = request.user
                         else:
-                            for f in formularios[4]:
-                                if f.cleaned_data and f.cleaned_data['Tcontribuyente']:
-                                    resolucion.objects.create(id_trib=tribu, **f.cleaned_data)
+                            email = formularios[0].cleaned_data['email']
+                            documento = formularios[0].cleaned_data['documento']
+                            password = formularios[0].cleaned_data['matricula_mercantil']
+                            user = User.objects.create_user(username=documento, password=password, email=email)
+                            grupo, _ = Group.objects.get_or_create(name='Proveedor')
+                            user.groups.add(grupo)
 
-                    info_pago.objects.create(id_registro=registro, **formularios[5].cleaned_data)
+                        registro = registro_formulario.objects.create(usuario=user, **formularios[0].cleaned_data)
 
-                    for f in formularios[6]:
-                        if f.cleaned_data and f.cleaned_data['file']:
-                            f.cleaned_data.pop('nombre', None)
-                            certificaciones_proveedores.objects.create(id_registro=registro, **f.cleaned_data)
+                        for f in formularios[1]:
+                            if f.cleaned_data and f.cleaned_data['tipo_identificacion']:
+                                composicion_accionaria.objects.create(id_registro=registro, **f.cleaned_data)
 
-                    for f in formularios[7]:
-                        if f.cleaned_data and f.cleaned_data['file']:
-                            documentos_requeridos.objects.create(id_registro=registro, **f.cleaned_data)
+                        info_financiera.objects.create(id_registro=registro, **formularios[2].cleaned_data)
 
-                    productos_servicios_condiciones.objects.create(id_registro=registro, **formularios[8].cleaned_data)
-                    declaracion.objects.create(id_registro=registro, **formularios[9].cleaned_data)
-                    homologacion.objects.create(id_registro=registro)
+                        cleaned_data = formularios[3].cleaned_data.copy()
+                        Tcontribuyente = cleaned_data.pop('tipo_contribuyente')
+                        tribu = info_tributaria.objects.create(id_registro=registro, **cleaned_data)
 
-                    messages.success(request, '¡Registro exitoso! Ya puedes ver tu perfil.')
-                    return redirect('users:profile')
+                        for data in Tcontribuyente:
+                            if data.codigo not in ['T03', 'T04']:
+                                resolucion.objects.create(id_trib=tribu, Tcontribuyente=data)
+                            else:
+                                for f in formularios[4]:
+                                    if f.cleaned_data and f.cleaned_data['Tcontribuyente']:
+                                        resolucion.objects.create(id_trib=tribu, **f.cleaned_data)
+
+                        info_pago.objects.create(id_registro=registro, **formularios[5].cleaned_data)
+
+                        for f in formularios[6]:
+                            if f.cleaned_data and f.cleaned_data['file']:
+                                f.cleaned_data.pop('nombre', None)
+                                certificaciones_proveedores.objects.create(id_registro=registro, **f.cleaned_data)
+
+                        for f in formularios[7]:
+                            if f.cleaned_data and f.cleaned_data['file']:
+                                documentos_requeridos.objects.create(id_registro=registro, **f.cleaned_data)
+
+                        productos_servicios_condiciones.objects.create(id_registro=registro, **formularios[8].cleaned_data)
+                        declaracion.objects.create(id_registro=registro, **formularios[9].cleaned_data)
+                        homologacion.objects.create(id_registro=registro)
+
+                except Exception as e:
+                    text = "Error al registrar el formulario, por favor revise bien los datos e intente nuevamente"
+                    url = reverse('users:signup')
+                    print(e)
+                    return render(request, "error.html", {'texto': text, 'url': url, 'error': e})
+
+                # 🔐 Ahora fuera del bloque atomic: enviar correo y login
+                if not request.user.is_authenticated:
+                    html_content = render_to_string('compras/correo/email.html', {
+                        'user': user,
+                    })
+
+                    msg = EmailMultiAlternatives(
+                        subject='🎉 ¡Bienvenido a FEPCO!',
+                        body='Has sido aprobado como proveedor en FEPCO.',
+                        from_email='motomami1612@gmail.com',
+                        to=[user.email],
+                    )
+                    msg.attach_alternative(html_content, "text/html")
+                    msg.send()
+
+                    login(request, user)
+
+                messages.success(request, '¡Registro exitoso! Ya puedes ver tu perfil.')
+                return redirect('users:profile')
 
             else:
                 text = "Error al registrar el formulario, por favor intente nuevamente"
@@ -243,10 +267,8 @@ def profile(request):
         'documentos': docs,
         'certificaciones': certs,
     })
-    
-    
-    
-    
+        
+#Función para recuperar la contraseña del proveedor   
 def forgot_password(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -258,10 +280,7 @@ def forgot_password(request):
 
     return render(request, 'users/forgot_password.html')
 
-
-
-from django.contrib.auth.hashers import make_password
-
+#Función para resetear la contraseña del proveedor
 def reset_password(request, username):
     user = User.objects.filter(username=username).first()
     if not user:
